@@ -1,0 +1,105 @@
+@import "../../../assets/styles/global.scss";
+@import "../../../assets/styles/variable";
+
+.stores-grid {
+  // width: 100%;
+
+  &.ag-theme-balham {
+    .ag-header-select-all,
+    .ag-selection-checkbox {
+      // margin-left: -8px;
+    }
+    .ag-header-viewport {
+      .ag-header-row {
+        .ag-header-cell {
+          &.edit-store-store-id {
+            width: 120px !important;
+          }
+          &.edit-store-store-location {
+            left: 120px !important;
+            width: 290px !important;
+          }
+        }
+      }
+    }
+    .ag-body-viewport {
+      .ag-center-cols-container {
+        .ag-row {
+          .ag-cell {
+            &.edit-store-store-id {
+              width: 120px !important;
+            }
+            &.edit-store-store-location {
+              left: 120px !important;
+              width: 290px !important;
+            }
+          }
+        }
+      }
+    }
+    .ag-status-bar {
+      border: 0px;
+    }
+  }
+}
+// .button-actions {
+//   position: relative;
+//   top: 14px;
+// }
+.add-edit-stores {
+  height: calc(100vh - 235px);
+}
+.stores-content {
+  // min-height: 742px;
+  position: relative;
+  height: calc(85vh - 300px);
+  .toggleClass {
+    visibility: hidden;
+  }
+}
+
+.store-add-edit {
+  .mat-dialog-container {
+    .mat-dialog-heading {
+      .mat-dialog-title {
+        padding: 0 0;
+        // color: $primary-font-color;
+        // font-size: 16px;
+        // font-family: "SF-Pro-Text-Semibold", Sans-Serif;
+        letter-spacing: -0.45px;
+      }
+    }
+    .mat-tab-group {
+      height: 35px;
+      clear: both;
+      margin-bottom: 15px;
+      // margin-top: 0px;
+      .mat-tab-header {
+        margin: 0px 20px;
+      }
+      .mat-tab-label {
+        font-family: "SF-Pro-Text-Medium", sans-serif;
+        height: 35px;
+        // padding: 0;
+        // margin-right: 30px;
+        min-width: inherit;
+        &.mat-tab-label-active {
+          // color: $primary-color;
+          opacity: 1;
+        }
+      }
+    }
+    .stores-content {
+      padding: 0px 20px 0px 20px;
+      margin-bottom: 20px;
+      // height: calc(100vh - 235px);
+      .stores-grid {
+        // margin-top: 15px;
+        width: 100%;
+        height: calc(85vh - 300px);
+        overflow: hidden;
+        min-height: 120px;
+      }
+    }
+  }
+}

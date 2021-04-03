@@ -1,0 +1,39 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>Add User Role</h2>
+  <!-- <button mat-icon-button tabindex="-1" (click)="close()">
+    <em class="pixel-icons icon-close"></em>
+  </button> -->
+</div>
+<mat-dialog-content class="box-files-list">
+  <form [formGroup]="addUserRoleForm" class="form-flex">
+    <pi-form-field label="Role Name*">
+      <input type="text" pi-input formControlName="name" />
+      <div
+        class="pi-error"
+        *ngIf="
+          addUserRoleForm.controls['name'].hasError('required') && submitted
+        "
+      >
+        Please enter Role name.
+      </div>
+    </pi-form-field>
+    <pi-form-field label="Description">
+      <textarea pi-input formControlName="description" [minRows]="5"></textarea>
+    </pi-form-field>
+    <pi-form-field label="Status*">
+      <pi-select [options]="statusOptions" formControlName="status"></pi-select>
+    </pi-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions class="mat-dialog-footer mat-dialog-footer-empty-error">
+  <button pi-button (click)="close()">Cancel</button>
+  <button
+    pi-button
+    color="accent"
+    class="apply-btn"
+    [disabled]="addRoleProgress"
+    (click)="saveUserRole(addUserRoleForm)"
+  >
+    {{ addRoleProgress == true ? 'Saving...' : 'Save' }}
+  </button>
+</mat-dialog-actions>

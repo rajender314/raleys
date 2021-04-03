@@ -1,0 +1,84 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <!-- <button mat-icon-button mat-dialog-close tabindex="-1">
+    <em class="pixel-icons icon-close"></em>
+  </button> -->
+  <span (click)="closeDialog()">
+    <em class="pixel-icons icon-close"></em>
+  </span>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="createUserForm" class="form-flex" autocomplete="off">
+    <ng-container *ngFor="let field of state.list">
+      <pi-form-field>
+        <label class="label-name">{{ field.label }}</label>
+        <span class="required" *ngIf="field.required"> *</span>
+        <div class="value" *ngIf="field.type == 'readonly'">
+          {{ field.value }}
+        </div>
+        <input
+          type="text"
+          *ngIf="field.type == 'text' || field.type == 'email'"
+          class="ak-field-text"
+          [name]="field.name"
+          formControlName="{{ field.name }}"
+        />
+        <pi-select
+          *ngIf="field.type == 'select'"
+          [options]="state[field.options]"
+          idKey="_id"
+          formControlName="{{ field.name }}"
+        ></pi-select>
+
+        <div
+          class="pi-error"
+          *ngIf="
+            (createUserForm.controls[field.name].hasError('required') ||
+              createUserForm.controls[field.name].hasError('whitespace')) &&
+            state.submitted &&
+            field.type != 'select'
+          "
+        >
+          Please Enter {{ field.label }}
+        </div>
+        <div
+          class="pi-error"
+          *ngIf="
+            !createUserForm.controls[field.name].hasError('required') &&
+            state.submitted &&
+            createUserForm.controls[field.name].hasError('pattern')
+          "
+        >
+          Please Enter Valid Email
+        </div>
+        <div
+          class="pi-error"
+          *ngIf="
+            createUserForm.controls[field.name].hasError('required') &&
+            state.submitted &&
+            field.type == 'select'
+          "
+        >
+          Please Select {{ field.label }}
+        </div>
+        <div class="pi-error" *ngIf="errorMsg != '' && field.name == 'email'">
+          {{ errorMsg }}
+        </div>
+      </pi-form-field>
+    </ng-container>
+  </form>
+</mat-dialog-content>
+
+<div class="mat-dialog-footer">
+  <div>
+    <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+    <button
+      pi-button
+      color="accent"
+      (click)="saveDetails(createUserForm)"
+      [disabled]="createUserForm.pristine"
+    >
+      Save
+    </button>
+  </div>
+</div>

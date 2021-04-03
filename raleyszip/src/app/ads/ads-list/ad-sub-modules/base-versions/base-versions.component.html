@@ -1,0 +1,115 @@
+<mat-sidenav-container class="settings-container grid-container">
+  <mat-sidenav-content>
+    <div>
+      <div class="versions-list" *ngIf="pageVersions.length">
+        <form [formGroup]="pageGroup" class="page-list">
+          <pi-form-field class="page-select">
+            <pi-select
+              [options]="pageVersions"
+              (onChange)="
+                getPage($event); getBaseVersions(currentlySelectedPage)
+              "
+              nameKey="page_no"
+              idKey="base_id"
+              formControlName="page_id"
+            ></pi-select>
+          </pi-form-field>
+        </form>
+        <!-- <div>
+          <div class="base-list">
+            <span
+              *ngFor="let basePrice of baseList?.base"
+              class="cursor base-item"
+              [ngClass]="{ active: basePrice.key == base.key }"
+              (click)="getBasePrices(basePrice)"
+              >{{ basePrice.value }}</span
+            >
+          </div>
+          <div></div>
+        </div> -->
+      </div>
+      <div class="pages-grid-container">
+        <div class="ads-grid-section">
+          <div class="section-header"></div>
+          <div class="inner-section">
+            <ag-grid-angular
+              @rightAnimate
+              class="ag-theme-balham base-grid grid"
+              *ngIf="rowData?.length"
+              [rowData]="rowData"
+              [animateRows]="true"
+              rowHeight="40"
+              [enableRangeSelection]="true"
+              [enableFilter]="true"
+              [suppressDragLeaveHidesColumns]="true"
+              [suppressMakeColumnVisibleAfterUnGroup]="true"
+              [rowGroupPanelShow]="rowGroupPanelShow"
+              [enableSorting]="true"
+              [enableColResize]="true"
+              [sideBar]="false"
+              [columnDefs]="columnDefs"
+              [domLayout]="autoHeight"
+              (gridReady)="onGridReady($event)"
+              [autoGroupColumnDef]="autoGroupColumnDef"
+              [rowSelection]="'single'"
+              (cellEditingStarted)="cellEditingStarted($event)"
+              (cellEditingStopped)="cellEditingStopped($event)"
+              (cellValueChanged)="onCellValueChanged($event)"
+              (cellClicked)="onCellClicked($event)"
+              [rowMultiSelectWithClick]="false"
+              (rowSelected)="onRowSelected($event)"
+              (cellMouseOver)="onCellMouseOver($event)"
+              (rowGroupOpened)="onRowGroupOpened($event)"
+              [frameworkComponents]="frameworkComponents"
+              [getRowNodeId]="getRowNodeId"
+              [rememberGroupStateWhenNewData]="true"
+              [suppressCopyRowsToClipboard]="true"
+              [suppressKeyboardEvent]="suppressKeyboardEvent"
+            >
+            </ag-grid-angular>
+            <h3 class="base-promotion-heading" *ngIf="rowData?.length">
+              Available Promotions in Mod {{ modOrder }}
+            </h3>
+            <div
+              class="no-promo-data"
+              *ngIf="!promotionData.length && rowData?.length && !promoProgress"
+            >
+              <div class="no-data-grid">Promotions Not Found</div>
+            </div>
+            <div class="spinner" *ngIf="promoProgress && rowData?.length">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+            <!-- <p class="loading"  *ngIf="promoProgress && rowData?.length">Loading plz wait</p> -->
+            <ag-grid-angular
+              @rightAnimate
+              class="ag-theme-balham promo-grid grid"
+              *ngIf="promotionData?.length && !promoProgress"
+              [rowData]="promotionData"
+              [animateRows]="true"
+              rowHeight="40"
+              [columnDefs]="promocolumnDefs"
+              [domLayout]="autoHeight"
+              (gridReady)="onGridReadyEve($event)"
+              [enableColResize]="true"
+              [suppressColumnVirtualisation]="true"
+              [frameworkComponents]="frameworkComponents"
+            >
+            </ag-grid-angular>
+          </div>
+
+          <div class="footer"><div class="custom-pagination-panel"></div></div>
+          <div class="loader" *ngIf="dataLoad && !noData"></div>
+          <div class="loader-text no-data-grid" *ngIf="!noData && dataLoad">
+            Loading, please wait...
+          </div>
+          <div class="no-data-grid" *ngIf="noData && !dataLoad">
+            <em class="{{ listData?.iconClass }}"></em>
+            <p>Pages Not Found.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

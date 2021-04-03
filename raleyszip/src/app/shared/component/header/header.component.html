@@ -1,0 +1,77 @@
+<div class="toolbar secondar-bg-color">
+  <div class="shadow-line"></div>
+  <div class="app-logo-icon" (click)="goToHome()">
+    <img src="{{ app_image }}" alt="no-image.png" />
+  </div>
+  <mat-icon (click)="togglePrimaryNav()">menu</mat-icon>
+  <div class="primary-nav" [ngClass]="[showNav ? 'hide-icons' : '']">
+    <div
+      class="item"
+      *ngFor="let tab of appService.configLabels"
+      [routerLink]="tab.url"
+      routerLinkActive="active"
+      [matTooltip]="tab.value"
+      matTooltipPosition="after"
+    >
+      <a class="inner-nav-sec">
+        <span
+          class="my-pixel-icon"
+          [ngStyle]="{ background: tab.iconBackground }"
+        >
+          <em class="{{ tab.iconClass }}"></em>
+        </span>
+        <div class="bottom-border"></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="flex"></div>
+  <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-img">
+    <mat-icon *ngIf="!loginDetails.user_data.cloud_path"
+      >account_circle</mat-icon
+    >
+    <img
+      *ngIf="loginDetails.user_data.cloud_path"
+      src="{{ loginDetails.user_data.cloud_path }}"
+      alt="no-image.png"
+    />
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item class="header-logout" (click)="manageAccount()">
+      <span>Manage Account</span>
+    </button>
+    <button mat-menu-item class="header-logout" (click)="logout()">
+      <span>Log Out</span>
+    </button>
+  </mat-menu>
+</div>
+<div class="primary-nav-container" [class.active]="showNav">
+  <div
+    class="overlay"
+    (click)="togglePrimaryNav()"
+    [@fadeAnimation]
+    *ngIf="showNav"
+  ></div>
+  <div class="app-primary-nav secondar-bg-color">
+    <div class="nav-data">
+      <img class="logo-text" src="{{ logo }}" alt="no-image.png" />
+      <div class="list">
+        <div class="item" *ngFor="let tab of tabs">
+          <a
+            [routerLink]="tab.url"
+            routerLinkActive="active"
+            (click)="togglePrimaryNav()"
+          >
+            <span
+              class="my-pixel-icon"
+              [ngStyle]="{ background: tab.iconBackground }"
+            >
+              <em class="{{ tab.iconClass }}"></em>
+            </span>
+            {{ tab.value }}</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

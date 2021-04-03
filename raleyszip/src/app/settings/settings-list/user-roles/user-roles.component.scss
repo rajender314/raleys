@@ -1,0 +1,39 @@
+@import "../../../../assets/styles/mixins";
+.role-details {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  text-transform: capitalize;
+  .form-details {
+    .smaller-text {
+      font-size: x-small;
+    }
+    .dynamic-form-content {
+      .children-permissions {
+        max-width: 600px;
+        .d-flex {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      }
+    }
+  }
+  .footer {
+    background: #fff;
+    border-top: 1px solid #dcdfeb;
+    padding: 10px 20px;
+    @include flex(flex-end, center);
+    .cancel-btn {
+      margin-right: 10px;
+    }
+  }
+}
+.inner-detail-list {
+  overflow-y: auto;
+  mat-list-item {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

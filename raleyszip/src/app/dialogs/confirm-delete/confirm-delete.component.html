@@ -1,0 +1,90 @@
+<div class="mat-dialog-heading" *ngIf="!process">
+  <!-- <h2 mat-dialog-title>{{ mode }} {{ data.rowData.label || data.title }}</h2> -->
+  <h2 mat-dialog-title>
+    {{ mode == 'Split Mod' ? (data?.action ? 'Signage' : 'Pages') : mode }}
+  </h2>
+  <!-- <button mat-icon-button tabindex="-1" (click)="closeDialog()">
+      <em class="pixel-icons icon-close"></em>
+    </button> -->
+</div>
+<mat-dialog-content
+  *ngIf="
+    !process &&
+    mode != 'Import' &&
+    mode != 'Split Mod' &&
+    mode != 'Create Signage' &&
+    data?.action != 'deltePreviewItems' &&
+    data?.action != 'deleteSpec'
+  "
+>
+  <span class="confirm-del-msg"
+    >Are you sure you want to {{ mode }} this {{ data.rowData.label }}?</span
+  >
+</mat-dialog-content>
+
+<mat-dialog-content
+  *ngIf="data.action == 'deltePreviewItems' || data.action == 'deleteSpec'"
+>
+  <span class="confirm-del-msg"
+    >Are you sure you want to {{ data.mode }} this {{ data.label }}?</span
+  >
+</mat-dialog-content>
+
+<mat-dialog-content *ngIf="!process && mode == 'Create Signage'">
+  <span class="confirm-del-msg"
+    >Signage once created can't be undone. Are you sure you want to continue?
+  </span>
+</mat-dialog-content>
+
+<mat-dialog-content *ngIf="!process && mode == 'Import'">
+  <span class="confirm-del-msg"
+    >Importing a file will modify the existing data, Are you sure you want to
+    continue?</span
+  >
+</mat-dialog-content>
+<mat-dialog-content *ngIf="!process && mode == 'Split Mod'">
+  <span class="confirm-del-msg"
+    >Changes made will not be saved, Are you sure you want to continue?
+  </span>
+</mat-dialog-content>
+<div class="btn-actions box mat-dialog-footer" *ngIf="!process">
+  <p *ngIf="errorMsg != ''">{{ errorMsg }}</p>
+  <button class="mat-button" pi-button color="subtle" (click)="closeDialog()">
+    Cancel
+  </button>
+  <button
+    pi-button
+    color="accent"
+    class="mat-raised-button"
+    [disabled]="btnDisable"
+    (click)="delete()"
+  >
+    {{
+      mode == 'Import'
+        ? 'Proceed'
+        : mode == 'Split Mod'
+        ? 'Proceed'
+        : mode == 'Create Signage'
+        ? 'Create'
+        : mode
+    }}
+    <!-- Yes, {{ mode }} {{ data.rowData.label }} -->
+  </button>
+</div>
+<div [ngClass]="{ 'confirmation-sec': this.process }">
+  <div class="loader-sm" *ngIf="process"></div>
+  <div class="loading-msg" *ngIf="process">
+    {{
+      mode === 'Export'
+        ? 'Exporting,'
+        : mode === 'Download'
+        ? 'Downloading,'
+        : mode == 'Split Mod'
+        ? 'Adding,'
+        : mode == 'Create Signage'
+        ? 'Creating'
+        : 'Deleting,'
+    }}
+    Please wait ...
+  </div>
+</div>

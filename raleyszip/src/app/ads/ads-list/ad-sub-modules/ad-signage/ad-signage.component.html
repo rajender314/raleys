@@ -1,0 +1,378 @@
+<div *ngIf="!editingMod" class="ads-grid-section ad-pages-sec ad-signage-sec">
+  <div class="section-header" [ngClass]="{ 'w-100': !pageDetails.length }">
+    <em class="{{ currentTabData?.iconClass }}"></em>
+    <h3 class="sub-heading">{{ currentTabData?.value }}</h3>
+    <div class="page-list">
+      <pi-form-field class="page-select">
+        <pi-select
+          [options]="deptList"
+          [(ngModel)]="selectedDepartment"
+          autocomplete="off"
+          placeholder="Select Dept."
+          (onChange)="getPromotionsByDept($event)"
+        >
+        </pi-select>
+      </pi-form-field>
+    </div>
+    <div class="nav-sec">
+      <button
+        pi-button
+        (click)="exportSignage()"
+        *ngIf="pageDetails?.length"
+        [ngClass]="{
+          'no-hover-click': adsService.isImportProgess
+        }"
+      >
+        Export
+      </button>
+
+      <div
+        class="ad-options"
+        [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+      >
+        <button
+          class="ak-button ak-button__appearance-default"
+          pi-button
+          #menuTrigger="matMenuTrigger"
+          [matMenuTriggerFor]="menu"
+        >
+          Create Signage
+        </button>
+        <button
+          class="ak-button ak-button__appearance-default icon-arrow-down-button"
+          pi-button
+          #menuTrigger="matMenuTrigger"
+          [matMenuTriggerFor]="menu"
+        >
+          <em class="pixel-icons icon-arrow-down"></em>
+        </button>
+        <mat-menu #menu="matMenu" class="ad-export">
+          <button mat-menu-item (click)="createSign('upc-search')">
+            Search by UPC / SKU
+          </button>
+          <button mat-menu-item (click)="createSign('ads-search')">
+            Use Previous Ads
+          </button>
+          <button mat-menu-item (click)="createSign('sign-search')">
+            Use Existing Signage
+          </button>
+          <button mat-menu-item (click)="createBlankSign('blank-sign')">
+            Blank Signage
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+    <!-- <div class="page-list" *ngIf="pagesInfo?.length">
+      <pi-form-field class="page-select">
+        <pi-select [options]="pagesInfo" [(ngModel)]="selectedPage" nameKey="name" placeholder="Select pages"
+          (onChange)="onPageSelected($event)">
+        </pi-select>
+      </pi-form-field>
+    </div> -->
+    <!-- <div class="nav-sec save-import">
+      <div class="box nav-sec save-view-btn">
+        <span>
+          <span class="revert-btn  cursor">
+            <em class="pixel-icons icon-filter"></em> <span> Filters</span>
+          </span>
+        </span>
+      </div>
+      <div search-sec>
+        <app-search
+          [search]="search"
+          (onSearch)="onSearch($event)"
+        ></app-search>
+      </div>
+    </div> -->
+  </div>
+  <div class="page-content-main-sec">
+    <!--this code is for tabs representation-->
+    <!-- <div class="page-tab-sec">
+      <mat-tab-group>
+        <mat-tab class="mat-tabs" label="All"></mat-tab>
+        <mat-tab class="mat-tabs" label="Changed"></mat-tab
+        ><mat-tab class="mat-tabs" label="Unchanged"></mat-tab
+        ><mat-tab class="mat-tabs" label="Deleted"></mat-tab>
+      </mat-tab-group>
+    </div> -->
+
+    <div
+      class="page-content-sec"
+      *ngFor="let detail of pageDetails; let i = index"
+    >
+      <div class="page-content">
+        <div
+          class="page-preview"
+          [ngClass]="[
+            !detail?.headline && !detail?.header_id && !detail?.regular_price
+              ? 'no-content'
+              : ''
+          ]"
+        >
+          <div>
+            <div
+              class="page-preview-header"
+              [ngClass]="{ 'signage-preview-header': detail?.header.length }"
+            >
+              <div class="page-preview-left-header">
+                <p class="page-preview-title">
+                  {{
+                    detail?.header
+                      ? detail?.header
+                      : 'SIGN ' + detail?.signage_number
+                  }}
+                  <!-- sign {{ detail.signage_number }} -->
+                  <!--this code is for green check mark representation-->
+                  <!-- <span  class="text-success">
+                    <em  class="material-icons">check_circle</em> 
+                  </span> -->
+                </p>
+              </div>
+              <!-- <div class="page-preview-right-header">
+                <p class="version-count">{{ detail?.version_count }} versions</p>
+              </div> -->
+            </div>
+            <div
+              class="page-preview-content"
+              [ngClass]="[
+                detail?.headline || detail?.header_id || detail?.regular_price
+                  ? 'signage-preview-content'
+                  : ''
+              ]"
+            >
+              <div
+                class="page-preview-left-content"
+                [ngClass]="[
+                  !detail?.headline && !detail?.header_id ? 'no-content' : ''
+                ]"
+              >
+                <p
+                  class="page-preview-main-content"
+                  [ngClass]="{
+                    'no-content': !detail?.headline && !detail?.header_id
+                  }"
+                >
+                  {{
+                    detail?.headline ? detail?.headline.substring(0, 25) : ''
+                  }}
+                  <span *ngIf="detail?.headline && detail?.headline.length > 25"
+                    >...</span
+                  >
+                  <!-- <p class="asset-name" [matTooltip]="asset.file_name">
+                      {{
+                        asset.file_name ? asset.file_name?.substring(0, 25) : '---'
+                      }}
+                      
+                </p> -->
+                </p>
+
+                <p
+                  class="page-preview-main-content w-30 m-b-15"
+                  [ngClass]="{
+                    'no-content': !detail?.headline && !detail?.header_id
+                  }"
+                ></p>
+                <p
+                  class="page-preview-sub-content"
+                  [ngClass]="{
+                    'no-content': !detail?.headline && !detail?.header_id
+                  }"
+                >
+                  {{
+                    detail?.underline ? detail?.underline.substring(0, 30) : ''
+                  }}
+                  <span
+                    *ngIf="detail?.underline && detail?.underline.length > 30"
+                    >...</span
+                  >
+                </p>
+                <p
+                  class="page-preview-sub-content"
+                  [ngClass]="{
+                    'no-content': !detail?.headline && !detail?.header_id
+                  }"
+                ></p>
+
+                <p
+                  class="page-preview-sub-content w-30"
+                  [ngClass]="{
+                    'no-content': !detail?.headline && !detail?.header_id
+                  }"
+                ></p>
+              </div>
+              <div class="page-preview-right-content">
+                <div>
+                  <p class=" offer-type" *ngIf="detail?.offer_type_name">
+                    {{ detail?.offer_type_name }}
+                  </p>
+                </div>
+                <div class="price-sec">
+                  <p class="page-preview-cost " *ngIf="detail?.regular_price">
+                    ${{ detail?.regular_price }}
+                  </p>
+                  <p *ngIf="detail?.uom" class="text-center">
+                    {{ detail?.uom | uppercase }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="page-preview-images no-preview-images"
+              *ngIf="!detail.logos.length"
+            >
+              <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+              </div>
+              <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+              </div>
+              <!-- <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+              </div>
+              <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+              </div> -->
+            </div>
+            <div class="page-preview-images" *ngIf="detail.logos.length">
+              <div
+                class="preview-image"
+                *ngFor="let image of (detail.logos | slice: 0:2); let i = index"
+              >
+                <div class="preview-image-sec">
+                  <img [src]="image.previewUrl" />
+                </div>
+
+                <!-- <div *ngIf="detail.images.length > 2 && i > 0">
+                  <div class="overlay-sec"></div>
+                  <span class="preview-image-count"
+                    >+{{ detail.images.length - 2 }}</span
+                  >
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <div class="preview-overlay-sec"></div>
+          <div class="preview-edit-mod" (click)="editSignageDialog(detail, i)">
+            <span> <em class="pixel-icons icon-mod-edit"></em> Edit Sign </span>
+          </div>
+        </div>
+        <div class="page-list-view">
+          <div class="page-list-header">
+            <div class="page-list-left-header">
+              <span class="page-name">promotions {{ detail.page_order }}</span>
+            </div>
+            <div
+              class="page-list-right-header"
+              [ngClass]="{ 'not-allowed': adsService.isImportProgess }"
+            >
+              <!-- <p [ngClass]="detail.status == 'Pending' ? 'mod-status-pending' :'mod-status-complete'">
+                {{detail.status}}
+              </p> -->
+              <!-- <pi-select [ngClass]="{ 'no-hover-click': adsService.isImportProgess }" [options]="modStaus"
+                [(ngModel)]="detail.status" nameKey="name" (onChange)="onModStatusChanged($event, mod)"
+                class="page-mod-status">
+              </pi-select> -->
+              <p class="edit-mod" (click)="editSignageDialog(detail, i)">
+                <span><em class="pixel-icons icon-mod-edit"></em></span>Edit
+                Sign
+              </p>
+            </div>
+          </div>
+          <div
+            class="page-list-main-sec pos-rel"
+            [ngClass]="detail.isExp ? 'page-list-expanded' : ''"
+          >
+            <!-- {{detail.mod_id == selectedModId}} -->
+            <div
+              class="page-list-content"
+              *ngFor="let promo of detail.promotions"
+            >
+              <div class="page-list-left-content w-90">
+                <span class="promo-id">
+                  <em class="pixel-icons icon-label"></em>
+                  <span class="promo-id-block" [matTooltip]="promo.promo_id">
+                    {{ promo.promo_id }}</span
+                  >
+                </span>
+                <span class="promo-content">{{ promo.item_description }}</span>
+              </div>
+              <div
+                class="page-list-right-content signage-list-right-content w-15"
+              >
+                <span class="promo-cost">${{ promo.promo_price }}</span>
+                <!-- <span
+                  class="promo-specs"
+                  *ngIf="detail?.offer_type_name.length"
+                  [matTooltip]="detail?.offer_type_name"
+                >
+                  <em class="pixel-icons icon-offer-type"></em
+                  >{{ detail?.offer_type_name }}</span
+                >
+                <span
+                  class="promo-specs"
+                  *ngIf="!detail?.offer_type_name.length"
+                  ><em class="pixel-icons icon-offer-type"></em>--</span
+                > -->
+              </div>
+            </div>
+            <p
+              class="page-list-expand-btn page-list-collapse-btn"
+              *ngIf="expandListValue && detail.promotions.length > 4"
+              (click)="expandList()"
+            >
+              Collapse
+            </p>
+            <div class="no-data" *ngIf="!detail.promotions.length">
+              <p>No Promotions Found</p>
+            </div>
+          </div>
+          <p
+            class="page-list-expand-btn "
+            *ngIf="!detail.isExp && detail.promotions.length > 4"
+          >
+            <span (click)="expandList(mod)">More Promotions</span>
+          </p>
+          <p
+            class="page-list-expand-btn page-list-collapse-btn"
+            *ngIf="detail.isExp && detail.promotions.length > 4"
+          >
+            <span (click)="expandList(mod)">Collapse</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!--this code is for spinner section and no pages found section-->
+    <div class="loader" *ngIf="fetchingData"></div>
+    <div class="no-data" *ngIf="!pageDetails.length && !fetchingData">
+      <div class="icon"><em class="pixel-icons icon-signage"></em></div>
+      <p>No Signage Found</p>
+    </div>
+    <!-- <div
+      class="loader-text no-data-grid "
+      *ngIf="!pageDetails.length && !fetchingData"
+    >
+      <em class="pixel-icons icon-signage"></em>
+
+      <p>No Signage Found</p>
+    </div> -->
+    <div class="loader-text no-data-grid " *ngIf="fetchingData">
+      <p>Loading Please Wait...</p>
+    </div>
+  </div>
+</div>
+<div *ngIf="editingMod">
+  <app-edit-signage
+    [editModInputData]="editModInputData"
+    (closeEdit)="selectedList(currentTabData)"
+  >
+  </app-edit-signage>
+</div>

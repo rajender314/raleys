@@ -1,0 +1,23 @@
+@import "../../../assets/styles/variable";
+@import "../../../assets/styles/mixins";
+
+.campaigns-container {
+  &.tabs-view {
+    .section-header {
+      margin: 10px auto 0;
+      max-width: 1200px;
+      padding: 0 20px;
+      border-bottom: 1px solid $dailog-header-border;
+      @include semibold-font;
+    }
+    .import-btn {
+      text-align: center;
+    }
+    .heading-tab {
+      max-width: 900px;
+      margin: 0 auto;
+      padding-bottom: 15px;
+      @include regular-font;
+    }
+  }
+}

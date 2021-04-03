@@ -1,0 +1,416 @@
+<div class="ad-details-body">
+  <div
+    class="ad-details-container"
+    [ngClass]="{
+      active: footerView,
+      'not-allowed': !editAddPer,
+      visible: !fetchingData,
+      fadeIn: !fetchingData
+    }"
+  >
+    <div
+      class="second-header-section"
+      [ngClass]="{ 'pointer-event': !editAddPer }"
+    >
+      <div class="second-header">
+        <em class="{{ configData.icon }}"></em>
+        <h3 class="sub-heading">{{ configData.label }}</h3>
+      </div>
+      <div class="ad-options">
+        <!-- <span
+        class="cursor-link"
+        mat-icon-button
+        
+      >
+        Ad Options
+      </span> -->
+        <button
+          class="ak-button ak-button__appearance-default"
+          pi-button
+          #menuTrigger="matMenuTrigger"
+          [matMenuTriggerFor]="menu"
+          [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+        >
+          Ad Options
+        </button>
+        <button
+          class="ak-button ak-button__appearance-default icon-arrow-down-button"
+          pi-button
+          #menuTrigger="matMenuTrigger"
+          [matMenuTriggerFor]="menu"
+        >
+          <em class="pixel-icons icon-arrow-down"></em>
+        </button>
+        <mat-menu #menu="matMenu" class="ad-export">
+          <button
+            mat-menu-item
+            (click)="showPopup('exported')"
+            [ngClass]="{ hidden: !exportAddPer }"
+          >
+            <em class="pixel-icons icon-export"></em>Export Ad
+          </button>
+
+          <!-- <button
+          mat-menu-item
+          (click)="showPopup('versionexport')"
+          [ngClass]="{ hidden: !exportAddPer }"
+        >
+          <em class="pixel-icons icon-export"></em>Version Export
+        </button> -->
+          <!-- <button mat-menu-item (click)="adPreview()">
+            <em class="pixel-icons icon-preview"></em>Ad Preview
+          </button> -->
+          <!-- <button mat-menu-item (click)="customAttributes()">
+            <em class="pixel-icons icon-duplicate"></em>Custom Attributes
+          </button> -->
+          <button
+            mat-menu-item
+            (click)="showPopup('Deleted')"
+            [ngClass]="{ hidden: !delAddPer }"
+          >
+            <em class="pixel-icons icon-delete-copy"></em>Delete Ad
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+    <div
+      class="details-section-1"
+      @rightAnimate
+      [ngClass]="{ 'pointer-event': !editAddPer }"
+      *ngIf="formReady"
+    >
+      <form [formGroup]="adDetailsForm" class="modal-container">
+        <div class="adDetail-attributes" formArrayName="adDetailsFormValues">
+          <div
+            class="form-fields"
+            *ngFor="let field of state.section; let i = index"
+            [ngClass]="[
+              field.db_column_key == 'divisions' ? 'full-width-field' : '',
+              field.db_column_key == 'theme' ? 'half-width-field' : ''
+            ]"
+          >
+            <pi-form-field [formGroupName]="i">
+              <label class="label-name">{{ field.label | titlecase }}</label>
+              <span
+                class="required"
+                *ngIf="field.form_save_value.settings.mandatory"
+                >*</span
+              >
+              <div
+                class="structure-select"
+                *ngIf="field.key == 'single_line_text'"
+              >
+                <input
+                  type="text"
+                  formControlName="{{ field.db_column_key }}"
+                  (input)="valChanged()"
+                  pi-input
+                />
+                <div
+                  class="error pi-error"
+                  *ngIf="errorMsg != '' && field.label == 'Ad Name'"
+                >
+                  {{ errorMsg }}
+                </div>
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    adDetailsForm.controls.adDetailsFormValues.controls[
+                      i
+                    ].controls[field.db_column_key].hasError('required') &&
+                    submitted
+                  "
+                >
+                  Please Enter {{ field.label | titlecase }}
+                </div>
+              </div>
+              <div class="structure-select" *ngIf="field.key == 'number'">
+                <input
+                  type="text"
+                  formControlName="{{ field.db_column_key }}"
+                  (input)="valChanged()"
+                  pi-input
+                  (keypress)="allowNumber($event)"
+                />
+              </div>
+              <div class="structure-select" *ngIf="field.key == 'auto_suggest'">
+                <input
+                  type="text"
+                  pi-input
+                  formControlName="{{ field.db_column_key }}"
+                  [matAutocomplete]="auto"
+                />
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  [displayWith]="displayFn"
+                >
+                  <mat-option
+                    *ngFor="let option of field.options"
+                    [value]="option"
+                  >
+                    {{ option.value }}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+              <div class="structure-select" *ngIf="field.key == 'date'">
+                <div class="date-picker-field">
+                  <input
+                    class="datepicker"
+                    (click)="openCalendar(picker)"
+                    readonly="true"
+                    [min]="minDate[field.db_column_key]"
+                    [max]="maxDate[field.db_column_key]"
+                    placeholder="Select Date"
+                    formControlName="{{ field.db_column_key }}"
+                    (focus)="openCalendar(picker)"
+                    (dateChange)="dateValueChange(field, $event)"
+                    [disabled]="disableStatus[field.db_column_key]"
+                    [matDatepicker]="picker"
+                    pi-input
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </div>
+
+                <!-- <div class="date-picker-field" *ngIf="field.db_column_key == 'start_date'">
+                <input class="datepicker" (click)="openCalendar(picker)" readonly="true" [min]="minDate[field.db_column_key]"
+                  [max]="maxDate[field.db_column_key]" placeholder="Select Date" formControlName="{{ field.db_column_key }}"
+                  (focus)="openCalendar(picker)" (dateChange)="dateValueChange(field, $event)" [matDatepicker]="picker"
+                  pi-input />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+              <div class="date-picker-field" *ngIf="field.db_column_key == 'break_date'">
+                <input id="end_date" class="datepicker" (click)="openCalendar(picker)" readonly="true"
+                  [min]="minDate['break_date']" [max]="maxDate['break_date']" placeholder="Select Date"
+                  formControlName="{{ field.db_column_key }}" (focus)="openCalendar(picker)"
+                  (dateChange)="dateValueChange(field, $event)" [matDatepicker]="picker" pi-input />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+              <div class="date-picker-field" *ngIf="field.db_column_key == 'end_date'">
+                <input class="datepicker" (click)="openCalendar(picker)" readonly="true" [min]="minDate['end_date']"
+                  [max]="maxDate['end_date']" placeholder="Select Date" formControlName="{{ field.db_column_key }}"
+                  (focus)="openCalendar(picker)" (dateChange)="dateValueChange(field, $event)" [matDatepicker]="picker"
+                  pi-input />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+              <div class="date-picker-field" *ngIf="field.db_column_key == 'first_proof_date'">
+                <input class="datepicker" (click)="openCalendar(picker)" readonly="true" [min]="minDate['first_proof']"
+                  [max]="maxDate['first_proof']" placeholder="Select Date" formControlName="{{ field.db_column_key }}"
+                  (focus)="openCalendar(picker)" (dateChange)="dateValueChange(field, $event)" [matDatepicker]="picker"
+                  pi-input />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+              <div class="date-picker-field" *ngIf="field.db_column_key == 'second_proof_date'">
+                <input class="datepicker" (click)="openCalendar(picker)" readonly="true" [min]="minDate['second_proof']"
+                  [max]="maxDate['second_proof']" placeholder="Select Date" formControlName="{{ field.db_column_key }}"
+                  (focus)="openCalendar(picker)" (dateChange)="dateValueChange(field, $event)" [matDatepicker]="picker"
+                  pi-input />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+              <div class="date-picker-field" *ngIf="field.db_column_key == 'final_proof_date'">
+                <input class="datepicker" (click)="openCalendar(picker)" readonly="true" [min]="minDate['final_proof']"
+                  [max]="maxDate['final_proof']" placeholder="Select Date" formControlName="{{ field.db_column_key }}"
+                  (focus)="openCalendar(picker)" (dateChange)="dateValueChange(field, $event)" [matDatepicker]="picker"
+                  pi-input />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div> -->
+                <div class="date-picker-icon-sec">
+                  <div class="date-picker-icon"></div>
+                </div>
+              </div>
+              <div class="structure-select" *ngIf="field.key == 'date_range'">
+                <div class="date-picker-field">
+                  <input
+                    formControlName="{{ field.db_column_key }}"
+                    ngxDaterangepickerMd
+                    [dateLimit]="15"
+                    [autoApply]="true"
+                    [minDate]="minDate[field.db_column_key]"
+                    (datesUpdated)="dateValueChange(field, $event)"
+                    class="form-control"
+                    readonly="true"
+                    pi-input
+                  />
+                  <!-- <ngx-mat-drp formControlName="{{ field.db_column_key }}" (selectedDateRangeChanged)="updateRange($event)" [options]="rangeOptions" #dateRangePicker></ngx-mat-drp> -->
+                </div>
+                <div class="date-picker-icon-sec">
+                  <div class="date-picker-icon"></div>
+                </div>
+              </div>
+
+              <div class="structure-select" *ngIf="field.key == 'button'">
+                <div>
+                  <mat-button-toggle-group
+                    [disabled]="disableCheck"
+                    formControlName="{{ field.db_column_key }}"
+                  >
+                    <mat-button-toggle [value]="1"> Active</mat-button-toggle>
+                    <mat-button-toggle [value]="2"> Inactive</mat-button-toggle>
+                  </mat-button-toggle-group>
+                </div>
+              </div>
+              <div class="structure-select" *ngIf="field.key == 'dropdown'">
+                <!-- <pi-select [options]="campaignData" formControlName="{{ field.db_column_key }}"
+                *ngIf="field.db_column_key == 'campaign_id'" (onChange)="valChanged()"></pi-select>
+              <pi-select [options]="channelTypes" formControlName="{{ field.db_column_key }}"
+                *ngIf="field.db_column_key == 'channel_id'" (onChange)="valChanged()"></pi-select>
+              <pi-select [options]="channelTypes" formControlName="{{ field.db_column_key }}"
+                *ngIf="field.db_column_key == 'ad_format'" (onChange)="valChanged()"></pi-select>
+              <pi-select [options]="channelTypes" formControlName="{{ field.db_column_key }}"
+                *ngIf="field.db_column_key == 'ad_creation_batch'" (onChange)="valChanged()"></pi-select> -->
+                <pi-select
+                  [options]="field.options"
+                  formControlName="{{ field.db_column_key }}"
+                  (onChange)="valChangedDrop(field.db_column_key)"
+                  *ngIf="field.db_column_key != 'channel_type_id'"
+                ></pi-select>
+                <pi-select
+                  [options]="channelTypeIds"
+                  formControlName="{{ field.db_column_key }}"
+                  (onChange)="valChangedDrop(field.db_column_key)"
+                  *ngIf="field.db_column_key === 'channel_type_id'"
+                ></pi-select>
+              </div>
+              <div
+                *ngIf="field.key == 'multiple_choice'"
+                class="structure-select"
+              >
+                <!-- <pi-select [options]="divisionsList" formControlName="{{ field.db_column_key }}"
+                *ngIf="field.db_column_key == 'divisions'" (onChange)="valChanged()" nameKey="divname" [multi]="true"
+                class="divsions_list"></pi-select>
+              <pi-select [options]="divisionsList" formControlName="{{ field.db_column_key }}"
+                *ngIf="field.db_column_key == 'unique_ad_id'" (onChange)="valChanged()" nameKey="divname" [multi]="true"
+                class="divsions_list"></pi-select> -->
+                <pi-select
+                  [options]="field.options"
+                  formControlName="{{ field.db_column_key }}"
+                  (onChange)="valChanged()"
+                  [multi]="true"
+                  class="divsions_list"
+                ></pi-select>
+              </div>
+              <div *ngIf="field.key == 'textarea'">
+                <textarea
+                  rows="3"
+                  pi-input
+                  formControlName="{{ field.db_column_key }}"
+                  (input)="valChanged()"
+                ></textarea>
+              </div>
+              <div *ngIf="field.key == 'autocomplete'">
+                <input
+                  matInput
+                  placeholder="State"
+                  [matAutocomplete]="auto"
+                  formControlName="{{ field.db_column_key }}"
+                />
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option
+                    *ngFor="let state of (campaignData | async)"
+                    [value]="state.name"
+                  >
+                    {{ state }} <span>{{ state.name }}</span> |
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+              <div *ngIf="field.key == 'checkboxes'">
+                <div *ngFor="let option of field.options">
+                  <pi-form-field label="{{ option.value }}">
+                    <input
+                      type="checkbox"
+                      pi-input
+                      formControlName="{{ field.db_column_key }}"
+                    />
+                  </pi-form-field>
+                </div>
+                <div *ngIf="!field.options.length">no options found.</div>
+              </div>
+            </pi-form-field>
+            <div
+              class="pi-error"
+              *ngIf="
+                adDetailsForm.controls.adDetailsFormValues.controls[i].controls[
+                  field.db_column_key
+                ].hasError('required') &&
+                submitted &&
+                field.key != 'single_line_text'
+              "
+            >
+              Please Select {{ field.label | titlecase }}
+            </div>
+            <div
+              class="pi-error"
+              *ngIf="
+                adDetailsForm.controls.adDetailsFormValues.controls[i].controls[
+                  field.db_column_key
+                ].invalid &&
+                submitted &&
+                adDetailsForm.controls.adDetailsFormValues.controls[i].controls[
+                  field.db_column_key
+                ].value != '' &&
+                field.db_column_key == 'week_no'
+              "
+            >
+              Week Number should be from 1-53
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div
+      class="details-section"
+      @rightAnimate
+      [ngClass]="{ 'pointer-event': !editAddPer }"
+    >
+      <!-- <div class="details-section-header">
+  <div class="second-header">
+    <em class="{{ configData.icon }}"></em>
+    <h3 class="sub-heading">{{ configData.label }}</h3>
+  </div>
+  <div class="ad-options">
+   
+    <button class="ak-button ak-button__appearance-default cursor-link" pi-button #menuTrigger="matMenuTrigger"
+    [matMenuTriggerFor]="menu"> Ad Options</button>
+    </div>
+    </div> -->
+
+      <app-stores
+        (onUpdate)="onUpdate($event)"
+        *ngIf="!fetchingData"
+      ></app-stores>
+      <!-- src/app/shared/component/stores/stores.component.ts-->
+    </div>
+  </div>
+</div>
+<div class="loader" *ngIf="fetchingData"></div>
+<div class="loader-text no-data-grid" *ngIf="fetchingData">
+  <span> Loading, please wait...</span>
+</div>
+<div
+  class="ad-detail-action box"
+  *ngIf="footerView && !fetchingData"
+  [ngClass]="{
+    'pointer-event': !editAddPer
+  }"
+>
+  <button pi-button color="subtle" (click)="cancel()">Cancel</button>
+  <button
+    pi-button
+    color="accent"
+    class="apply-btn"
+    (click)="update(adDetailsForm)"
+    [disabled]="adDetailsForm.pristine"
+    [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+  >
+    Update
+  </button>
+</div>

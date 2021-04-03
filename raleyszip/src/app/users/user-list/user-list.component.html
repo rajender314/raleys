@@ -1,0 +1,141 @@
+<pi-master-detail-view [showDetail]="showDetail" class="users-leftnav">
+  <pi-master-view class="left-view">
+    <div class="left-header">
+      <h3>{{ tabData?.value }} ({{ usersList?.length }})</h3>
+      <div class="actions">
+        <span (click)="userFilters()" title="Filter">
+          <em class="pixel-icons icon-filter-hallow primary-color"></em>
+        </span>
+        <span title="Add User" [ngClass]="{ hidden: !addEditUsrPer }">
+          <em
+            class="pixel-icons icon-plus primary-color"
+            (click)="addUser()"
+          ></em>
+        </span>
+      </div>
+    </div>
+
+    <div class="clear-filter" *ngIf="isFilterApplied">
+      <span>Filters Applied</span>
+      <span class="clear" (click)="clearFilters()">Clear</span>
+    </div>
+
+    <app-search [search]="search" (onSearch)="onSearch($event)"></app-search>
+
+    <div class="left-content" *ngIf="!noData">
+      <mat-list class="inner-detail-list" @leftAnimate>
+        <mat-list-item
+          *ngFor="let list of usersList"
+          (click)="userChange(list); showDetails(); allExpandState = false"
+          routerLink="/users/{{ list.id }}"
+          [ngClass]="{ active: list.id == userData.id }"
+          routerLinkActive="active"
+        >
+          <div class="user-icon">
+            <img
+              *ngIf="list.cloud_path"
+              src="{{ list.cloud_path }}"
+              alt="image"
+            />
+          </div>
+          <h4 mat-line class="text-capital">{{ list?.fullname }}</h4>
+          <h4 mat-line>{{ list?.email }}</h4>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div class="loader" *ngIf="noUsers"></div>
+    <div class="loader-text no-data-grid" *ngIf="noUsers">
+      Loading, please wait...
+    </div>
+    <div class="no-users no-data-grid">
+      <div *ngIf="noData">
+        <em class="pixel-icons icon-user-profile"></em>
+        <p>User Not Found</p>
+      </div>
+    </div>
+  </pi-master-view>
+
+  <pi-detail-view class="users-content">
+    <div *ngIf="!userLoad && !noData">
+      <div
+        class="user-details"
+        @rightAnimate
+        [ngClass]="{ 'not-allowed': !addEditUsrPer }"
+      >
+        <div
+          class="user-detail-section"
+          [ngClass]="{ 'pointer-event': !addEditUsrPer }"
+        >
+          <!-- details view component-->
+          <app-user-detail
+            [userDetails]="userData"
+            [submitFlag]="submitted"
+            (detailFormValue)="formValue($event)"
+            (formSubmit)="formSubmitFlag($event)"
+            (userImg)="userLogo($event)"
+          ></app-user-detail>
+          <!-- details view component-->
+        </div>
+        <div
+          class="accordion-list"
+          [ngClass]="{ 'pointer-event': !addEditUsrPer }"
+        >
+          <app-user-permissions
+            *ngFor="let parent of permissions; let i = index"
+            [permission]="parent"
+          ></app-user-permissions>
+
+          <!-- <h3>Permissions</h3> -->
+          <!-- user roles dynamic content goes here-->
+          <app-user-roles
+            (updatedValues)="updatedRolePermissions($event)"
+            [userRoles]="permissions2"
+          >
+          </app-user-roles>
+          <!-- user roles dynamic content goes here-->
+
+          <!-- divisions dynamic content goes here-->
+          <!-- <app-user-roles
+            (updatedValues)="updatedDivsionsList($event)"
+            [userRoles]="divisionsList"
+          >
+          </app-user-roles> -->
+          <!-- divisions dynamic content goes here-->
+          <!-- divisions dynamic content goes here-->
+          <app-user-roles
+            (updatedValues)="updatedDepartmentList($event)"
+            [userRoles]="departmentsList"
+          >
+          </app-user-roles>
+          <!-- divisions dynamic content goes here-->
+        </div>
+      </div>
+      <div class="btn-actions" *ngIf="edit">
+        <div class="box">
+          <button mat-button (click)="resetUserData()">Discard Changes</button>
+          <button
+            pi-button
+            color="accent"
+            [disabled]="
+              (validFormData ? !isValid : false) || saveBtnInfo == 'Saving'
+            "
+            (click)="updateUserData(); update()"
+          >
+            {{ saveBtnInfo }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loader" *ngIf="userLoad && !noData"></div>
+    <div class="loader-text no-data-grid" *ngIf="!noData && userLoad">
+      Loading, please wait...
+    </div>
+    <div class="no-users no-data-grid">
+      <div *ngIf="noData">
+        <em class="pixel-icons icon-user-profile"></em>
+        <p>User Data Not Found</p>
+      </div>
+    </div>
+  </pi-detail-view>
+</pi-master-detail-view>

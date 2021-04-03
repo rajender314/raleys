@@ -1,0 +1,162 @@
+@import "../../../../assets/styles/variable";
+
+.upload_logo {
+  .mat-dialog-container {
+    position: relative;
+    min-height: 566px;
+    .mat-dialog-heading {
+      h2 {
+        padding-bottom: 0;
+      }
+    }
+    .mat-dialog-content {
+      display: flex;
+      flex-direction: column;
+      padding: 24px !important;
+      color: rgba(23, 43, 77, 0.8);
+      .file-drop-zone {
+        border: 2px dashed #ccc;
+        background: #f7f9fc;
+        // border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 100px;
+        position: relative;
+        @media screen and (min-width: 600px) {
+          width: 200px;
+          height: 200px;
+        }
+        .images-dropzone {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          display: flex;
+          overflow: hidden;
+          img {
+            width: 100%;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            height: auto;
+            max-height: 100%;
+          }
+        }
+        .delete-logo {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.25);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          padding: 10px;
+          text-align: right;
+          img {
+            cursor: pointer;
+          }
+        }
+        .info-label {
+          margin: auto;
+          text-align: center;
+          height: 200px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          .mat-icon {
+            margin: 0 auto;
+            width: 60px;
+            height: 60px;
+            font-size: 60px;
+            color: #ccc;
+          }
+          p {
+            margin: 10px 20px;
+          }
+        }
+        .browse-file {
+          position: absolute;
+          bottom: -70px;
+          text-align: center;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
+          p {
+            margin: 16px 0;
+            font-weight: 600;
+          }
+          a {
+            cursor: pointer;
+            background: #f5f6f7;
+            color: $header-color;
+            padding: 5px 30px;
+            border-radius: 3px;
+            &:hover {
+              background: #e0e4e8;
+            }
+          }
+        }
+        &:hover {
+          .delete-logo {
+            opacity: 1;
+          }
+        }
+      }
+      .info {
+        p {
+          margin: 0;
+          padding: 0;
+          text-align: center;
+          &:last-child {
+            margin-top: 10px;
+          }
+          span {
+            color: red;
+          }
+          &.invalid-error {
+            color: #f6cdcd; /*#FCBEBE;*/
+            background: #6d3535;
+            border-radius: 3px;
+            padding: 2px 4px;
+            margin: 4px 0;
+          }
+        }
+      }
+    }
+
+    .btn-actions {
+      .actions {
+        float: right;
+        .cancel {
+          background: 0 0;
+          color: #505f79;
+          text-decoration: none;
+        }
+      }
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      background: #fff;
+      bottom: 0;
+      .actions {
+        top: 50%;
+        position: absolute;
+        transform: translateY(-50%);
+        right: 0;
+        left: 0;
+        text-align: center;
+      }
+      .loader {
+        margin-top: 15px;
+      }
+    }
+  }
+}

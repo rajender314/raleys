@@ -1,0 +1,114 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>
+    Add New {{ formKey === 'OFFER_TYPES' ? 'Offer Type' : 'Form' }}
+  </h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <em class="pixel-icons icon-close"></em>
+  </button>
+</div>
+<mat-dialog-content>
+  <form [formGroup]="addForm">
+    <pi-form-field>
+      <label class="label-name"
+        >{{ formKey === 'OFFER_TYPES' ? 'Offer Type' : 'Form' }} Name</label
+      >
+      <span
+        class="required"
+        [ngClass]="{ error: addForm.controls.name.hasError('required') }"
+      >
+        *</span
+      >
+      <input type="text" pi-input formControlName="name" />
+      <div
+        class="pi-error"
+        *ngIf="addForm.controls.name.hasError('required') && submitted"
+      >
+        Please enter
+        {{ formKey === 'OFFER_TYPES' ? 'Offer Type' : 'Form' }} Name
+      </div>
+      <div class="pi-error">{{ errorMsg }}</div>
+    </pi-form-field>
+    <pi-form-field *ngIf="formKey === 'OFFER_TYPES'">
+      <label class="label-name">Key words </label>
+      <!-- <span
+        class="required"
+        [ngClass]="{ error: addForm.controls.key_words.hasError('required') }"
+      >
+        *</span
+      > -->
+      <input
+        type="text"
+        pi-input
+        formControlName="key_words"
+        (input)="valChanged($event)"
+        [(ngModel)]="tagsList"
+      />
+      <!-- <div
+        class="pi-error"
+        *ngIf="addForm.controls.key_words.hasError('required') && submitted"
+      >
+        Please enter Key Words
+      </div> -->
+      <!-- <div class="pi-error">{{ errorMsg }}</div> -->
+    </pi-form-field>
+    <pi-form-field>
+      <pi-select
+        label="Status"
+        [options]="statusList"
+        formControlName="status"
+      ></pi-select>
+    </pi-form-field>
+    <pi-form-field *ngIf="formKey != 'OFFER_TYPES'">
+      <label class="label-name">Select Category</label>
+      <span
+        class="required"
+        [ngClass]="{
+          error: addForm.controls.form_assign_id.hasError('required')
+        }"
+      >
+        *</span
+      >
+      <pi-select
+        [options]="formCategories"
+        idKey="key"
+        nameKey="value"
+        formControlName="form_assign_id"
+      ></pi-select>
+      <div
+        class="pi-error"
+        *ngIf="
+          addForm.controls.form_assign_id.hasError('required') && submitted
+        "
+      >
+        Please select the Category
+      </div>
+    </pi-form-field>
+    <!-- <pi-form-field *ngIf="formKey == 'OFFER_TYPES'">
+      <label class="label-name">Select Divisions</label>
+      <span
+        class="required"
+        [ngClass]="{ error: addForm.controls.division_id.hasError('required') }"
+        >*</span
+      >
+      <pi-select
+        [options]="divsionsForOfferTypes"
+        idKey="id"
+        nameKey="divname"
+        [multi]="true"
+        formControlName="division_id"
+      ></pi-select>
+      <div
+        class="pi-error"
+        *ngIf="addForm.controls.division_id.hasError('required') && submitted"
+      >
+        Please select divisions
+      </div>
+    </pi-form-field> -->
+  </form>
+</mat-dialog-content>
+<div class="mat-dialog-actions mat-dialog-footer mat-dialog-footer-empty-error">
+  <div class="box">
+    <button pi-button color="subtle" (click)="close()">Cancel</button>
+    <button pi-button color="accent" (click)="save(addForm)">Save</button>
+  </div>
+</div>

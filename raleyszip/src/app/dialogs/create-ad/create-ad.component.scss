@@ -1,0 +1,59 @@
+mat-datepicker-toggle {
+  position: absolute;
+  right: 0px;
+}
+textarea {
+  width: 100%;
+}
+.ad-form-attributes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .form-attributes {
+    width: calc(50% - 15px);
+    &.full-width-field {
+      width: 100%;
+      .pi-form-field {
+        max-width: 100%;
+        .pi-select-input {
+          &.multi {
+            pi-icon {
+              top: 16px;
+            }
+          }
+        }
+      }
+    }
+    textarea {
+      resize: none;
+    }
+  }
+}
+// .pi-error {
+//   padding: 10px 0;
+// }
+.divsions_list {
+  .pi-select-input {
+    max-height: 90px;
+  }
+}
+
+.ads-dialog {
+  .modal-container {
+    .structure-select {
+      margin-bottom: 0px;
+      ngx-daterangepicker-material {
+        .md-drppicker {
+          .calendar {
+            @media screen and (max-width: 1365px) and (min-width: 1024px) {
+              float: none;
+            }
+          }
+        }
+      }
+    }
+    .pi-error {
+      margin-top: 3px;
+    }
+  }
+}

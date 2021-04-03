@@ -1,0 +1,241 @@
+::ng-deep app-grid-layout-designer {
+  display: block;
+}
+
+.grid-header {
+  background: #de5459;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  z-index: 6;
+  border-right: 1px solid rgba(0, 0, 0, 0.3);
+  &:last-child {
+    border-right: 0;
+  }
+  // &:after{
+  //   content: '';
+  //   background-color: rgba(255, 255, 255, 0.3);
+  //   width: 2px;
+  //   height: 30px;
+  //   position: relative;
+  //   left:8px;
+  // }
+  .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #fff;
+    font-size: 1.1em;
+    text-transform: capitalize;
+  }
+  .spacer {
+    flex: 1 1 auto;
+  }
+  .icon-button {
+    background: inherit;
+    margin: 0 2px;
+    min-width: 32px;
+    padding: 0 4px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.grid-layout {
+  background: #fff;
+  position: relative;
+  .placeholder {
+    display: flex;
+    flex-wrap: wrap;
+    .block {
+      border: 1px dashed #efefef;
+    }
+  }
+  .grid-layout {
+    .placeholder {
+      .block {
+        border: 1px dashed #efacac;
+      }
+    }
+  }
+  .canvas {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+  .drag-box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid #ccc;
+    z-index: 1;
+  }
+  .container {
+    > .block {
+      position: absolute;
+      animation: blockCreate 0.2s ease-in-out;
+    }
+    .inner-block {
+      background: #fff;
+      border: 1px solid #cdcdcd;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.block-info {
+  background: #fff;
+  width: 216px;
+  position: absolute;
+  right: 4px;
+  top: 40px;
+  padding: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  z-index: 1;
+  .pi-form-field {
+    margin-top: 0;
+    > label {
+      font-size: 0.8em;
+    }
+    input {
+      padding: 4px 6px;
+    }
+    .colors {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -2px;
+      .item {
+        width: 24px;
+        height: 24px;
+        margin: 2px;
+        border-radius: 2px;
+        em {
+          color: #fff;
+        }
+      }
+    }
+  }
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 12px;
+    button {
+      min-width: 48px;
+      height: 2em;
+      line-height: 2em;
+      font-size: 0.9em;
+      margin-left: 12px;
+    }
+  }
+}
+
+.inner-block {
+  background: #fff;
+  .header {
+    display: flex;
+    // height: 24px;
+    padding: 4px 0 0 8px;
+    align-items: center;
+    .title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #fff;
+      font-size: 0.9em;
+      padding: 0px 8px;
+      border-radius: 3px;
+      min-width: 20px;
+      height: 20px;
+      line-height: 19px;
+      text-transform: capitalize;
+    }
+    .spacer {
+      flex: 1 1 auto;
+    }
+    .icon-button {
+      min-width: 20px;
+      padding: 0 4px;
+      background: inherit;
+      // height: 20px;
+      &:focus {
+        box-shadow: none;
+      }
+      .mat-icon {
+        height: 20px;
+        width: 20px;
+        font-size: 18px;
+      }
+    }
+  }
+  .block-data {
+    height: calc(100% - 40px);
+    .product-info {
+      display: flex;
+      // height: 60%;
+      padding: 4px 8px 8px 8px;
+    }
+    .img {
+      width: 60%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      // background-position: center center;
+    }
+    .price-info {
+      background: #ffe78b;
+      width: 40%;
+      // height: 70%;
+      border-radius: 4px;
+      padding: 8px;
+      min-height: 60px;
+    }
+    .price {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    .price-desc {
+      font-size: 0.9em;
+    }
+    .title {
+      font-family: "SF-Pro-Text-Medium", Sans-Serif;
+      padding: 0 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .desc {
+      padding: 0 8px;
+      font-size: 0.8em;
+      opacity: 0.8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand {
+      font-family: "SF-Pro-Text-Medium", Sans-Serif;
+      padding: 0 8px;
+      font-size: 13px;
+      color: #7364ab;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+@keyframes blockCreate {
+  0% {
+    transform: scale(1.1, 1.1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}

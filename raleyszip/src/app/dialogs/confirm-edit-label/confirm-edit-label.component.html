@@ -1,0 +1,15 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>Configure Label?</h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <em class="pixel-icons icon-close"></em>
+  </button>
+</div>
+<mat-dialog-content>
+  <span>Are you sure you want to update this label?</span>
+</mat-dialog-content>
+<div class="btn-actions box mat-dialog-footer mat-dialog-footer-empty-error">
+  <button class="mat-button" pi-button color="subtle" (click)="closeDialog()">
+    Cancel
+  </button>
+  <button pi-button color="accent" (click)="save()">Yes, Update</button>
+</div>

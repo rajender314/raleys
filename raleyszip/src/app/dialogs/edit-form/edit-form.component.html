@@ -1,0 +1,313 @@
+<div class="form-container">
+  <div class="form-container-left-sec">
+    <div class="container-heading">
+      <div class="left-content">
+        <div class="icon-back cursor">
+          <em
+            class="pixel-icons icon-arrow-back"
+            (click)="close(isNewForm ? 1 : 0)"
+          ></em>
+        </div>
+        <div class="title">
+          <h2 mat-dialog-title>{{ data.title | titlecase }}</h2>
+        </div>
+      </div>
+      <div class="right-content">
+        <button
+          pi-button
+          color="accent"
+          (click)="updateForm(formData)"
+          [disabled]="disableBtn"
+          class="apply-btn"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+    <div class="dialog-body">
+      <div class="dialog-body-content">
+        <div class="no-data-grid" *ngIf="!formData.length">Data Not Found</div>
+        <form
+          [formGroup]="createSampleForms"
+          class="form-flex"
+          *ngIf="formData.length"
+        >
+          <div [sortablejs]="formData" [sortablejsOptions]="sortOptions">
+            <div
+              *ngFor="let field of formData; let i = index"
+              class="form-specs"
+              [ngClass]="[
+                field.key == 'checkboxes' ? 'content-label-align' : '',
+                field.key == 'radio' ? 'content-label-align' : ''
+              ]"
+            >
+              <div formArrayName="formValues" class="flex forms-specs-left-sec">
+                <pi-form-field class="input-field" [formGroupName]="i">
+                  <div class="label-sec">
+                    <label class="label-name" [matTooltip]="field.tooltip"
+                      >{{ field.label | titlecase }}
+                    </label>
+                    <span
+                      class="required "
+                      *ngIf="!field.form_save_value.settings == ''"
+                      >{{ field.form_save_value.settings.mandatory ? '*' : '' }}
+                    </span>
+                  </div>
+
+                  <!-- <em
+                    class="material-icons display-ingrid"
+                    *ngIf="field.form_save_value.display_in_grid"
+                    >grid_on</em
+                  > -->
+
+                  <input
+                    type="text"
+                    class="edit-form-field"
+                    formControlName="{{ field.label }}"
+                    pi-input
+                    *ngIf="field.key == 'single_line_text'"
+                  />
+                  <input
+                    type="text"
+                    class="edit-form-field"
+                    formControlName="{{ field.label }}"
+                    pi-input
+                    *ngIf="field.key == 'calculated'"
+                    [disabled]="true"
+                  />
+                  <pi-select
+                    [multi]="true"
+                    *ngIf="field.key == 'multiple_choice'"
+                    nameKey="value"
+                    [options]="field.options"
+                    formControlName="{{ field.label }}"
+                  ></pi-select>
+                  <pi-select
+                    *ngIf="field.key == 'dropdown'"
+                    nameKey="value"
+                    [options]="field.options"
+                    formControlName="{{ field.label }}"
+                  ></pi-select>
+                  <textarea
+                    rows="4"
+                    formControlName="{{ field.label }}"
+                    pi-input
+                    *ngIf="field.key == 'paragraph_text'"
+                  ></textarea>
+                  <div *ngIf="field.key == 'checkboxes'" class="selective-sec">
+                    <div
+                      *ngFor="let option of field.options"
+                      class="selective-inner-sec"
+                    >
+                      <pi-form-field label="{{ option.value }}">
+                        <input
+                          type="checkbox"
+                          pi-input
+                          formControlName="{{ option.label }}"
+                        />
+                      </pi-form-field>
+                    </div>
+                  </div>
+                  <div *ngIf="field.key == 'date'" class="structure-select">
+                    <div class="date-picker-field">
+                      <input
+                        class="datepicker"
+                        pi-input
+                        formControlName="{{ field.label }}"
+                        [matDatepicker]="picker"
+                        placeholder="Select Date"
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </div>
+                  </div>
+                  <div
+                    class="structure-select"
+                    *ngIf="field.key == 'date_range'"
+                  >
+                    <div class="date-picker-field">
+                      <input
+                        formControlName="{{ field.label }}"
+                        ngxDaterangepickerMd
+                        [autoApply]="true"
+                        class="form-control"
+                        readonly="true"
+                        pi-input
+                      />
+                    </div>
+                    <div class="date-picker-icon-sec">
+                      <div class="date-picker-icon"></div>
+                    </div>
+                  </div>
+                  <mat-form-field
+                    class="example-full-width"
+                    *ngIf="field.key == 'auto_suggest'"
+                  >
+                    <input
+                      type="text"
+                      class="edit-form-field"
+                      aria-label="Number"
+                      matInput
+                      formControlName="{{ field.label }}"
+                      [matAutocomplete]="auto"
+                    />
+                    <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option
+                        *ngFor="let option of field.options"
+                        [value]="option.value"
+                      >
+                        {{ option.value }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                  <input
+                    class="edit-form-field"
+                    type="number"
+                    formControlName="{{ field.label }}"
+                    pi-input
+                    *ngIf="field.key == 'number'"
+                  />
+                  <input
+                    class="edit-form-field"
+                    type="text"
+                    formControlName="{{ field.label }}"
+                    pi-input
+                    appPriceOnly
+                    *ngIf="field.key == 'price'"
+                  />
+                  <pi-select
+                    [multi]="true"
+                    *ngIf="field.key == 'group'"
+                    nameKey="delimiter"
+                    [options]="field.options"
+                    formControlName="{{ field.label }}"
+                  ></pi-select>
+
+                  <pi-field-group
+                    direction="column"
+                    *ngIf="field.key == 'radio'"
+                    class="selective-sec"
+                  >
+                    <pi-form-field
+                      label="{{ radioOption.value }}"
+                      *ngFor="let radioOption of field.options"
+                      class="selective-inner-sec"
+                    >
+                      <input type="radio" pi-input name="radio" />
+                    </pi-form-field>
+                  </pi-field-group>
+                  <em
+                    class="pixel-icons icon-information"
+                    matTooltip="Display in grid"
+                    *ngIf="field.form_save_value.display_in_grid"
+                  ></em>
+                </pi-form-field>
+              </div>
+              <div class="actions-col">
+                <button pi-icon-button class="handle">
+                  <em class="pixel-icons icon-swap"></em>
+                </button>
+                <button
+                  pi-icon-button
+                  color="subtle"
+                  [matMenuTriggerFor]="actions"
+                >
+                  <em class="material-icons"> more_horiz </em>
+                </button>
+                <mat-menu
+                  #actions="matMenu"
+                  [overlapTrigger]="false"
+                  yPosition="below"
+                  xPosition="before"
+                  class="more-actions row-actions"
+                >
+                  <button
+                    mat-menu-item
+                    (click)="perfomAction(field, 'mandatory', null, i)"
+                  >
+                    <span *ngIf="!field.form_save_value.settings == ''"
+                      >{{
+                        field.form_save_value.settings.mandatory
+                          ? 'Remove Mandatory'
+                          : 'Set as Mandatory'
+                      }}
+                    </span>
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="perfomAction(field, 'delete', null, i)"
+                  >
+                    Remove Spec
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="perfomAction(field, 'display', null, i)"
+                  >
+                    {{
+                      field.form_save_value.display_in_grid ? 'Hide' : 'Display'
+                    }}
+                    in Grid
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="form-container-right-sec">
+    <div class="heading">
+      <h2>specifications</h2>
+      <em
+        class="pixel-icons icon-plus addModal add-btn"
+        (click)="addSepcification()"
+      ></em>
+    </div>
+    <div class="search-sec">
+      <app-search
+        [search]="search"
+        [class.invisible]="
+          !specsList.length && searchingBox.searchOpts.value == ''
+        "
+        #searchingBox
+        (onSearch)="onSearch($event)"
+      ></app-search>
+    </div>
+    <!-- side nav specslist to add into the form -->
+    <div class="inner-detail-list">
+      <h2 class="title">Recent Specs</h2>
+      <mat-list>
+        <ng-container *ngIf="specsList.length">
+          <mat-list-item
+            *ngFor="let data of specsList"
+            (click)="getSelectedForm(data)"
+          >
+            <h3 class="mat-list-item-title" [matTooltip]="data.tooltip">
+              {{ data.label }}
+            </h3>
+            <p class="mat-list-item-inner-content">{{ data.type }}</p>
+          </mat-list-item>
+
+          <!-- <div class="spects-list" *ngFor="let data of specsList">
+            <mat-list-item>
+              <div class="specs-with-menu" (click)="getSelectedForm(data)">
+                <div>
+                  <h3>{{ data.label }}</h3>
+                  <p class="text">{{ data.type }}</p>
+                </div>
+              </div>
+            </mat-list-item>
+          </div> -->
+        </ng-container>
+        <div class="no-data" *ngIf="!specsList.length && !progress">
+          <p>No Specs Found</p>
+        </div>
+      </mat-list>
+    </div>
+    <!-- side nav of specslist  close here -->
+  </div>
+</div>

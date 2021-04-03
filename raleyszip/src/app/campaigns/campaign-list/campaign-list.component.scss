@@ -1,0 +1,46 @@
+.filter-content {
+  padding: 10px;
+  .structure-select {
+    margin-bottom: 20px;
+    input {
+      border: 1px solid #dfe1e6;
+      padding: 0 10px;
+      height: 36px;
+      line-height: 33px;
+      margin-top: 5px;
+      border-radius: 4px;
+      background-color: #f4f5f7;
+      width: 100%;
+    }
+    .level-name {
+      font-size: 14px;
+      letter-spacing: -0.12px;
+      text-align: left;
+      text-transform: capitalize;
+    }
+    .date-picker-field {
+      position: relative;
+      .mat-datepicker-toggle {
+        position: absolute;
+        right: 0px;
+      }
+    }
+  }
+  .close_filter {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+.filter-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: #f4f5f7;
+}
+.search-sec {
+  padding: 0 10px;
+}
+.toggleClass {
+  visibility: hidden;
+}

@@ -1,0 +1,62 @@
+<div class="offerunit-dropdown">
+  <pi-select
+    *ngIf="params.column.colDef.field == 'banner_id'"
+    [options]="banners"
+    (onChange)="offerUnitChanged($event)"
+    [ngModel]="OfferUnitCellValue"
+  >
+  </pi-select>
+  <pi-select
+    *ngIf="params.column.colDef.field == 'channel_id'"
+    [options]="channels"
+    (onChange)="offerUnitChanged($event)"
+    [ngModel]="OfferUnitCellValue"
+  >
+  </pi-select>
+  <pi-select
+    *ngIf="params.column.colDef.field == 'channel_type_id'"
+    [options]="channelTypes"
+    (onChange)="offerUnitChanged($event)"
+    [ngModel]="OfferUnitCellValue"
+  >
+  </pi-select>
+  <pi-select
+    *ngIf="params.column.colDef.field == 'format_id'"
+    [options]="formats"
+    (onChange)="offerUnitChanged($event)"
+    [ngModel]="OfferUnitCellValue"
+  >
+  </pi-select>
+  <pi-select
+    *ngIf="params.column.colDef.field == 'offer_model'"
+    [options]="offerModels"
+    (onChange)="offerUnitChanged($event)"
+    [ngModel]="OfferUnitCellValue"
+  >
+  </pi-select>
+  <pi-select
+    *ngIf="params.column.colDef.field == 'images_yes_or_no'"
+    [options]="imageYesNoOptions"
+    (onChange)="offerUnitChanged($event)"
+    [ngModel]="OfferUnitCellValue"
+  >
+  </pi-select>
+
+  <!-- promotion tab grid unit column edit here -->
+  <pi-select
+    *ngIf="params.column.colDef.field == 'ea_or_lb'"
+    [options]="promotionUnitOptions"
+    (onChange)="offerUnitChanged($event)"
+    [ngModel]="OfferUnitCellValue"
+  >
+  </pi-select>
+</div>
+<!-- <input
+                type="text"
+                [ngModel]="OfferUnitCellValue"
+                (click) = "openOptions()"
+              />
+              <div class="options">
+                <p>123</p>
+                <p>456</p>
+              </div> -->

@@ -1,0 +1,87 @@
+.cdk-overlay-pane {
+  &.editform-dialog {
+    position: absolute !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    right: 0;
+    left: 60px;
+    top: 0;
+    bottom: 0;
+
+    .mat-dialog-container {
+      width: 98%;
+      border-radius: 0px;
+    }
+  }
+}
+
+.mat-dialog-heading {
+  justify-content: space-between;
+  margin-bottom: 15px;
+  .closeModal-savedViews {
+    display: flex;
+    align-items: center;
+    .icon-arrow-back {
+      width: auto;
+      height: auto;
+      font-size: 15px;
+      background: #392489;
+      color: #fff;
+      border-radius: 50%;
+      padding: 1px;
+      margin: 0px 5px 0 0;
+      transition: -webkit-transform 0.2s ease;
+      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, -webkit-transform 0.2s ease;
+      &:hover {
+        transform: translate(-5px, 0);
+        -moz-transform: translate(-5px, 0);
+        -webkit-transform: translate(-5px, 0);
+        -ms-transform: translate(-5px, 0);
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+        -webkit-animation-timing-function: ease-in-out;
+        animation-timing-function: ease-in-out;
+        -webkit-animation-iteration-count: 1;
+        animation-iteration-count: 1;
+      }
+    }
+    .left-border {
+      border-left: 1px solid #d7dbdd;
+      height: 24px;
+      margin: 0px 4px;
+    }
+  }
+  .saveView-exportView {
+    padding-right: 15px;
+    @media (min-width: 1024px) and (max-width: 1600px) {
+      padding-right: 25px;
+    }
+  }
+
+  .page-list {
+    margin-left: 15px;
+    min-width: 154px;
+    pi-form-field {
+      margin-top: 0px;
+    }
+  }
+  .saveView-exportView {
+    .save-view {
+      margin-right: 18px;
+    }
+    .export-view {
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  .left-view {
+    display: flex;
+    justify-content: space-between;
+    flex: 0.4;
+  }
+}

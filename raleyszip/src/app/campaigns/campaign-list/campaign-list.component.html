@@ -1,0 +1,104 @@
+<mat-sidenav-container class="campaigns-container">
+  <mat-sidenav-content>
+    <div class="campaigns-section">
+      <div class="section-header">
+        <em class="{{ tabData?.iconClass }}"></em>
+        <h2 class="heading">{{ tabData?.value }}</h2>
+        <div class="nav-sec">
+          <div class="search-sec">
+            <app-search
+              [search]="search"
+              (onSearch)="onSearch($event)"
+            ></app-search>
+          </div>
+          <button
+            pi-button
+            color="accent"
+            (click)="createCamp()"
+            [ngClass]="{ hidden: !createCampPer }"
+          >
+            Create Campaign
+          </button>
+        </div>
+      </div>
+      <div class="inner-section">
+        <ag-grid-angular
+          class="ag-theme-balham grid "
+          @rightAnimate
+          *ngIf="!noData"
+          [ngClass]="{
+            'fade-in': rowData.length > 0,
+            'fade-out': toggleClass,
+            hideTheGrid: !gridVisibility
+          }"
+          [rowData]="rowData"
+          [animateRows]="true"
+          rowHeight="38"
+          [enableFilter]="true"
+          [enableSorting]="true"
+          [enableColResize]="true"
+          [sideBar]="sideBar"
+          [columnDefs]="columnDefs"
+          [domLayout]="autoHeight"
+          (gridReady)="onGridReady($event)"
+          (columnResized)="onColumnResized($event)"
+          [autoGroupColumnDef]="autoGroupColumnDef"
+          [rowDragManaged]="true"
+          [pagination]="true"
+          [suppressPaginationPanel]="true"
+          [suppressNoRowsOverlay]="true"
+          (paginationChanged)="onPaginationChanged()"
+        >
+        </ag-grid-angular>
+      </div>
+      <div class="footer" *ngIf="!noData">
+        <!-- "!noData" && !dataLoad-->
+        <div class="left-view">
+          <div class="total" *ngIf="rowData.length">
+            <label>total count:</label> <span>{{ totalCount }}</span>
+          </div>
+        </div>
+        <div class="custom-pagination-panel" *ngIf="totalCount >= 20">
+          <em
+            class="pixel-icons icon-arrow-left"
+            (click)="loadMore('prev')"
+            [ngClass]="{ disabled: active[1] }"
+          ></em>
+          <div
+            class="pagination-items"
+            *ngFor="
+              let num of (numbers | slice: minLimit:maxLimit);
+              let i = index
+            "
+            (click)="loadMore(num)"
+            [ngClass]="{ active: active[num] }"
+          >
+            <span> {{ num }}</span>
+          </div>
+          <em
+            class="pixel-icons icon-arrow-right"
+            (click)="loadMore('next')"
+            [ngClass]="{ disabled: active[numbers.length] }"
+          ></em>
+        </div>
+      </div>
+    </div>
+    <div class="loader" *ngIf="dataLoad && !noData && !toggleClass"></div>
+    <div
+      class="loader-text no-data-grid"
+      *ngIf="!noData && dataLoad && !toggleClass"
+    >
+      Loading, please wait...
+    </div>
+
+    <div class=" no-data-grid" *ngIf="noData && !dataLoad">
+      <em class="{{ tabData?.iconClass }}"></em>
+      <p>Campaigns Not Found</p>
+    </div>
+    <div class="spinner no-data-grid" *ngIf="toggleClass">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

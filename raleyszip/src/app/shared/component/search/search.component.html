@@ -1,0 +1,25 @@
+<pi-form-field
+  label=" "
+  class="search-section"
+  leftIcon="true"
+  rightIcon="true"
+>
+  <pi-icon name="icon-search"></pi-icon>
+  <input
+    type="text"
+    pi-input
+    [placeholder]="searchOpts.placeHolder"
+    [(ngModel)]="searchOpts.value"
+    #search
+    (input)="searchList(search.value)"
+    (keyup.enter)="searchList(search.value)"
+  />
+  <mat-spinner *ngIf="searching" class="md spinner" diameter="18"></mat-spinner>
+  <pi-icon
+    *ngIf="!searching && search.value.length"
+    (click)="
+      $event.stopPropagation(); search.value = ''; searchList(search.value)
+    "
+    name="icon-close"
+  ></pi-icon>
+</pi-form-field>

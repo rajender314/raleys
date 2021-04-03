@@ -1,0 +1,22 @@
+<mat-form-field>
+  <input
+    matInput
+    [matDatepicker]="picker"
+    (click)="picker.open()"
+    (focus)="picker.open()"
+    (dateChange)="dateValueChange($event)"
+    [value]="currentdate"
+  />
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker
+    #picker
+    panelClass="ag-custom-component-popup"
+    opened="true"
+  ></mat-datepicker>
+</mat-form-field>
+
+<!-- <input matInput [matDatepicker]="picker"  (click)="picker.open()"
+(focus)="picker.open()"
+(dateChange)="dateValueChange($event)" #eInput >
+<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+<mat-datepicker #picker ></mat-datepicker> -->

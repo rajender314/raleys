@@ -1,0 +1,1123 @@
+<pi-master-detail-view
+  class="details-wrapper pi-master-detail-view settings-view"
+>
+  <pi-master-view class="left-section pi-master-view">
+    <div class="left-header">
+      <em
+        class="{{
+          tabData?.iconClass ? tabData?.iconClass : 'pixel-icons icon-settings'
+        }}"
+      ></em>
+      <h3>{{ tabData?.value ? tabData?.value : 'Settings' }}</h3>
+    </div>
+    <div class="left-content" @leftAnimate>
+      <mat-list class="inner-detail-list">
+        <div *ngFor="let list of settingsList">
+          <mat-list-item
+            *ngIf="!list.children"
+            (click)="selectedList()"
+            routerLink="/settings/{{ list.url }}"
+            routerLinkActive="active"
+          >
+            <div>{{ list.value }}</div>
+          </mat-list-item>
+
+          <mat-list-item
+            *ngIf="list.children"
+            (click)="dropdownTrigger($event, list)"
+            routerLinkActive="active"
+          >
+            <div class="sub">
+              {{ list.value }}
+              <em
+                class="pixel-icons icon-sub-attributes arrow icon-arrow-down {{
+                  isOpen ? 'arrow-up' : 'icon-arrow-down'
+                }}"
+              ></em>
+            </div>
+          </mat-list-item>
+
+          <div class="submenu" *ngIf="list.children && isOpen">
+            <div class="sub-menu-list" *ngFor="let child of list.children">
+              <mat-list-item
+                class="example-box"
+                (click)="selectedList(child)"
+                routerLink="/settings/{{ child.url }}"
+                routerLinkActive="active"
+              >
+                <span class="child-labels">{{ child.value }}</span>
+              </mat-list-item>
+            </div>
+          </div>
+        </div>
+      </mat-list>
+    </div>
+  </pi-master-view>
+
+  <pi-detail-view class="right-section pi-detail-view">
+    <mat-sidenav-container
+      class="settings-container grid-container admin-grid"
+      *ngIf="
+        listData?.key != 'SKU' &&
+        listData?.key != 'VERSION_SETTINGS' &&
+        listData?.key != 'CONFIGURATIONS' &&
+        listData?.key != 'FORM_BUILDER' &&
+        listData?.key != 'OFFER_TYPES' &&
+        listData?.key != 'FORM_SPECS' &&
+        listData?.key != 'ROLES' &&
+        listData?.key != 'FORMULA_BUILDER' &&
+        listData?.parent != 'SYSTEM_SETTINGS'
+      "
+    >
+      <mat-sidenav-content>
+        <div class="settings-section">
+          <div class="section-header">
+            <h2 class="heading">{{ listData?.value }}</h2>
+            <div class="nav-sec save-import">
+              <!-- <div class="primary-color cursor" (click)="seeTotalImportHistory('getDivisionsHistory',listData)" *ngIf="listData?.key == 'RMS_DIVISIONS' " >View History -->
+              <!-- <span class="history-view">View History<em class="pixel-icons icon-revisions"></em></span>       -->
+              <!-- </div>     -->
+              <div class="search-sec">
+                <app-search
+                  [search]="search"
+                  (onSearch)="onSearch($event)"
+                  [class.invisible]="
+                    !rowData.length && searchingBox.searchOpts.value == ''
+                  "
+                  #searchingBox
+                ></app-search>
+              </div>
+              <!-- <button
+                class="ak-button ak-button__appearance-default history-viewbtn"
+                (click)="seeTotalImportHistory('getDivisionsHistory', listData)"
+                *ngIf="listData?.key == 'RMS_DIVISIONS'"
+                pi-button=""
+                _nghost-c10=""
+              >
+                View History
+              </button> -->
+              <!-- <div class="import-sec" >
+                <span mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu">
+                  <em class="pixel-icons icon-import"></em>
+                </span>
+                <mat-menu #menu="matMenu">
+                  <span class="menu-content" (click)="importExcelDailog()">Import From Excel</span>
+                </mat-menu>
+              </div> -->
+
+              <div title="import" *ngIf="listData?.key == 'MARKET_ATTRIBUTES'">
+                <span
+                  pi-button
+                  color="accent"
+                  mat-icon-button
+                  #menuTrigger="matMenuTrigger"
+                  [matMenuTriggerFor]="menu"
+                >
+                  Import <em class="pixel-icons icon-arrow-down"></em>
+                </span>
+                <mat-menu #menu="matMenu" class="import-menu">
+                  <button
+                    mat-menu-item
+                    (click)="importExcelDailog(listData)"
+                    class="cursor"
+                  >
+                    <em class="pixel-icons icon-import"></em> Import From Excel
+                  </button>
+                  <!-- <button mat-menu-item (click)="importBoxDailog()">
+                    <em class="pixel-icons icon-import"></em> Import From BOX
+                  </button> -->
+                </mat-menu>
+              </div>
+              <!-- Add button -->
+              <button
+                pi-button
+                color="accent"
+                *ngIf="listData?.is_add == '1'"
+                (click)="add(listData)"
+                [ngClass]="{
+                  hidden:
+                    (listData?.key == 'ICONS' && !editIconsPer) ||
+                    (listData?.key == 'COMPANIES' && !editCompanyPer) ||
+                    (listData?.key == 'RMS_DIVISIONS' && !editDivPer) ||
+                    (listData?.key == 'PAGE_TEMPLATES' && !editPgTempPer) ||
+                    (listData?.key == 'VEHICLE_TYPES' && !editVehiclePer)
+                }"
+              >
+                Add
+              </button>
+              <!-- Add button closes-->
+            </div>
+          </div>
+          <div class="inner-section">
+            <ag-grid-angular
+              @rightAnimate
+              *ngIf="!noData"
+              class="ag-theme-balham grid"
+              [ngClass]="{
+                'fade-in': rowData.length > 0,
+                'fade-out': gridVisibility
+              }"
+              [class.hideTheGrid]="gridVisibility"
+              [rowData]="rowData"
+              [animateRows]="true"
+              rowHeight="40"
+              [enableRangeSelection]="true"
+              [enableFilter]="true"
+              [enableSorting]="true"
+              [enableColResize]="true"
+              [sideBar]="sideBar"
+              [columnDefs]="columnDefs"
+              [suppressNoRowsOverlay]="true"
+              (gridReady)="onGridReady($event)"
+              (columnResized)="onColumnResize($event)"
+              [autoGroupColumnDef]="autoGroupColumnDef"
+              [rowGroupPanelShow]="false"
+            >
+            </ag-grid-angular>
+            <div class="loader" *ngIf="!noData && progress"></div>
+            <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+              Loading, please wait...
+            </div>
+            <!-- <div class="spinner no-data-grid" *ngIf="gridVisibility">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>  -->
+            <div class="no-data" *ngIf="noData">
+              <p>{{ listData?.value }} Not Found</p>
+            </div>
+          </div>
+
+          <div class="footer footer-grid" *ngIf="!noData">
+            <div class="left-view">
+              <div class="total">
+                <label>total count:</label> <span>{{ totalCount }}</span>
+              </div>
+            </div>
+            <div class="custom-pagination-panel" *ngIf="totalCount >= 20">
+              <em
+                class="pixel-icons icon-arrow-left"
+                (click)="loadMore('prev')"
+                [ngClass]="{ disabled: active[1] }"
+              ></em>
+              <div
+                class="pagination-items"
+                *ngFor="
+                  let num of (numbers | slice: minLimit:maxLimit);
+                  let i = index
+                "
+                (click)="loadMore(num)"
+                [ngClass]="{ active: active[num] }"
+              >
+                {{ num }}
+              </div>
+              <em
+                class="pixel-icons icon-arrow-right"
+                (click)="loadMore('next')"
+                [ngClass]="{ disabled: active[numbers.length] }"
+              ></em>
+            </div>
+          </div>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+
+    <!-- System Settings -->
+    <mat-sidenav-container
+      class="settings-container grid-container admin-grid"
+      *ngIf="listData?.parent == 'SYSTEM_SETTINGS'"
+    >
+      <mat-sidenav-content>
+        <div class="system-settings-section settings-section">
+          <div
+            class="section-header"
+            [ngClass]="{ 'border-header': listData?.key == 'GENERAL_SETTINGS' }"
+          >
+            <h2 class="heading">{{ listData?.value }}</h2>
+          </div>
+
+          <!-- General settings content (non-ag grid content) -->
+          <div
+            class="general-settings"
+            *ngIf="listData?.key == 'GENERAL_SETTINGS'"
+            [ngClass]="{ 'not-allowed': !editEmailPer }"
+          >
+            <pi-field-group
+              label="Email Notifications"
+              direction="column"
+              [ngClass]="{ 'pointer-event': !editEmailPer }"
+            >
+              <pi-form-field
+                label="{{ header.name }}"
+                *ngFor="let header of headers"
+              >
+                <input
+                  type="radio"
+                  pi-input
+                  name="{{ header.key }}"
+                  (click)="check(header, $event)"
+                  [checked]="
+                    header.stop_outgoing_emails == rowData.stop_outgoing_emails
+                  "
+                />
+              </pi-form-field>
+            </pi-field-group>
+
+            <div
+              class="general-settings-controls"
+              *ngIf="listData?.key == 'GENERAL_SETTINGS'"
+              [ngClass]="{ 'pointer-event': !editEmailPer }"
+            >
+              <!-- <button pi-button (click)="resetGeneralSettings()">
+                Cancel
+              </button> -->
+              <button
+                pi-button
+                color="accent"
+                class="save-btn"
+                [disabled]="disableSaveBtn"
+                (click)="saveGeneralSettings()"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
+          <!-- ag grid section-->
+          <div
+            class="inner-section"
+            *ngIf="listData?.key != 'GENERAL_SETTINGS'"
+          >
+            <ag-grid-angular
+              @rightAnimate
+              class="ag-theme-balham grid"
+              [ngClass]="{
+                'fade-in': rowData.length > 0,
+                'fade-out': gridVisibility
+              }"
+              [class.hideTheGrid]="gridVisibility"
+              [rowData]="rowData"
+              [animateRows]="true"
+              rowHeight="40"
+              [enableRangeSelection]="true"
+              [enableFilter]="true"
+              [enableSorting]="true"
+              [enableColResize]="true"
+              [sideBar]="sideBar"
+              [columnDefs]="columnDefs"
+              [rowSelection]="rowSelection"
+              (selectionChanged)="onSelectionChanged($event)"
+              [domLayout]="autoHeight"
+              [suppressNoRowsOverlay]="true"
+              [getRowNodeId]="getRowNodeId"
+              (gridReady)="onGridReady($event)"
+              (columnResized)="onColumnResize($event)"
+              [autoGroupColumnDef]="autoGroupColumnDef"
+              [rowGroupPanelShow]="false"
+            >
+            </ag-grid-angular>
+            <ng-template #clientTemplate let-row>
+              <div class="box">
+                <button pi-button (click)="showMail()" class="send-mail-btn">
+                  Show Mail
+                </button>
+              </div>
+            </ng-template>
+
+            <ng-template #clientTemplate2 let-row>
+              <div class="box">
+                <button pi-button (click)="sendMail()" class="send-mail-btn">
+                  Send Mail
+                </button>
+              </div>
+            </ng-template>
+
+            <div
+              class="no-data"
+              *ngIf="noData && listData?.key != 'GENERAL_SETTINGS'"
+            >
+              <p>{{ listData?.label }} Not Found</p>
+            </div>
+          </div>
+
+          <div
+            class="footer system-settings-footer"
+            *ngIf="!noData && listData?.key != 'GENERAL_SETTINGS' && !progress"
+          >
+            <div class="left-view">
+              <!-- *ngIf="totalCount >= 20" -->
+              <div class="total">
+                <label>total count:</label> <span>{{ totalCount }}</span>
+              </div>
+            </div>
+
+            <div class="custom-pagination-panel" *ngIf="footerPagination">
+              <em
+                class="pixel-icons icon-arrow-left"
+                (click)="loadMore('prev')"
+                [ngClass]="{ disabled: active[1] }"
+              ></em>
+              <div
+                class="pagination-items"
+                *ngFor="
+                  let num of (numbers | slice: minLimit:maxLimit);
+                  let i = index
+                "
+                (click)="loadMore(num)"
+                [ngClass]="{ active: active[num] }"
+              >
+                {{ num }}
+              </div>
+              <em
+                class="pixel-icons icon-arrow-right"
+                (click)="loadMore('next')"
+                [ngClass]="{ disabled: active[numbers.length] }"
+              ></em>
+            </div>
+
+            <!-- action buttons - (search columns section) (not available for now)-->
+            <!-- <div class="btn-actions" *ngIf="editSearchColumnData && listData?.key == 'SEARCH_COLUMNS'">
+            <div class="box">
+              <button mat-button (click)="resetSearchColumnData()">Cancel</button>
+              <button pi-button color="accent" [disabled]="noSKUIds" (click)="updateSearchColumns(searchColumnForm)">
+                Save
+              </button>
+            </div>
+          </div> -->
+          </div>
+          <div class="loader" *ngIf="!noData && progress"></div>
+          <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+            Loading, please wait...
+          </div>
+        </div>
+
+        <!-- <div class="spinner no-data-grid" *ngIf="gridVisibility">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div> -->
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+
+    <!-- version settings  -->
+    <mat-sidenav-container
+      class="settings-container grid-container"
+      *ngIf="listData?.key == 'VERSION_SETTINGS'"
+    >
+      <mat-sidenav-content>
+        <div class="settings-section version-settings">
+          <div class="section-header">
+            <h2 class="heading">{{ listData?.value }}</h2>
+          </div>
+          <div class="inner-section">
+            <form
+              class="version-settings-form"
+              [formGroup]="versionSettingsForm"
+            >
+              <div class="ak-field-group">
+                <label>Maximum number of Versions per Mod:</label>
+                <div class="right-sec">
+                  <input
+                    type="text"
+                    class="ak-field-text"
+                    min="1"
+                    formControlName="version_count"
+                    (change)="changeCount()"
+                    (keypress)="modNumber($event)"
+                  />
+
+                  <div class="btn-actions">
+                    <div class="box">
+                      <!-- <button mat-button (click)="resetVersionCount()">
+                          Cancel
+                        </button> -->
+                      <button
+                        pi-button
+                        color="accent"
+                        (click)="
+                          updateVersionCount(versionSettingsForm, listData)
+                        "
+                        [disabled]="
+                          versionSettingsForm.pristine ||
+                          versionCountDisabledFlag
+                        "
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div class="loader" *ngIf="!noData && progress"></div>
+            <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+              Loading, please wait...
+            </div>
+            <!-- <div class="spinner no-data-grid" *ngIf="gridVisibility">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div> -->
+          </div>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+
+    <!-- SKU  -->
+    <mat-sidenav-container
+      class="settings-container grid-container"
+      *ngIf="listData?.key == 'SKU'"
+    >
+      <mat-sidenav-content @rightAnimate>
+        <div class="settings-section sku">
+          <div class="section-header">
+            <h2 class="heading">{{ listData?.value }}</h2>
+          </div>
+          <div class="inner-section">
+            <div class="import-sku" *ngIf="skuHistoryData">
+              <app-excel-uploader
+                (importSuccess)="importSuccess($event)"
+                [importdata]="impSkuData"
+              >
+              </app-excel-uploader>
+            </div>
+            <div class="import-history-details">
+              <div class="import-history-heading">
+                <h2 class="heading">Import History</h2>
+                <!-- <span
+                  class="primary-color"
+                  (click)="seeTotalImportHistory('getUpcHistory', listData)"
+                  >See All</span
+                > -->
+                <button
+                  pi-button
+                  (click)="seeTotalImportHistory('getUpcHistory', listData)"
+                >
+                  See All
+                </button>
+              </div>
+              <div class="import-history-content">
+                <div class="history-data" *ngFor="let data of rowData">
+                  <div class="left-sec">
+                    <div class="user-img">
+                      <img src="{{ data.cloud_path }}" alt="image" />
+                    </div>
+                    {{ data.created_by }} Imported
+                    <a
+                      [matTooltip]="data.original_filename"
+                      href="{{ data.cloud_download_path }}"
+                      class="primary-color"
+                      >{{ data.original_filename }}</a
+                    >
+                  </div>
+
+                  <span>{{ data.gt_date_added }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="loader" *ngIf="!noData && progress"></div>
+            <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+              Loading, please wait...
+            </div>
+            <!-- <div class="spinner no-data-grid" *ngIf="gridVisibility">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div> -->
+          </div>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+
+    <!-- Form Builder or Offer Types -->
+    <mat-sidenav-container
+      class="settings-container grid-container"
+      *ngIf="listData?.key == 'FORM_BUILDER' || listData?.key == 'OFFER_TYPES'"
+    >
+      <mat-sidenav-content>
+        <div class="settings-section configuaration form_builder">
+          <div class="inner-section">
+            <div class="config-labels">
+              <div class="left-sec">
+                <div class="heading">
+                  <div class="flex-end">
+                    <h2 class="config-heading">{{ listData?.value }}</h2>
+                    <em
+                      class="pixel-icons icon-plus addModal"
+                      (click)="addForm('create')"
+                    ></em>
+                  </div>
+                  <app-search
+                    [search]="search"
+                    [class.invisible]="
+                      !rowData.length && searchingBox.searchOpts.value == ''
+                    "
+                    (onSearch)="onSearch($event)"
+                    #searchingBox
+                  ></app-search>
+                </div>
+                <div class="inner-detail-list">
+                  <ng-container *ngIf="rowData.length">
+                    <mat-list
+                      infiniteScroll
+                      [infiniteScrollDistance]="2"
+                      [infiniteScrollThrottle]="19"
+                      [scrollWindow]="false"
+                      (scrolled)="onScroll('OFFER_TYPES')"
+                    >
+                      <div *ngFor="let list of rowData; let i = index">
+                        <mat-list-item
+                          (click)="getSelectedForm(list)"
+                          [ngClass]="{
+                            active: list.id === selectedFormLabels.id
+                          }"
+                        >
+                          <div>{{ list.name }}</div>
+                          <div style="color: #838383;">
+                            {{ list.assigned_category_name }}
+                          </div>
+                        </mat-list-item>
+                      </div>
+                    </mat-list>
+                  </ng-container>
+                  <ng-container *ngIf="!rowData.length && !fetchingData">
+                    <div class="no-data"><p>Data Not Found</p></div>
+                  </ng-container>
+                </div>
+              </div>
+              <!-- third section of the page-->
+              <div class="right-sec">
+                <div class="no-data" *ngIf="!rowData.length && !fetchingData">
+                  <p>Data Not Found</p>
+                </div>
+                <div class="loader" *ngIf="!noData && fetchingData"></div>
+                <div
+                  class="loader-text no-data-grid"
+                  *ngIf="!noData && fetchingData"
+                >
+                  Loading, please wait...
+                </div>
+
+                <div class="right-sec-content" *ngIf="rowData.length">
+                  <div class="name-del-btn">
+                    <h2 class="heading config-heading">
+                      {{ selectedFormLabels?.name }}
+                    </h2>
+                    <button
+                      class="mr1p"
+                      *ngIf="listData?.key == 'OFFER_TYPES'"
+                      pi-button
+                      color="primary"
+                      (click)="deleteSpec(selectedFormLabels)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <div class="right-label-sec">
+                    <div class="right-label-sec-content">
+                      <div class="right-config-sec">
+                        <form
+                          [formGroup]="offerType_formBuilderForm"
+                          *ngIf="createOfferTypeFormReady"
+                        >
+                          <pi-form-field class="input-field">
+                            <label class="label-name">Name</label>
+                            <span
+                              class="required"
+                              [ngClass]="{
+                                error: offerType_formBuilderForm.controls.offerType_formBuilder_name.hasError(
+                                  'required'
+                                )
+                              }"
+                            >
+                              *</span
+                            >
+                            <input
+                              type="text"
+                              pi-input
+                              formControlName="offerType_formBuilder_name"
+                            />
+                            <div
+                              class="pi-error"
+                              *ngIf="
+                                offerType_formBuilderForm.controls.offerType_formBuilder_name.hasError(
+                                  'required'
+                                ) && offerTypeFormSubmitted
+                              "
+                            >
+                              Please enter Name
+                            </div>
+                          </pi-form-field>
+
+                          <pi-form-field class="input-field">
+                            <label class="label-name">Key Words</label>
+
+                            <input
+                              type="text"
+                              pi-input
+                              formControlName="offerType_formBuilder_keyword"
+                              (input)="valChanged($event)"
+                              [(ngModel)]="tagsList"
+                            />
+                          </pi-form-field>
+                          <!-- <pi-form-field
+                            class="input-field"
+                            *ngIf="listData?.key == 'OFFER_TYPES'"
+                          >
+                            <label class="label-name">Divisions</label>
+                            <span
+                              class="required"
+                              [ngClass]="{
+                                error: offerType_formBuilderForm.controls.offerType_divisions.hasError(
+                                  'required'
+                                )
+                              }"
+                            >
+                              *</span
+                            >
+                            <pi-select
+                              [options]="getSelectedForm"
+                              formControlName="offerType_divisions"
+                              nameKey="divname"
+                              [multi]="true"
+                              class="divsions_list"
+                            ></pi-select>
+                            <div
+                              class="pi-error"
+                              *ngIf="
+                                offerType_formBuilderForm.controls.offerType_divisions.hasError(
+                                  'required'
+                                ) && offerTypeFormSubmitted
+                              "
+                            >
+                              Please select Division
+                            </div>
+                          </pi-form-field> -->
+                          <pi-form-field class="input-field">
+                            <label class="label-name">Status</label>
+                            <span
+                              class="required"
+                              [ngClass]="{
+                                error: offerType_formBuilderForm.controls.offerType_formBuilder_status.hasError(
+                                  'required'
+                                )
+                              }"
+                            >
+                              *</span
+                            >
+                            <div>
+                              <mat-button-toggle-group
+                                formControlName="offerType_formBuilder_status"
+                              >
+                                <mat-button-toggle [value]="true">
+                                  Active
+                                </mat-button-toggle>
+                                <mat-button-toggle [value]="false">
+                                  Inactive
+                                </mat-button-toggle>
+                              </mat-button-toggle-group>
+                            </div>
+                            <div
+                              class="pi-error"
+                              *ngIf="
+                                offerType_formBuilderForm.controls.offerType_formBuilder_status.hasError(
+                                  'required'
+                                ) && offerTypeFormSubmitted
+                              "
+                            >
+                              Please Select Status
+                            </div>
+                          </pi-form-field>
+                        </form>
+                      </div>
+                      <!-- form preview section-->
+                      <div class="form-preview-content">
+                        <div class="heading form_preview" *ngIf="!fetchingData">
+                          <h2 class="config-heading">Form Preview</h2>
+                          <button
+                            pi-button
+                            color="default"
+                            (click)="editForm(selectedFormLabels)"
+                          >
+                            Edit Form
+                          </button>
+                        </div>
+                        <div
+                          class="no-data-grid"
+                          *ngIf="!formData.length && !fetchingData"
+                        >
+                          No Preview
+                        </div>
+                        <div
+                          class="form_preview_content_sec"
+                          *ngIf="!fetchingData"
+                        >
+                          <form
+                            [formGroup]="createSampleForms"
+                            class="form-flex"
+                            *ngIf="formData.length"
+                          >
+                            <div *ngFor="let field of formData; let i = index">
+                              <div formArrayName="formValues">
+                                <pi-form-field
+                                  class="input-field"
+                                  [formGroupName]="i"
+                                >
+                                  <div class="label-sec">
+                                    <div class="label-inner-sec">
+                                      <label
+                                        class="label-name"
+                                        [matTooltip]="field.tooltip"
+                                        >{{ field.label | titlecase }}
+                                      </label>
+                                      <span
+                                        class="required"
+                                        *ngIf="
+                                          !field.form_save_value.settings == ''
+                                        "
+                                        >{{
+                                          field.form_save_value.settings
+                                            .mandatory
+                                            ? '*'
+                                            : ''
+                                        }}
+                                      </span>
+                                    </div>
+                                    <!-- <em
+                                  class="material-icons display-ingrid"
+                                  *ngIf="field.form_save_value.display_in_grid"
+                                  >grid_on</em
+                                > -->
+                                    <em
+                                      class="pixel-icons icon-information"
+                                      matTooltip="Display in Grid"
+                                      *ngIf="
+                                        field.form_save_value.display_in_grid
+                                      "
+                                    ></em>
+                                  </div>
+
+                                  <input
+                                    type="text"
+                                    formControlName="{{ field.label }}"
+                                    pi-input
+                                    *ngIf="field.key == 'single_line_text'"
+                                  />
+                                  <pi-select
+                                    [multi]="true"
+                                    *ngIf="field.key == 'multiple_choice'"
+                                    nameKey="value"
+                                    [options]="field.options"
+                                    formControlName="{{ field.label }}"
+                                  ></pi-select>
+                                  <input
+                                    class="edit-form-field"
+                                    type="text"
+                                    formControlName="{{ field.label }}"
+                                    pi-input
+                                    appPriceOnly
+                                    *ngIf="field.key == 'price'"
+                                  />
+                                  <pi-select
+                                    *ngIf="field.key == 'dropdown'"
+                                    nameKey="value"
+                                    [options]="field.options"
+                                    formControlName="{{ field.label }}"
+                                  ></pi-select>
+                                  <textarea
+                                    rows="4"
+                                    formControlName="{{ field.label }}"
+                                    pi-input
+                                    *ngIf="field.key == 'paragraph_text'"
+                                  ></textarea>
+                                  <div *ngIf="field.key == 'checkboxes'">
+                                    <div *ngFor="let option of field.options">
+                                      <pi-form-field label="{{ option.value }}">
+                                        <input
+                                          type="checkbox"
+                                          pi-input
+                                          formControlName="{{ field.label }}"
+                                        />
+                                      </pi-form-field>
+                                    </div>
+                                  </div>
+                                  <div *ngIf="field.key == 'radio'">
+                                    <pi-field-group
+                                      direction="column"
+                                      *ngIf="field.key == 'radio'"
+                                    >
+                                      <pi-form-field
+                                        label="{{ radioOption.value }}"
+                                        *ngFor="
+                                          let radioOption of field.options
+                                        "
+                                      >
+                                        <input
+                                          type="radio"
+                                          pi-input
+                                          name="radio"
+                                        />
+                                      </pi-form-field>
+                                    </pi-field-group>
+                                  </div>
+                                  <div *ngIf="field.key == 'calculated'">
+                                    <input
+                                      type="text"
+                                      formControlName="{{ field.label }}"
+                                      pi-input
+                                      [disabled]="true"
+                                    />
+                                  </div>
+                                  <div
+                                    *ngIf="field.key == 'date'"
+                                    class="structure-select"
+                                  >
+                                    <div class="date-picker-field">
+                                      <input
+                                        class="datepicker"
+                                        pi-input
+                                        formControlName="{{ field.label }}"
+                                        [matDatepicker]="picker"
+                                        placeholder="Select Date"
+                                      />
+                                      <mat-datepicker-toggle
+                                        matSuffix
+                                        [for]="picker"
+                                      ></mat-datepicker-toggle>
+                                      <mat-datepicker #picker></mat-datepicker>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="structure-select"
+                                    *ngIf="field.key == 'date_range'"
+                                  >
+                                    <div class="date-picker-field">
+                                      <input
+                                        formControlName="{{
+                                          field.db_column_key
+                                        }}"
+                                        ngxDaterangepickerMd
+                                        [autoApply]="true"
+                                        class="form-control"
+                                        readonly="true"
+                                        pi-input
+                                      />
+                                      <!-- <ngx-mat-drp formControlName="{{ field.db_column_key }}" (selectedDateRangeChanged)="updateRange($event)" [options]="rangeOptions" #dateRangePicker></ngx-mat-drp> -->
+                                    </div>
+                                    <div class="date-picker-icon-sec">
+                                      <div class="date-picker-icon"></div>
+                                    </div>
+                                  </div>
+                                  <mat-form-field
+                                    class="example-full-width"
+                                    *ngIf="field.key == 'auto_suggest'"
+                                  >
+                                    <input
+                                      type="text"
+                                      aria-label="Number"
+                                      matInput
+                                      formControlName="{{ field.label }}"
+                                      [matAutocomplete]="auto"
+                                    />
+                                    <mat-autocomplete #auto="matAutocomplete">
+                                      <mat-option
+                                        *ngFor="let option of field.options"
+                                        [value]="option.value"
+                                      >
+                                        {{ option.value }}
+                                      </mat-option>
+                                    </mat-autocomplete>
+                                  </mat-form-field>
+                                  <input
+                                    type="number"
+                                    formControlName="{{ field.label }}"
+                                    pi-input
+                                    *ngIf="field.key == 'number'"
+                                  />
+                                  <!-- <pi-select
+                                  [multi]="true"
+                                  *ngIf="field.key == 'group'"
+                                  nameKey="delimiter"
+                                  [options]="field.options"
+                                  formControlName="{{ field.label }}"
+                                ></pi-select> -->
+                                </pi-form-field>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="footer" *ngIf="formStatusChanged">
+                    <button
+                      pi-button
+                      color="subtle"
+                      (click)="resetOfferFormValues()"
+                    >
+                      Cancel
+                    </button>
+                    <button pi-button color="accent" (click)="addForm('edit')">
+                      Save
+                    </button>
+                    <!--[disabled]="offerTypeFormSubmitted"-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+
+    <!-- Formula Builder-->
+    <mat-sidenav-container
+      class="settings-container grid-container"
+      *ngIf="listData?.key == 'FORMULA_BUILDER'"
+    >
+      <div class="loader" *ngIf="!noData && progress"></div>
+      <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+        Loading, please wait...
+      </div>
+
+      <!-- dynamic content goes here   (src/app/dialogs/formula-builder)-->
+      <app-formula-builder
+        [data]="offerTypesForFormulaBuilders"
+        *ngIf="listData?.key == 'FORMULA_BUILDER' && formulaBuilderReady"
+      >
+      </app-formula-builder>
+      <!-- dynamic content goes here-->
+    </mat-sidenav-container>
+
+    <!-- User Roles -->
+    <div *ngIf="listData?.key == 'ROLES'">
+      <div class="loader" *ngIf="!noData && progress"></div>
+      <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+        Loading, please wait...
+      </div>
+
+      <div class="user-roles-container">
+        <!-- path : resources/assets/js/web/src/app/settings/settings-list/user-roles -->
+        <app-user-roles2
+          [userRolesList]="userRolesList"
+          *ngIf="listData?.key == 'ROLES' && rolesReady"
+        ></app-user-roles2>
+      </div>
+    </div>
+
+    <!-- Speicfications -->
+    <div *ngIf="listData?.key == 'FORM_SPECS'">
+      <div class="loader" *ngIf="!noData && progress"></div>
+      <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+        Loading, please wait...
+      </div>
+      <!-- dynamic content goes here. path : (src/app/settings/settings-list/specifications)-->
+      <app-specifications
+        [specList]="specList"
+        *ngIf="listData?.key == 'FORM_SPECS' && specsReady"
+      ></app-specifications>
+    </div>
+
+    <!-- configuring labels -->
+    <mat-sidenav-container
+      class="settings-container grid-container"
+      *ngIf="listData?.key == 'CONFIGURATIONS'"
+    >
+      <mat-sidenav-content>
+        <div class="settings-section configuaration">
+          <div class="inner-section">
+            <div class="config-labels">
+              <div class="left-sec">
+                <h2 class="heading config-heading">{{ listData?.value }}</h2>
+                <div class="inner-detail-list">
+                  <mat-list>
+                    <div *ngFor="let list of rowData">
+                      <mat-list-item
+                        (click)="getSelectedLables(list)"
+                        [ngClass]="{
+                          active: list.key === selectedConfigLabels.key
+                        }"
+                      >
+                        <div>{{ list.label }}</div>
+                      </mat-list-item>
+                    </div>
+                  </mat-list>
+                </div>
+              </div>
+
+              <div class="right-sec">
+                <!-- {{selectedConfigLabels.value}} -->
+                <div class="right-sec-content">
+                  <h2 class="heading config-heading">
+                    {{ selectedConfigLabels?.label }}
+                  </h2>
+                  <div class="right-label-sec">
+                    <div class="right-label-sec-content config-list">
+                      <div
+                        class="config"
+                        *ngFor="let field of selectedConfigLabels?.value"
+                      >
+                        <div class="edit-view">
+                          <div>
+                            <div
+                              class="view-mode value text-ellipsis"
+                              *ngIf="!field.edit"
+                            >
+                              {{ field.value }}
+                              <span
+                                class="edit-label"
+                                (click)="editLabel(field)"
+                                *ngIf="editCompleted"
+                                [ngClass]="{ hidden: !editLblPer }"
+                              >
+                                <em class="pixel-icons icon-pencil"></em>
+                              </span>
+                            </div>
+                            <div class="edit-section" *ngIf="field.edit">
+                              <pi-form-field class="input-field">
+                                <input
+                                  type="text"
+                                  class="ak-field-text"
+                                  [(ngModel)]="field.value"
+                                />
+                                <div class="btn-actions">
+                                  <button
+                                    pi-button
+                                    color="default"
+                                    (click)="saveLabel(field)"
+                                  >
+                                    <mat-icon>check</mat-icon>
+                                  </button>
+                                  <button
+                                    pi-button
+                                    color="default"
+                                    (click)="discardLabel(field)"
+                                  >
+                                    <em class="pixel-icons icon-close"></em>
+                                  </button>
+                                </div>
+                              </pi-form-field>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="loader" *ngIf="!noData && progress"></div>
+            <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+              Loading, please wait...
+            </div>
+            <!-- <div class="spinner no-data-grid" *ngIf="gridVisibility">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div> -->
+          </div>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </pi-detail-view>
+</pi-master-detail-view>

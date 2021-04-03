@@ -1,0 +1,30 @@
+@import "../../../../assets/styles/mixins";
+@import "../../../../assets/styles/variable";
+.dynamic-form-content {
+  .children-permissions {
+    // max-width: 600px;
+    .d-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+  .label-heading {
+    @include semibold-font;
+    border-bottom: 1px solid #e3e4f2;
+  }
+  .child-header {
+    @include regular-font;
+    padding: 15px;
+    border-bottom: 1px solid #e3e4f2;
+  }
+}
+
+.user-roles-form {
+  .label-heading {
+    @include semibold-font;
+  }
+  .child-heading {
+    @include regular-font;
+  }
+}

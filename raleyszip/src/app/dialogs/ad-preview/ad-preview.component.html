@@ -1,0 +1,100 @@
+<!-- showing ag-grid for ad-preview-->
+<div class="mat-dialog-heading">
+  <div class="closeModal-savedViews">
+    <em class="pixel-icons icon-arrow-back cursor" (click)="close()"></em>
+    <div class="left-border"></div>
+    <h2 mat-dialog-title>
+      {{ fromPage === 'adReports' ? 'Report View' : 'Ad Preview' }}
+    </h2>
+    <div
+      class="page-list"
+      *ngIf="!(dataLoad && !noData) && fromPage != 'adReports'"
+    >
+      <pi-form-field class="page-select" *ngIf="savedViewOptions.length > 1">
+        <pi-select
+          [options]="savedViewOptions"
+          [(ngModel)]="savedViewValue"
+          nameKey="name"
+          idKey="_id"
+          placeholder="Select Views"
+          (onChange)="getSelectedView($event)"
+        >
+        </pi-select>
+      </pi-form-field>
+    </div>
+  </div>
+  <div class="saveView-exportView">
+    <button
+      pi-button
+      class="save-view"
+      (click)="openSaveReport('saveReport')"
+      [disabled]="!rowData?.length"
+      *ngIf="fromPage != 'adReports'"
+      [ngClass]="{ hidden: !viewReportPer }"
+    >
+      Save Report
+    </button>
+    <button
+      pi-button
+      class="save-view"
+      (click)="openSaveView('saveView')"
+      [disabled]="!rowData?.length"
+      *ngIf="fromPage != 'adReports'"
+    >
+      Save View
+    </button>
+    <button
+      pi-button
+      class="export-view"
+      color="accent"
+      (click)="adExport()"
+      [disabled]="!rowData?.length"
+      *ngIf="fromPage != 'adReports'"
+    >
+      Export
+    </button>
+  </div>
+</div>
+<div class="inner-section" id="myGrid">
+  <ag-grid-angular
+    @rightAnimate
+    class="ag-theme-balham grid offers-list lazy-load-grid"
+    *ngIf="rowData?.length"
+    [ngClass]="{
+      'fade-in': gridVisibility,
+      showGrid: gridVisibility,
+      'no-pointer-events': !pointerEvents
+    }"
+    [rowData]="rowData"
+    [animateRows]="true"
+    rowHeight="38"
+    [enableRangeSelection]="true"
+    [enableFilter]="true"
+    [suppressCopyRowsToClipboard]="true"
+    [suppressDragLeaveHidesColumns]="true"
+    [suppressMakeColumnVisibleAfterUnGroup]="true"
+    [enableSorting]="true"
+    [enableColResize]="true"
+    [sideBar]="true"
+    [columnDefs]="columnDefs"
+    [domLayout]="autoHeight"
+    (gridReady)="onGridReady($event)"
+    [suppressColumnVirtualisation]="true"
+    [rowSelection]="rowSelection"
+    (filterChanged)="onFilterChanged($event)"
+  >
+  </ag-grid-angular>
+</div>
+<div class="footer">
+  <div class="left-view">
+    <div class="total txt-captl" *ngIf="totalCount && rowData?.length">
+      <label>total count:</label> <span>{{ totalCount }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="loader" *ngIf="dataLoad && !noData"></div>
+<div class="loader-text no-data-grid" *ngIf="dataLoad && !noData">
+  Loading, please wait...
+</div>
+<div class="no-data-grid" *ngIf="noData && !dataLoad">No Preview...</div>

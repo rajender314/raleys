@@ -1,0 +1,62 @@
+<div class="main-sec">
+  <div class="import-main-sec" *ngIf="!progress && !success">
+    <div class="mat-dialog-heading">
+      <div class="mat-header-inner-sec">
+        <span (click)="closeDialog()">
+          <em class="pixel-icons icon-arrow-back"></em>
+        </span>
+        <div class="left-border"></div>
+
+        <h2 mat-dialog-title>Select Columns to Import</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="import-body">
+        <div class="import-content">
+          <form [formGroup]="importSkuForm">
+            <div formArrayName="skuAttributes" class="sku-attributes">
+              <div
+                *ngFor="let attribute of skuAttributes.controls; let i = index"
+                class="attr-fields"
+              >
+                <pi-form-field [formGroupName]="i">
+                  <label class="label-name">{{
+                    skuAttributesData[i]?.name
+                  }}</label>
+
+                  <pi-select
+                    [options]="selectOptions"
+                    idKey="key"
+                    nameKey="label"
+                    formControlName="selected_field"
+                  ></pi-select>
+                </pi-form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- <div class="col-sm-4"></div> -->
+    </div>
+
+    <div class="btn-actions box">
+      <div class="btn-inner-sec">
+        <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+        <button pi-button color="accent" (click)="save(importSkuForm)">
+          Import
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay-msgs" *ngIf="progress || success">
+    <div *ngIf="progress && !success">
+      <img src="{{ progressImg }}" alt="image.png" />
+      <p>Importing Items Please Wait</p>
+    </div>
+    <div *ngIf="success && !progress">
+      <img src="{{ successImg }}" alt="image.png" />
+      <p>Items Imported Successfully</p>
+    </div>
+  </div>
+</div>

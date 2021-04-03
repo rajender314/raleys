@@ -1,0 +1,17 @@
+body {
+  &.raleys {
+    //new raleys styles go here
+    .app-header {
+      .primary-nav-container {
+        .app-primary-nav {
+          .nav-data {
+            .logo-text {
+              margin: 5px 0 0 15px;
+              width: auto;
+            }
+          }
+        }
+      }
+    }
+  }
+}

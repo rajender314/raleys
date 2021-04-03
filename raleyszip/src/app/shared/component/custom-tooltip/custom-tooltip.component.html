@@ -1,0 +1,8 @@
+<div class="custom-tooltip">
+  <div *ngIf="imageViewer"><img [src]="params.value" alt="" /></div>
+  <div *ngIf="imageViewer === false">{{ params.value }}</div>
+  <div *ngIf="noData">
+    Add {{ (fieldName === 'icon_path' ? 'icons' : fieldName) | lowercase }}
+  </div>
+  <div *ngIf="noData === false">No Preview.</div>
+</div>

@@ -1,0 +1,15 @@
+.comming-soon {
+  position: absolute;
+  top: 37%;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+  font-size: 28px;
+  button {
+    line-height: 41px;
+    height: 42px;
+  }
+}

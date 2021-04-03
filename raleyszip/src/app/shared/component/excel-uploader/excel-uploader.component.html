@@ -1,0 +1,231 @@
+<div class="file-area">
+  <div *ngIf="!progress && !fileImporting">
+    <div class="file">
+      <div
+        ng2FileDrop
+        [ngClass]="{ 'file-over': hasDropZoneOver }"
+        [uploader]="uploader"
+        class="file-drop-zone"
+        (fileOver)="fileOverBase($event)"
+        (onFileDrop)="fileDrop($event)"
+      >
+        <div class="images-dropzone">
+          <img src="{{ importImg }}" alt="no_image.png" />
+        </div>
+
+        <div class="info-label">
+          <p class="drag-drop-text">
+            Drag and drop your files anywhere here or
+          </p>
+          <input
+            id="{{ this.importdata.id ? this.importdata.id : 'edit-org-logo' }}"
+            type="file"
+            #activeFrameInputFile
+            ng2FileSelect
+            [uploader]="uploader"
+            [hidden]="true"
+          />
+          <div
+            class="flex-row"
+            [ngClass]="{ 'rev-row': fileData?.original_name }"
+          >
+            <label
+              for="{{
+                this.importdata.id ? this.importdata.id : 'edit-org-logo'
+              }}"
+            >
+              <a class="browse-file">{{
+                fileData?.original_name ? 'Upload New File' : 'Browse File'
+              }}</a>
+            </label>
+            <button
+              pi-button
+              (click)="crushImp()"
+              color="accent"
+              *ngIf="
+                fromComp === 'comp-files' &&
+                importdata.id === 'edit-org-logo' &&
+                !impSucces &&
+                fileData?.original_name
+              "
+              [disabled]="uploadError || sizeError || disCrush || impSucces"
+            >
+              <span *ngIf="impSucces || (!impSucces && !prog1)">Import</span>
+              <span *ngIf="!impSucces && prog1">Importing ...</span>
+            </button>
+            <button
+              pi-button
+              (click)="crushDwnld()"
+              color="accent"
+              *ngIf="
+                fromComp === 'comp-files' &&
+                importdata.id === 'edit-org-logo' &&
+                impSucces &&
+                fileData?.original_name
+              "
+              [disabled]="uploadError || sizeError || !impSucces"
+            >
+              <span *ngIf="!impSucces || (impSucces && !prog1)">Download</span>
+              <span *ngIf="impSucces && prog1">Downloading ...</span>
+            </button>
+            <button
+              pi-button
+              (click)="crushImp()"
+              color="accent"
+              *ngIf="
+                fromComp === 'comp-files' &&
+                importdata.id === 'edit-org-logo1' &&
+                !impSucces1 &&
+                fileData?.original_name
+              "
+              [disabled]="uploadError || sizeError || disCrush || impSucces1"
+            >
+              <span *ngIf="impSucces1 || (!impSucces1 && !prog2)">Import</span>
+              <span *ngIf="!impSucces1 && prog2">Importing ...</span>
+            </button>
+            <button
+              pi-button
+              (click)="crushDwnld()"
+              *ngIf="
+                fromComp === 'comp-files' &&
+                importdata.id === 'edit-org-logo1' &&
+                impSucces1 &&
+                fileData?.original_name
+              "
+              color="accent"
+              [disabled]="uploadError || sizeError || !impSucces1"
+            >
+              <span *ngIf="!impSucces1 || (impSucces1 && !prog2)"
+                >Download</span
+              >
+              <span *ngIf="impSucces1 && prog2">Downloading ...</span>
+            </button>
+          </div>
+          <div class="primary-color file-name">
+            {{ fileData?.original_name }}
+          </div>
+
+          <p class="size">
+            Maximum File Size 150 MB,
+            {{
+              this.importdata.format === 'csv'
+                ? "Accepts csv / txt file with ' | ' delimiter only."
+                : this.importdata.format
+            }}
+            <span *ngIf="this.importdata.format != 'csv'"
+              >File Format Only
+            </span>
+            <a
+              *ngIf="fromComp != 'comp-files' && fromComp != 'comp-file'"
+              class="primary-color"
+              href="{{ importdata.samplePath }}"
+              >Download Sample</a
+            >
+            <!-- <a *ngIf="fromComp === 'comp-files'" class="primary-color" (click)="crushImp()">Import</a>
+            <a *ngIf="fromComp === 'comp-files'" class="primary-color" (click)="crushDwnld()">Downlaod</a> -->
+          </p>
+        </div>
+      </div>
+      <div
+        class="flex-row  success-msgs"
+        *ngIf="
+          fromComp === 'comp-files' &&
+          importdata.id === 'edit-org-logo' &&
+          fileData?.original_name &&
+          !uploadError &&
+          !sizeError &&
+          !onlyHeadersError &&
+          !impSucces
+        "
+      >
+        <mat-icon>check_circle</mat-icon>
+        Uploaded
+      </div>
+      <div
+        class="flex-row  success-msgs"
+        *ngIf="
+          fromComp === 'comp-files' &&
+          importdata.id === 'edit-org-logo' &&
+          fileData?.original_name &&
+          !uploadError &&
+          !sizeError &&
+          !onlyHeadersError &&
+          impSucces
+        "
+      >
+        <mat-icon>check_circle</mat-icon>
+        No Errors Found
+      </div>
+      <div
+        class="flex-row  success-msgs"
+        *ngIf="
+          fromComp === 'comp-files' &&
+          importdata.id === 'edit-org-logo1' &&
+          fileData?.original_name &&
+          !uploadError &&
+          !sizeError &&
+          !onlyHeadersError &&
+          !impSucces1
+        "
+      >
+        <mat-icon>check_circle</mat-icon>
+        Uploaded
+      </div>
+      <div
+        class="flex-row  success-msgs"
+        *ngIf="
+          fromComp === 'comp-files' &&
+          importdata.id === 'edit-org-logo1' &&
+          fileData?.original_name &&
+          !uploadError &&
+          !sizeError &&
+          !onlyHeadersError &&
+          impSucces1
+        "
+      >
+        <mat-icon>check_circle</mat-icon>
+        No Errors Found
+      </div>
+      <!-- <div> No Errors Found</div> -->
+    </div>
+    <div class="info">
+      <p class="invalid-error text-capital" *ngIf="uploadError">
+        Invalid file format.
+      </p>
+      <p class="invalid-error text-capital" *ngIf="sizeError">
+        Maximum file size(150 Mb) exceeded
+      </p>
+      <p class="invalid-error text-capital" *ngIf="onlyHeadersError">
+        {{ onlyHeadersErrorMsg }}
+      </p>
+      <div class="invalid-error text-capital" *ngIf="fileMatch != ''">
+        {{ fileMatch }}
+      </div>
+    </div>
+    <div
+      class="import-btn"
+      *ngIf="
+        fromComp != 'Items' &&
+        fromComp != 'comp-files' &&
+        fromComp != 'comp-file'
+      "
+    >
+      <button
+        pi-button
+        color="accent"
+        (click)="import()"
+        [disabled]="state.disableSave || uploadError || sizeError"
+      >
+        Import {{ this.importdata.title }}
+      </button>
+    </div>
+  </div>
+  <div class="loader" *ngIf="progress"></div>
+  <div *ngIf="progress" class="no-data-grid loader-text">
+    Importing Items, please wait...
+  </div>
+  <div class="loader" *ngIf="fileImporting"></div>
+  <div *ngIf="fileImporting" class="no-data-grid loader-text">
+    Attaching file, please wait ...
+  </div>
+</div>

@@ -1,0 +1,206 @@
+<div
+  class="grid-header"
+  *ngIf="layout.header"
+  [ngStyle]="{ 'height.px': layout.header, background: layout.bgColor }"
+>
+  <div class="title" *ngIf="layout.title" [ngStyle]="{ color: layout.color }">
+    {{ layout.title || ' ' }}
+  </div>
+  <div class="spacer"></div>
+  <button pi-icon-button (click)="deleteLayout(layout)">
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button
+    pi-icon-button
+    (click)="$event.stopPropagation(); togglePopup(layout)"
+  >
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <div
+    class="block-info"
+    (click)="$event.stopPropagation()"
+    *ngIf="staticBlockInfoPopup === layout"
+  >
+    <pi-form-field label="Title">
+      <input type="text" pi-input [(ngModel)]="layout.tempTitle" />
+    </pi-form-field>
+    <pi-form-field label="Background">
+      <div class="colors">
+        <div
+          class="item"
+          [style.background]="color"
+          (click)="selectBgColor(layout, color)"
+          *ngFor="let color of backgroundColors"
+        >
+          <em class="material-icons" *ngIf="color === layout.tempBgColor"
+            >done</em
+          >
+        </div>
+      </div>
+    </pi-form-field>
+    <pi-form-field label="Color">
+      <div class="colors">
+        <div
+          class="item"
+          [style.background]="color"
+          (click)="selectColor(layout, color)"
+          *ngFor="let color of backgroundColors"
+        >
+          <em class="material-icons" *ngIf="color === layout.txtColor">done</em>
+        </div>
+      </div>
+    </pi-form-field>
+    <div class="footer">
+      <button pi-button (click)="togglePopup(layout)">Cancel</button>
+      <button pi-button color="primary" (click)="saveBlockInfo(layout)">
+        Apply
+      </button>
+    </div>
+  </div>
+</div>
+<div
+  class="grid-layout"
+  [ngStyle]="{
+    'width.px': layout.width,
+    'height.px': layout.height - layout.header
+  }"
+>
+  <div class="placeholder">
+    <div
+      class="block"
+      *ngFor="let block of layout.placeholderBlocks"
+      [ngStyle]="{
+        'width.px': layout.blockWidth,
+        'height.px': layout.blockHeight
+      }"
+    ></div>
+  </div>
+  <div
+    class="canvas"
+    (mousedown)="startMove($event, 'create')"
+    (touchstart)="startMove($event, 'create')"
+  ></div>
+  <div
+    class="drag-box"
+    *ngIf="moveObject.active && moveObject.type === 'create'"
+    [ngStyle]="{
+      'left.px': moveObject.x1,
+      'top.px': moveObject.y1,
+      'width.px': moveObject.width,
+      'height.px': moveObject.height
+    }"
+  ></div>
+  <div class="container">
+    <div
+      class="block"
+      *ngFor="let block of layout.blocks"
+      [ngStyle]="{
+        'left.px': block.left * layout.blockWidth,
+        'top.px': block.top * layout.blockHeight,
+        'width.px': block.cols * layout.blockWidth,
+        'height.px': block.rows * layout.blockHeight
+      }"
+    >
+      <div
+        class="inner-block"
+        *ngIf="block.type === 'block'"
+        (click)="openPromos(block)"
+      >
+        <div class="header">
+          <div
+            class="title"
+            *ngIf="block.title"
+            [ngStyle]="{ color: block.color, background: block.bgColor }"
+          >
+            {{ block.title || ' ' }}
+          </div>
+          <div class="spacer"></div>
+          <button pi-icon-button (click)="deleteBlock(block)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button
+            pi-icon-button
+            (click)="$event.stopPropagation(); togglePopup(block)"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+        <div
+          class="block-info"
+          (click)="$event.stopPropagation()"
+          *ngIf="staticBlockInfoPopup === block"
+        >
+          <pi-form-field label="Title">
+            <input type="text" pi-input [(ngModel)]="block.tempTitle" />
+          </pi-form-field>
+          <pi-form-field label="Mod Sequence ID">
+            <input type="text" pi-input [(ngModel)]="block.tempSequenceId" />
+          </pi-form-field>
+          <pi-form-field label="Background">
+            <div class="colors">
+              <div
+                class="item"
+                [style.background]="color"
+                (click)="selectBgColor(block, color)"
+                *ngFor="let color of backgroundColors"
+              >
+                <em class="material-icons" *ngIf="color === block.tempBgColor"
+                  >done</em
+                >
+              </div>
+            </div>
+          </pi-form-field>
+          <pi-form-field label="Color">
+            <div class="colors">
+              <div
+                class="item"
+                [style.background]="color"
+                (click)="selectColor(block, color)"
+                *ngFor="let color of backgroundColors"
+              >
+                <em class="material-icons" *ngIf="color === block.txtColor"
+                  >done</em
+                >
+              </div>
+            </div>
+          </pi-form-field>
+          <div class="footer">
+            <button pi-button (click)="togglePopup(block)">Cancel</button>
+            <button pi-button color="primary" (click)="saveBlockInfo(block)">
+              Apply
+            </button>
+          </div>
+        </div>
+        <div class="block-data" *ngIf="block.sequenceId">
+          <div class="product-info">
+            <div
+              class="img"
+              [ngStyle]="{
+                'background-image': 'url(' + block.icons + ')'
+              }"
+            ></div>
+            <div class="price-info">
+              <div class="price">${{ block.price }}</div>
+              <div class="price-desc">{{ block.price_fct }}</div>
+            </div>
+          </div>
+          <div class="title" [matTooltip]="block.headline">
+            {{ block.headline }}
+          </div>
+          <div class="brand" [matTooltip]="block.brand">{{ block.brand }}</div>
+          <div class="desc" [matTooltip]="block.bodycopy">
+            {{ block.bodycopy }}
+          </div>
+        </div>
+      </div>
+      <app-grid-layout-designer
+        [layout]="block"
+        (onCreate)="onCreateBlock($event)"
+        (onDeleteLayout)="deleteBlock($event)"
+        (onDeleteBlock)="deleteBlock($event)"
+        *ngIf="block.type === 'layout'"
+      >
+      </app-grid-layout-designer>
+    </div>
+  </div>
+</div>

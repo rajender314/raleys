@@ -1,0 +1,69 @@
+<mat-sidenav-container class="campaigns-container">
+  <mat-sidenav-content>
+    <div class="campaigns-section">
+      <div class="section-header">
+        <em class="pixel-icons icon-events"></em>
+        <h2 class="heading">Events</h2>
+        <div class="nav-sec">
+          <div class="search-sec">
+            <app-search
+              [search]="search"
+              (onSearch)="onSearch($event)"
+            ></app-search>
+          </div>
+        </div>
+      </div>
+      <div class="inner-section">
+        <ag-grid-angular
+          class="ag-theme-balham grid"
+          [rowData]="rowData"
+          [animateRows]="true"
+          rowHeight="38"
+          [enableSorting]="true"
+          [enableColResize]="true"
+          [columnDefs]="columnDefs"
+          domLayout="autoHeight"
+          (gridReady)="onGridReady($event)"
+          [sideBar]="true"
+        >
+        </ag-grid-angular>
+      </div>
+      <div class="footer" *ngIf="totalCount >= 20">
+        <div class="left-view">
+          <div class="total">
+            <label>total count:</label> <span>{{ totalCount }}</span>
+          </div>
+          <div>
+            <label>Active</label> <span>{{ rowData.length }}</span>
+          </div>
+          <div>
+            <label>Inactive</label> <span>{{ rowData.length }}</span>
+          </div>
+        </div>
+        <div class="custom-pagination-panel">
+          <em
+            class="pixel-icons icon-arrow-left"
+            (click)="loadMore('prev')"
+            [ngClass]="{ disabled: active[1] }"
+          ></em>
+          <div
+            class="pagination-items"
+            *ngFor="
+              let num of (numbers | slice: minLimit:maxLimit);
+              let i = index
+            "
+            (click)="loadMore(num)"
+            [ngClass]="{ active: active[num] }"
+          >
+            {{ num }}
+          </div>
+          <em
+            class="pixel-icons icon-arrow-right"
+            (click)="loadMore('next')"
+            [ngClass]="{ disabled: active[numbers.length] }"
+          ></em>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

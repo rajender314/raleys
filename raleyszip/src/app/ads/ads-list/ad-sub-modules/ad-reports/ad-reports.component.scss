@@ -1,0 +1,77 @@
+@import "../../../../../assets/styles/mixins";
+@import "../../../../../assets/styles/variable";
+.ad-reports-container {
+  margin: 10px auto 0;
+  max-width: 1200px;
+  padding: 0 20px;
+  height: calc(100vh - 140px);
+  overflow: auto;
+  .ad-report-card {
+    width: calc(100vw - 300px);
+    height: auto;
+    margin: 30px auto 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #dedede;
+    padding: 20px;
+    margin: 0px auto 0;
+    max-width: 950px;
+    h5 {
+      margin: 0;
+    }
+    .ad-reports-list {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 5px;
+      border-bottom: 1px solid #e3e4f2;
+      .ad-report-name {
+        @include semibold-font;
+        span {
+          @include regular-font;
+          &.ad-report-date {
+            @include medium-font;
+          }
+        }
+      }
+      .ad-report-action-btns {
+        display: flex;
+        align-items: center;
+        .view-btn {
+          margin-right: 15px;
+        }
+        .delete-btn {
+          margin-left: 15px;
+          cursor: pointer;
+        }
+      }
+      &:hover {
+        background-color: #ebecf0;
+        transition: 0.3s;
+      }
+    }
+  }
+}
+
+.section-header {
+  .header-adReports {
+    display: flex;
+    align-items: center;
+    // padding: 5px;
+    &.align-cntnt {
+      max-width: 950px;
+      margin: 0 auto;
+      width: calc(100vw - 300px);
+    }
+    .sub-heading {
+      font-size: 16px;
+    }
+  }
+}
+
+// .mat-spinner {
+//   // position: absolute;
+//   display: initial;
+//   right: 25px;
+//   top: 0px;
+// }

@@ -1,0 +1,190 @@
+@import "../../../../../assets/styles/variable";
+
+.ak-field-text[disabled] {
+  color: $header-color;
+}
+.ak-field-text[disabled] {
+  &:hover {
+    color: $header-color;
+  }
+}
+textarea {
+  width: 100%;
+}
+.second-header-section {
+  padding: 20px 0 10px;
+  border-bottom: 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: calc(100vw - 300px);
+  max-width: 950px;
+  margin: 0 auto;
+  justify-content: space-between;
+  .second-header {
+    display: flex;
+    align-items: center;
+    em {
+      color: $primary-font-color;
+    }
+    h3 {
+      padding: 0 0;
+      color: $primary-font-color;
+      font-size: 16px;
+    }
+  }
+  .ad-options {
+    font-family: "SF-Pro-Text-medium", Sans-Serif;
+    font-size: 14px;
+    cursor: pointer;
+    .icon-arrow-down-button {
+      margin-left: 1px;
+      padding: 5px;
+      min-width: unset;
+    }
+    .icon-arrow-down {
+      color: #505f79;
+      font-size: 16px;
+      width: unset;
+      height: unset;
+      margin-left: 1px;
+    }
+    .cursor-link {
+      font-family: "SF-Pro-Text-Medium", Sans-Serif;
+      color: #392489;
+      font-weight: 400;
+    }
+  }
+}
+
+.ad-details-container {
+  height: calc(100vh - 40px);
+  overflow: auto;
+  background: #fff;
+  padding: 0px 30px;
+  padding-bottom: 30px;
+  visibility: hidden;
+  // position: relative;
+  &.visible {
+    visibility: visible;
+  }
+  &.active {
+    height: calc(100vh - 100px);
+  }
+  .second-header-section {
+    max-width: 1200px;
+    border-bottom: 1px solid #f2f4f5;
+  }
+  .details-section-1 {
+    width: calc(100vw - 300px);
+    margin: 30px auto 0;
+    background-color: #fff;
+    // box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+    // border: 1px solid #dedede;
+    // padding: 10px 30px 30px;
+    // padding: 0px 7px;
+    padding-left: 7px;
+    margin: 0px auto 0;
+    max-width: 1200px;
+    .modal-container {
+      // overflow-y: hidden;
+    }
+    .adDetail-attributes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      .form-fields {
+        // width: calc(50% - 15px);
+        width: calc(33% - 20px);
+        &.full-width-field {
+          width: 100%;
+          .pi-form-field {
+            max-width: 100%;
+            .pi-select-input {
+              &.multi {
+                height: unset !important;
+                pi-icon {
+                  top: 16px;
+                }
+              }
+            }
+          }
+        }
+        &.half-width-field {
+          width: 66%;
+          .pi-form-field {
+            max-width: 100%;
+          }
+        }
+        .label-name,
+        .required {
+          // color: #606a7b;
+          color: $primary-font-color;
+          font-family: "SF-Pro-Text-Regular", Sans-Serif;
+        }
+        .divsions_list {
+          .pi-select-input {
+            // height: 66px !important;
+          }
+        }
+        .ak-field-textarea {
+          height: 66px !important;
+        }
+        .date-picker-field {
+          ngx-daterangepicker-material {
+            .md-drppicker {
+              .calendar {
+                @media screen and (max-width: 1789px) and (min-width: 1024px) {
+                  float: none;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .details-section {
+    width: calc(100vw - 300px);
+    margin: 30px auto 0;
+    background-color: #fff;
+    // box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+    // border: 1px solid #dedede;
+    padding: 0 30px 30px;
+    max-width: 1200px;
+    min-height: 400px;
+    position: relative;
+    padding: 0px 0px 0px 7px;
+    .ag-theme-balham .ag-status-bar {
+      border: none;
+    }
+  }
+}
+.pi-error {
+  &.error {
+    padding: 10px 0px 0 0;
+  }
+}
+.ad-detail-action {
+  display: block;
+  text-align: right;
+  line-height: inherit;
+  font-weight: 400;
+  padding: 10px 0;
+  font-size: 14px;
+  width: calc(100vw - 300px);
+  max-width: 1200px;
+  margin: 0 auto;
+  border-top: 1px solid #d7dbdd;
+}
+.ad-export {
+  em {
+    margin-left: -4px;
+    margin-right: 5px;
+  }
+}
+.divsions_list {
+  .pi-select-input {
+    max-height: 108px;
+  }
+}

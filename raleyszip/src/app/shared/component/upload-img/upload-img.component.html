@@ -1,0 +1,58 @@
+<div class="upload-container">
+  <div class="uplaod-content">
+    <div
+      ng2FileDrop
+      [ngClass]="{ 'file-over': hasDropZoneOver }"
+      [uploader]="uploader"
+      class="file-drop-zone disabled"
+      (fileOver)="fileOverBase($event)"
+      (onFileDrop)="fileDrop($event)"
+    >
+      <div
+        class="images-dropzone"
+        *ngIf="
+          data.image != '' && data.image != default_logo && data.image != null
+        "
+      >
+        <img [src]="data.image" alt="Logo" />
+      </div>
+      <div
+        class="delete-logo"
+        *ngIf="
+          data.image != '' && data.image != default_logo && data.image != null
+        "
+      >
+        <img src="{{ deleteLogo }}" alt="delete" (click)="remove()" />
+      </div>
+      <div
+        class="info-label"
+        *ngIf="
+          data.image == '' || data.image == default_logo || data.image == null
+        "
+      >
+        <mat-icon>account_circle</mat-icon>
+        <p>Drag and drop your image here</p>
+      </div>
+      <input
+        id="edit-org-logo"
+        type="file"
+        ng2FileSelect
+        [uploader]="uploader"
+        [hidden]="true"
+      />
+      <label for="edit-org-logo" class="browse-file">
+        <p>OR</p>
+        <a>Browse</a>
+      </label>
+    </div>
+  </div>
+  <div class="info">
+    <p class="invalid-error" *ngIf="uploadError">Invalid file format.</p>
+    <p class="invalid-error" *ngIf="sizeError">
+      Maximum file size(5Mb) exceeded.
+    </p>
+    <p>Valid file formats are jpg, jpeg, png <span>*</span>.</p>
+    <p>Max file size allowed is 5MB <span>*</span>.</p>
+    <p>Images will be resized to 48 X 48 px, keeping the aspect ratio.</p>
+  </div>
+</div>

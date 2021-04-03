@@ -1,0 +1,77 @@
+<div class="login-sec">
+  <div class="login-sec-bg"></div>
+  <div class="login-page">
+    <section
+      class="login-hdr"
+      [ngStyle]="{ 'background-image': 'url(' + backgroundImg + ')' }"
+    >
+      <img src="{{ image }}" />
+    </section>
+    <section class="login-container">
+      <div class="login-form">
+        <form [formGroup]="loginForm">
+          <div class="ak-field-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              formControlName="email"
+              class="form-control"
+              (input)="valuechange($event)"
+            />
+            <div
+              class="pi-error"
+              *ngIf="
+                loginForm.controls.email.hasError('required') &&
+                !loginForm.controls.email.pristine
+              "
+            >
+              Please Enter Email Address
+            </div>
+            <div
+              class="pi-error"
+              *ngIf="loginForm.controls.email.hasError('pattern')"
+            >
+              Please enter valid email address.
+            </div>
+          </div>
+
+          <div class="ak-field-group">
+            <label>Password</label>
+            <input
+              type="password"
+              formControlName="password"
+              class="form-control"
+              (input)="valuechange($event)"
+            />
+            <div
+              class="pi-error"
+              *ngIf="
+                loginForm.controls.password.hasError('required') &&
+                !loginForm.controls.password.pristine
+              "
+            >
+              Please Enter Password
+            </div>
+          </div>
+          <div class="pi-error error" *ngIf="error">{{ error }}</div>
+
+          <div class="form-actions">
+            <mat-checkbox
+              color="primary"
+              formControlName="remember"
+              class="example-margin"
+              >Remember Me</mat-checkbox
+            >
+            <span class="forgot-pwd" routerLink="/forgotPassword"
+              >Forgot Password?</span
+            >
+          </div>
+
+          <footer>
+            <button class="btn" (click)="submit(loginForm)">Sign In</button>
+          </footer>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>

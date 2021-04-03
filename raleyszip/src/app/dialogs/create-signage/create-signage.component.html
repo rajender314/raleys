@@ -1,0 +1,261 @@
+<div class="mat-dialog-heading">
+  <div class="left-header">
+    <em
+      class="pixel-icons icon-arrow-back cursor"
+      *ngIf="showBackBtn"
+      (click)="backToAds()"
+    ></em>
+    <h2
+      mat-dialog-title
+      *ngIf="fromComp != 'blank-ads' && data.promoFrom != 'promoSku'"
+    >
+      Create Signage
+    </h2>
+
+    <h2 mat-dialog-title *ngIf="data.promoFrom == 'promoSku'">Add Promotion</h2>
+
+    <h2 mat-dialog-title *ngIf="fromComp == 'blank-ads'">Add Promotion</h2>
+  </div>
+  <div class="search-sec" *ngIf="updateProg && showSkuSearch">
+    <app-search [search]="search" (onSearch)="onSearch($event)"></app-search>
+  </div>
+</div>
+
+<mat-dialog-content class="custom-mat-dialog-content">
+  <div
+    class="header-dropdown"
+    *ngIf="data.from == 'upc-search' && showPromoPage"
+  >
+    <pi-form-field class="page-select">
+      <pi-form-field class="department-select" label="Department">
+        <pi-select
+          [options]="deptList"
+          [(ngModel)]="selectedDepartment"
+          autocomplete="off"
+          multi="true"
+          placeholder="Select Dept."
+          [readonly]="readonlyMode"
+          [ngStyle]="{ cursor: readonlyMode ? 'not-allowed' : 'pointer' }"
+          (onChange)="onDeptChanged($event)"
+        >
+        </pi-select>
+      </pi-form-field>
+
+      <div class="structure-select">
+        <div>
+          <label>End Date</label>
+          <input
+            class="datepicker"
+            (click)="openCalendar(picker)"
+            placeholder="Select End Date"
+            [(ngModel)]="endDate1"
+            readonly="true"
+            (dateChange)="dateValueChange(endDate, $event)"
+            [matDatepicker]="picker"
+            pi-input
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+
+          <div
+            class="date-picker-icon-sec"
+            *ngIf="showDateImg"
+            (click)="openCalendar(picker)"
+          >
+            <div class="date-picker-icon"></div>
+            <span class="close-icon">
+              <img src="{{ image_url }}/calender-new@2x.svg" />
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="date-picker-icon-sec"
+          *ngIf="!showDateImg"
+          (click)="clearDate($event)"
+        >
+          <div class="date-picker-icon"></div>
+          <span class="close-icon"
+            ><em class="pixel-icons icon-close"></em
+          ></span>
+        </div>
+      </div>
+    </pi-form-field>
+    <pi-form-field class="page-select" *ngIf="!readonlyMode">
+      <pi-form-field class="department-select sign-size" label="8 Up">
+        <input
+          type="text"
+          pi-input
+          maxlength="9"
+          [(ngModel)]="qty_3x8"
+          (input)="valChangedQty($event, 'qty_3x8')"
+          [ngStyle]="{ cursor: readonlyMode ? 'not-allowed' : 'pointer' }"
+          onkeydown="if(event.key==='.'){event.preventDefault();}"
+        />
+      </pi-form-field>
+      <pi-form-field class="department-select sign-size" label="5.5x3.5">
+        <input
+          type="text"
+          pi-input
+          maxlength="9"
+          [(ngModel)]="qty_5x3_5"
+          (input)="valChangedQty($event, 'qty_5x3_5')"
+          [ngStyle]="{ cursor: readonlyMode ? 'not-allowed' : 'pointer' }"
+          onkeydown="if(event.key==='.'){event.preventDefault();}"
+        />
+      </pi-form-field>
+      <pi-form-field class="department-select sign-size" label="11x7">
+        <input
+          type="text"
+          pi-input
+          maxlength="9"
+          [(ngModel)]="qty_7x11"
+          (input)="valChangedQty($event, 'qty_7x11')"
+          [ngStyle]="{ cursor: readonlyMode ? 'not-allowed' : 'pointer' }"
+          onkeydown="if(event.key==='.'){event.preventDefault();}"
+        />
+      </pi-form-field>
+    </pi-form-field>
+  </div>
+
+  <ng-container *ngIf="data.promoFrom == 'promoSku'">
+    <div class="fields">
+      <div class="row with-2-col">
+        <div class="col">
+          <pi-form-field label="SKU No">
+            <input
+              type="text"
+              pi-input
+              [(ngModel)]="skuNo"
+              placeholder="Enter SKU No"
+              (input)="valChangedQty($event, 'sku_no')"
+              onkeydown="if(event.key==='.'){event.preventDefault();}"
+            />
+          </pi-form-field>
+        </div>
+        <!-- <div class="col">
+          <pi-form-field
+            label="Date"
+            class="structure-select"
+            *ngIf="showDateRange"
+          >
+            <div class="date-picker-field">
+              <input
+                readonly="true"
+                pi-input
+                ngxDaterangepickerMd
+                [dateLimit]="15"
+                [minDate]="minDateValid"
+                [maxDate]="maxDateValid"
+                [autoApply]="true"
+                class="form-control"
+                (datesUpdated)="dateValueChange2($event)"
+                placeholder="Select Start & End Dates"
+              />
+            </div>
+            <div class="date-picker-icon-sec">
+              <div class="date-picker-icon"></div>
+            </div>
+          </pi-form-field>
+        </div> -->
+      </div>
+    </div>
+  </ng-container>
+
+  <p *ngIf="rowData.length">
+    Please select
+    {{
+      btnText == 'Create Signage' || btnText == 'Add Promotion'
+        ? 'a Promotion'
+        : 'an Ad'
+    }}
+  </p>
+  <div class="create-signage-container">
+    <!-- <div class="no-data">
+        <div class="icon">
+          <img
+            alt="no-image.png"
+            src="http://localhost:8282/raleys/public/images/Stores.svg"
+          />
+        </div>
+        <p *ngIf="data.from == 'upc-search'">No Data Found</p>
+        <p *ngIf="data.from == 'ads-search'">No Data1 Found</p>
+        <p *ngIf="data.from == 'upc-search' && !this.selectedDepartment.length">
+          Please select Department
+        </p>
+  
+        <button class="ak-button ak-button__appearance-accent" color="accent">
+          Create
+        </button>
+      </div> -->
+    <ag-grid-angular
+      class="ag-theme-balham grid stores-grid lazy-load-grid  "
+      [ngClass]="{
+        'fade-in': gridVisibility,
+        showGrid: gridVisibility,
+        'no-pointer-events': !pointerEvents
+      }"
+      [animateRows]="true"
+      [enableSorting]="false"
+      [enableColResize]="true"
+      rowHeight="40"
+      (gridReady)="onGridReady($event)"
+      [rowModelType]="'infinite'"
+      [maxConcurrentDatasourceRequests]="1"
+      [cacheOverflowSize]="3"
+      [infiniteInitialRowCount]="0"
+      [cacheBlockSize]="30"
+      [maxBlocksInCache]="10"
+      [rowSelection]="rowSelection"
+      [rowMultiSelectWithClick]="true"
+      [suppressColumnVirtualisation]="true"
+      [suppressDragLeaveHidesColumns]="true"
+      (rowSelected)="onRowSelected($event)"
+    >
+    </ag-grid-angular>
+    <div
+      class="loader"
+      *ngIf="!noData && dataLoad && loadingMsg == 'Loading Please Wait...'"
+    ></div>
+    <div
+      class="loader-text no-data-grid"
+      *ngIf="!noData && dataLoad && loadingMsg == 'Loading Please Wait...'"
+    >
+      {{ loadingMsg }}
+    </div>
+    <div
+      class="no-data"
+      *ngIf="!noData && dataLoad && loadingMsg != 'Loading Please Wait...'"
+    >
+      <div class="icon"><em class="pixel-icons icon-signage"></em></div>
+      <p class="text-center">{{ loadingMsg }}</p>
+    </div>
+    <!-- <div class="loader-text no-data-grid" *ngIf="!noData && dataLoad">
+        {{ loadingMsg }}
+      </div> -->
+    <div class="no-data" *ngIf="noData && !dataLoad"><p>No Data Found</p></div>
+    <!-- <div class="loader-text no-data-grid" *ngIf="noData && !dataLoad">
+        No Data Found
+      </div> -->
+  </div>
+</mat-dialog-content>
+
+<div class="button-actions box mat-dialog-footer">
+  <!-- <button pi-button (click)="backToAds()" color="subtle" *ngIf="showBackBtn">
+    Back
+  </button> -->
+
+  <button pi-button (click)="close()" color="subtle">Cancel</button>
+  <button
+    pi-button
+    color="accent"
+    class="apply-btn"
+    [disabled]="disableBtn"
+    (click)="update()"
+  >
+    {{ btnText }}
+  </button>
+</div>

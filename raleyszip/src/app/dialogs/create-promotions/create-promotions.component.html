@@ -1,0 +1,105 @@
+<div class="mat-dialog-heading">
+  <div class="left-header">
+    <h2 mat-dialog-title>Create Signage</h2>
+    <!-- <div class="header-dropdown" *ngIf="data.from == 'upc-search'">
+      <pi-form-field class="page-select">
+        <pi-select
+          [options]="deptList"
+          [(ngModel)]="selectedDepartment"
+          autocomplete="off"
+          multi="true"
+          placeholder="Select Dept."
+          (onChange)="onDeptChanged($event)"
+        >
+        </pi-select>
+      </pi-form-field>
+    </div> -->
+  </div>
+  <!-- <div class="search-sec" *ngIf="updateProg">
+    <app-search [search]="search" (onSearch)="onSearch($event)"></app-search>
+  </div> -->
+</div>
+
+<mat-dialog-content class="custom-mat-dialog-content">
+  <div class="create-signage-container">
+    <!-- <div class="no-data">
+      <div class="icon">
+        <img
+          alt="no-image.png"
+          src="http://localhost:8282/raleys/public/images/Stores.svg"
+        />
+      </div>
+      <p *ngIf="data.from == 'upc-search'">No Data Found</p>
+      <p *ngIf="data.from == 'ads-search'">No Data1 Found</p>
+      <p *ngIf="data.from == 'upc-search' && !this.selectedDepartment.length">
+        Please select Department
+      </p>
+
+      <button class="ak-button ak-button__appearance-accent" color="accent">
+        Create
+      </button>
+    </div> -->
+    <ag-grid-angular
+      class="ag-theme-balham grid stores-grid lazy-load-grid  "
+      [ngClass]="{
+        'fade-in': gridVisibility,
+        showGrid: gridVisibility,
+        'no-pointer-events': !pointerEvents
+      }"
+      [animateRows]="true"
+      [enableSorting]="false"
+      [enableColResize]="true"
+      rowHeight="40"
+      (gridReady)="onGridReady($event)"
+      [rowModelType]="'infinite'"
+      [maxConcurrentDatasourceRequests]="1"
+      [cacheOverflowSize]="3"
+      [infiniteInitialRowCount]="0"
+      [cacheBlockSize]="30"
+      [maxBlocksInCache]="10"
+      [rowSelection]="rowSelection"
+      [rowMultiSelectWithClick]="true"
+      [suppressColumnVirtualisation]="true"
+      [suppressDragLeaveHidesColumns]="true"
+      (rowSelected)="onRowSelected($event)"
+    >
+    </ag-grid-angular>
+    <div
+      class="loader"
+      *ngIf="!noData && dataLoad && loadingMsg == 'Loading Please Wait...'"
+    ></div>
+    <div
+      class="loader-text no-data-grid"
+      *ngIf="!noData && dataLoad && loadingMsg == 'Loading Please Wait...'"
+    >
+      {{ loadingMsg }}
+    </div>
+    <div
+      class="no-data"
+      *ngIf="!noData && dataLoad && loadingMsg != 'Loading Please Wait...'"
+    >
+      <div class="icon"><em class="pixel-icons icon-signage"></em></div>
+      <p class="text-center">{{ loadingMsg }}</p>
+    </div>
+    <!-- <div class="loader-text no-data-grid" *ngIf="!noData && dataLoad">
+      {{ loadingMsg }}
+    </div> -->
+    <div class="no-data" *ngIf="noData && !dataLoad"><p>No Data Found</p></div>
+    <!-- <div class="loader-text no-data-grid" *ngIf="noData && !dataLoad">
+      No Data Found
+    </div> -->
+  </div>
+</mat-dialog-content>
+
+<div class="button-actions box mat-dialog-footer">
+  <button pi-button (click)="close()" color="subtle">Cancel</button>
+  <button
+    pi-button
+    color="accent"
+    class="apply-btn"
+    [disabled]="disableBtn"
+    (click)="update()"
+  >
+    {{ btnText }}
+  </button>
+</div>

@@ -1,0 +1,107 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>Create Blank Signage</h2>
+  <span (click)="close()"> <em class="pixel-icons icon-close"></em> </span>
+</div>
+
+<div class="mat-dialog-content">
+  <form [formGroup]="createAdForm" class="modal-container">
+    <!-- <h2 mat-dialog-title>Create Blank Signage</h2>
+    <div class="header-dropdown">
+      <pi-form-field class="page-select">
+        <pi-select
+          [options]="deptList"
+          [(ngModel)]="selectedDepartment"
+          autocomplete="off"
+          multi="true"
+          placeholder="Select Dept."
+          (onChange)="onDeptChanged($event)"
+        >
+        </pi-select>
+      </pi-form-field>
+    </div> -->
+
+    <div class="ad-form-attributes">
+      <div class="form-attributes">
+        <pi-form-field label="Department *">
+          <pi-select
+            [options]="deptList"
+            formControlName="dept_name"
+            (onChange)="changeDept($event)"
+          >
+          </pi-select>
+          <div class="error pi-error" *ngIf="0">Please Select Department</div>
+        </pi-form-field>
+      </div>
+      <div class="form-attributes">
+        <pi-form-field label="8 Up">
+          <input
+            type="text"
+            pi-input
+            formControlName="qty_3x8"
+            maxlength="9"
+            (input)="valChangedQty($event, 'qty_3x8')"
+            onkeydown="if(event.key==='.'){event.preventDefault();}"
+          />
+        </pi-form-field>
+      </div>
+
+      <div class="form-attributes">
+        <pi-form-field label="5.5x3.5">
+          <input
+            type="text"
+            pi-input
+            formControlName="qty_5x3_5"
+            maxlength="9"
+            (input)="valChangedQty($event, 'qty_5x3_5')"
+            onkeydown="if(event.key==='.'){event.preventDefault();}"
+          />
+        </pi-form-field>
+      </div>
+
+      <div class="form-attributes">
+        <pi-form-field label="11x7">
+          <input
+            type="text"
+            pi-input
+            formControlName="qty_7x11"
+            maxlength="9"
+            (input)="valChangedQty($event, 'qty_7x11')"
+            onkeydown="if(event.key==='.'){event.preventDefault();}"
+          />
+        </pi-form-field>
+      </div>
+
+      <!-- <pi-form-field label="Header">
+        <pi-select
+          [options]="headerCreativeArray"
+          formControlName="header_id"
+          (onChange)="change($event)"
+        >
+        </pi-select>
+      </pi-form-field> -->
+    </div>
+
+    <!-- <div class="search-sec" *ngIf="updateProg">
+    <app-search [search]="search" (onSearch)="onSearch($event)"></app-search>
+  </div> -->
+  </form>
+</div>
+
+<div class="mat-dialog-footer">
+  <div class="error-msg">
+    <!-- <div class="pi-error" *ngIf="errorMsg != ''">{{ errorMsg }}</div> -->
+  </div>
+
+  <div class="button-actions box">
+    <button pi-button (click)="close()" color="subtle">Cancel</button>
+
+    <button
+      pi-button
+      color="accent"
+      (click)="createBlankSignage(createAdForm)"
+      [disabled]="!enableSubBtn"
+    >
+      Create Blank Signage
+    </button>
+  </div>
+</div>

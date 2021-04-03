@@ -1,0 +1,293 @@
+<div class="flex manage-account" @rightAnimate>
+  <div class="manage-container">
+    <h2 class="text-left">Manage Account</h2>
+    <mat-tab-group #tabGroup (selectedTabChange)="tabChanged($event)">
+      <mat-tab label="Personal Details">
+        <form [formGroup]="userDetails" autocomplete="off">
+          <div class="personal-details flex">
+            <div class="profile-img">
+              <div class="img">
+                <label (click)="uploadLogo()" class="browse-file">
+                  <div class="image" *ngIf="state.cloud_path != ''">
+                    <img class="cursor" [src]="state.cloud_path" alt="Logo" />
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="user-fields text-left">
+              <pi-form-field>
+                <label class="label-name">First Name</label>
+                <span
+                  class="required"
+                  [ngClass]="{
+                    error: userDetails.controls.firstname.hasError('required')
+                  }"
+                >
+                  *</span
+                >
+                <input
+                  type="text"
+                  pi-input
+                  formControlName="firstname"
+                  (keyup)="onKey($event)"
+                />
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    userDetails.controls.firstname.hasError('required') &&
+                    submitted
+                  "
+                >
+                  Please enter First Name
+                </div>
+              </pi-form-field>
+
+              <pi-form-field>
+                <label class="label-name">Last Name</label>
+                <span
+                  class="required"
+                  [ngClass]="{
+                    error: userDetails.controls.lastname.hasError('required')
+                  }"
+                >
+                  *</span
+                >
+                <input
+                  type="text"
+                  pi-input
+                  formControlName="lastname"
+                  (keyup)="onKey($event)"
+                />
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    userDetails.controls.lastname.hasError('required') &&
+                    submitted
+                  "
+                >
+                  Please enter Last Name
+                </div>
+              </pi-form-field>
+
+              <pi-form-field>
+                <label class="label-name">Email ID</label>
+                <input type="email" pi-input formControlName="email" disabled />
+              </pi-form-field>
+              <pi-form-field>
+                <label class="label-name">Company</label>
+                <div class="pi-disabled">
+                  <pi-select
+                    [options]="companies"
+                    idKey="_id"
+                    formControlName="company"
+                  ></pi-select>
+                </div>
+              </pi-form-field>
+              <pi-form-field label="Designation">
+                <input
+                  type="text"
+                  pi-input
+                  formControlName="designation"
+                  (keyup)="onKey($event)"
+                />
+              </pi-form-field>
+              <div class="pi-error">{{ errorMsg }}</div>
+              <pi-form-field>
+                <button
+                  pi-button
+                  color="accent"
+                  [disabled]="userDisable"
+                  (click)="saveChanges(userDetails)"
+                >
+                  Save Changes
+                </button>
+              </pi-form-field>
+            </div>
+          </div>
+        </form>
+      </mat-tab>
+      <mat-tab label="Change Password">
+        <form [formGroup]="changePwd">
+          <div class="change-pwd">
+            <div class="user-fields text-left">
+              <pi-form-field>
+                <label class="label-name">Current Password</label>
+                <span
+                  class="required"
+                  [ngClass]="{
+                    error: changePwd.controls.current_password.hasError(
+                      'required'
+                    )
+                  }"
+                >
+                  *</span
+                >
+                <input
+                  type="password"
+                  pi-input
+                  formControlName="current_password"
+                />
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    changePwd.controls.current_password.hasError('required') &&
+                    submitted
+                  "
+                >
+                  Please enter Current Password
+                </div>
+                <div
+                  class="pi-error"
+                  *ngIf="changePwd.controls.current_password.value != ''"
+                >
+                  {{ errorMsg }}
+                </div>
+              </pi-form-field>
+              <pi-form-field>
+                <label class="label-name">New Password</label>
+                <span
+                  class="required"
+                  [ngClass]="{
+                    error: changePwd.controls.password.hasError('required')
+                  }"
+                >
+                  *</span
+                >
+                <input
+                  type="password"
+                  pi-input
+                  formControlName="password"
+                  maxlength="20"
+                />
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    changePwd.controls.password.hasError('required') &&
+                    submitted
+                  "
+                >
+                  Please enter New Password
+                </div>
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    changePwd.controls.password.hasError('pattern') && submitted
+                  "
+                >
+                  Please enter valid Password
+                </div>
+              </pi-form-field>
+              <pi-form-field>
+                <label class="label-name">Confirm Password</label>
+                <span
+                  class="required"
+                  [ngClass]="{
+                    error: changePwd.controls.confirm_password.hasError(
+                      'required'
+                    )
+                  }"
+                >
+                  *</span
+                >
+                <input
+                  type="password"
+                  pi-input
+                  formControlName="confirm_password"
+                />
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    changePwd.controls.confirm_password.hasError('required') &&
+                    !changePwd.controls['confirm_password'].value &&
+                    submitted
+                  "
+                >
+                  Please enter Confirm Password
+                </div>
+                <div
+                  class="pi-error"
+                  *ngIf="
+                    changePwd.controls['confirm_password'].value &&
+                    changePwd.hasError('mismatch') &&
+                    submitted
+                  "
+                >
+                  Confirm Password doesn't match with the New Password
+                </div>
+              </pi-form-field>
+              <pi-form-field>
+                <button
+                  pi-button
+                  color="accent"
+                  [disabled]="changePwd.pristine"
+                  (click)="savePwd(changePwd)"
+                >
+                  Change Password
+                </button>
+              </pi-form-field>
+            </div>
+            <div class="pwd-syntax text-left">
+              <h4>Password must be</h4>
+              <div>
+                <div
+                  class="flex check"
+                  [ngClass]="
+                    changePwd.controls['password'].value
+                      ? changePwd.controls['password'].errors?.maxlength ||
+                        changePwd.controls['password'].errors?.minlength
+                        ? 'text-danger'
+                        : 'text-success'
+                      : ''
+                  "
+                >
+                  <em class="material-icons">check_circle</em> Minimum 8-20
+                  characters
+                </div>
+                <div
+                  class="flex check"
+                  [ngClass]="
+                    changePwd.controls['password'].value
+                      ? changePwd.controls['password'].hasError(
+                          'hasCapitalCase'
+                        )
+                        ? 'text-danger'
+                        : 'text-success'
+                      : ''
+                  "
+                >
+                  <em class="material-icons">check_circle</em> At least 1
+                  uppercase character
+                </div>
+                <div
+                  class="flex check"
+                  [ngClass]="
+                    changePwd.controls['password'].value
+                      ? changePwd.controls['password'].hasError('hasSmallCase')
+                        ? 'text-danger'
+                        : 'text-success'
+                      : ''
+                  "
+                >
+                  <em class="material-icons">check_circle</em> At least 1
+                  lowercase character
+                </div>
+                <div
+                  class="flex check"
+                  [ngClass]="
+                    changePwd.controls['password'].value
+                      ? changePwd.controls['password'].hasError('hasNumber')
+                        ? 'text-danger'
+                        : 'text-success'
+                      : ''
+                  "
+                >
+                  <em class="material-icons">check_circle</em> At least 1 number
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

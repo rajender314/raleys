@@ -1,0 +1,263 @@
+<mat-sidenav-content>
+  <div class="settings-section formula-section configuaration form_builder">
+    <div class="inner-section">
+      <div class="config-labels">
+        <div class="left-sec">
+          <div class="heading">
+            <div class="flex-end">
+              <h2 class="config-heading">Formula Builder</h2>
+            </div>
+            <app-search
+              [search]="search"
+              #searchingBox
+              [class.invisible]="
+                !rowData.length && searchingBox.searchOpts.value == ''
+              "
+              (onSearch)="onSearch($event)"
+            >
+            </app-search>
+          </div>
+          <div class="inner-detail-list">
+            <ng-container *ngIf="rowData.length">
+              <mat-list>
+                <div *ngFor="let list of rowData">
+                  <mat-list-item
+                    (click)="getSelectedFormulaBuilder(list)"
+                    [ngClass]="{
+                      active: list.id === selectedFormulaBuilderLabels.id
+                    }"
+                  >
+                    <div>{{ list.name }}</div>
+                    <div style="color: #838383;">
+                      {{ list.assigned_category_name }}
+                    </div>
+                  </mat-list-item>
+                </div>
+              </mat-list>
+            </ng-container>
+            <div class="no-data" *ngIf="!rowData.length && !showSpinner">
+              <p>Data Not Found</p>
+            </div>
+          </div>
+        </div>
+        <div class="right-sec">
+          <ng-container *ngIf="!showSpinner && rowData.length">
+            <div class="right-sec-content">
+              <h2 class="heading config-heading">
+                {{ selectedFormulaBuilderLabels?.name }}
+              </h2>
+              <div class="right-label-sec">
+                <div class="formula-builder-content">
+                  <div class="formula-builder-container">
+                    <div class="fbWrapper">
+                      <div class="operation-section">
+                        <form [formGroup]="formulaBuilderForm">
+                          <div class="input-boxes">
+                            <div class="basic-operand-container">
+                              <div
+                                *ngFor="
+                                  let field of basicOperands;
+                                  let i = index
+                                "
+                                class="operator-sec"
+                              >
+                                <div class="operator-inner-sec">
+                                  <div formArrayName="dynamicFields">
+                                    <pi-form-field
+                                      class="input-field"
+                                      [formGroupName]="i"
+                                    >
+                                      <!-- specType content -->
+                                      <!-- <label
+                                                          class="label-name"
+                                                          *ngIf="
+                                                            field.specType === 'specType' &&
+                                                            field.type === 'operand'
+                                                          "
+                                                        >
+                                                          {{ field.specType | titlecase }}
+                                                        </label> -->
+                                      <!-- <pi-select
+                                                          *ngIf="
+                                                            field.specType === 'specType' &&
+                                                            field.type === 'operand'
+                                                          "
+                                                          [options]="filteredSpecList"
+                                                          nameKey="type"
+                                                          idKey="id"
+                                                          formControlName="{{ field.specType }}"
+                                                          [disabled]="true"
+                                                        >
+                                                        </pi-select> -->
+                                      <!-- <pi-select *ngIf="
+                                                            field.specType === 'specType' &&
+                                                            field.type === 'operator'
+                                                          " [options]="basicOpertors" nameKey="name" idKey="id"
+                                                          formControlName="{{ field.specType }}" [disabled]="true">
+                                                        </pi-select> -->
+                                      <!-- specType content -->
+
+                                      <label class="label-name">
+                                        {{ field.label | titlecase }}
+                                      </label>
+                                      <span
+                                        class="required"
+                                        [ngClass]="{
+                                          error: formulaBuilderForm.controls.dynamicFields.controls[
+                                            i
+                                          ].controls[field.label].hasError(
+                                            'required'
+                                          )
+                                        }"
+                                      >
+                                        *</span
+                                      >
+                                      <pi-select
+                                        *ngIf="field.type === 'operand'"
+                                        nameKey="label"
+                                        idKey="id"
+                                        [options]="filteredSpecList"
+                                        formControlName="{{ field.label }}"
+                                        (onChange)="onChanges($event)"
+                                      >
+                                      </pi-select>
+
+                                      <pi-select
+                                        *ngIf="field.type === 'operator'"
+                                        (onChange)="onChanges($event)"
+                                        [options]="basicOpertors"
+                                        formControlName="{{ field.label }}"
+                                      >
+                                      </pi-select>
+
+                                      <div
+                                        class="pi-error"
+                                        *ngIf="
+                                          formulaBuilderForm.controls.dynamicFields.controls[
+                                            i
+                                          ].controls[field.label].hasError(
+                                            'required'
+                                          ) &&
+                                          submitted &&
+                                          field.type === 'operand'
+                                        "
+                                      >
+                                        Please select Operand
+                                      </div>
+                                      <div
+                                        class="pi-error"
+                                        *ngIf="
+                                          formulaBuilderForm.controls.dynamicFields.controls[
+                                            i
+                                          ].controls[field.label].hasError(
+                                            'required'
+                                          ) &&
+                                          submitted &&
+                                          field.type === 'operator'
+                                        "
+                                      >
+                                        Please select Operator
+                                      </div>
+                                    </pi-form-field>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="result-section">
+                              <pi-form-field label="Result">
+                                <pi-select
+                                  nameKey="label"
+                                  idKey="id"
+                                  [options]="filteredSpecList"
+                                  (onChange)="onChanges($event)"
+                                  formControlName="result"
+                                >
+                                </pi-select>
+                                <div
+                                  class="pi-error"
+                                  *ngIf="
+                                    formulaBuilderForm.controls.result.hasError(
+                                      'required'
+                                    ) && submitted
+                                  "
+                                >
+                                  Please select Result
+                                </div>
+                              </pi-form-field>
+                            </div>
+                          </div>
+                        </form>
+                        <!-- specType content -->
+                        <!-- <label class="label-name">
+                                            {{ 'specType' | titlecase }}</label
+                                          >
+                                          <pi-select
+                                            [options]="filteredSpecList"
+                                            nameKey="type"
+                                            idKey="id"
+                                            [formControl]="resultSpecType"
+                                            [disabled]="true"
+                                          >
+                                          </pi-select> -->
+                        <!-- specType content -->
+                      </div>
+                      <div class="actions-section">
+                        <div class="action-btns">
+                          <div class="box">
+                            <button pi-button (click)="addOperatorAndOpeand()">
+                              Add
+                            </button>
+                            <button
+                              pi-button
+                              (click)="subtractOperatorAndOpeand()"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                          <!-- <div class="box"><button pi-button>Result</button></div> -->
+                        </div>
+                        <!-- <div class="formula">
+                                            <p>Formula :</p>
+                                            <p *ngIf="mainFormula">( {{ mainFormula }} )</p>
+                                          </div> -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="formula-content" *ngIf="mainFormula">
+                    <div class="formula">
+                      <p class="content-header">Formula :</p>
+                      <p *ngIf="mainFormula" class="content-body">
+                        ( {{ mainFormula }} )
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="footer" *ngIf="!showSpinner && !hideActionButtons">
+                <button pi-button color="subtle" (click)="hideActionBtns()">
+                  Cancel
+                </button>
+                <button
+                  pi-button
+                  color="accent"
+                  [disabled]="submitted && formValid"
+                  (click)="saveFormulaBuilder(formulaBuilderForm)"
+                >
+                  {{ submitted && formValid ? 'Saving...' : 'Save' }}
+                </button>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!rowData.length">
+            <div class="no-data"><p>Data Not Found</p></div>
+          </ng-container>
+          <div class="loader" *ngIf="showSpinner"></div>
+          <div class="loader-text no-data-grid" *ngIf="showSpinner">
+            Loading, please wait...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-sidenav-content>

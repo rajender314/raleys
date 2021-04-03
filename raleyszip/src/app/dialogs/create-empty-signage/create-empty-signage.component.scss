@@ -1,0 +1,29 @@
+.ad-form-attributes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .form-attributes {
+    width: calc(50% - 15px);
+    .pi-select-input {
+      &.single {
+        min-height: 36px !important;
+      }
+    }
+    &.full-width-field {
+      width: 100%;
+      .pi-form-field {
+        max-width: 100%;
+        .pi-select-input {
+          &.multi {
+            pi-icon {
+              top: 16px;
+            }
+          }
+        }
+      }
+    }
+    textarea {
+      resize: none;
+    }
+  }
+}

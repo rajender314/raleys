@@ -1,0 +1,113 @@
+<div class="ad-modules">
+  <div class="top-header">
+    <div class="left-content">
+      <a href="#/vehicles" class="icon-back">
+        <em class="pixel-icons icon-arrow-back"></em>
+      </a>
+      <div class="title">
+        <em
+          class="pixel-icons {{
+            appService.adDetails['channel_icon']
+              ? appService.adDetails['channel_icon']
+              : 'icon-custom-ad'
+          }}"
+        ></em>
+        <h2 class="heading" id="header-content" *ngIf="adDetails">
+          {{ appService.adDetails ? appService.adDetails.vehicle : '' }} Week
+          #{{ appService.adDetails ? appService.adDetails.week_no : '' }}
+        </h2>
+        <span
+          class="adStatus"
+          [ngStyle]="{
+            background: appService.adDetails.status.background,
+            color: appService.adDetails.status.color
+          }"
+          *ngIf="adDetails"
+          >{{
+            appService.adDetails ? appService.adDetails.status.code : ''
+          }}</span
+        >
+      </div>
+    </div>
+    <div class="right-content">
+      <div class="prog-error" *ngIf="adsService.isImportProgess">
+        <p>{{ adsService.importProgStatus }}</p>
+        <mat-progress-bar
+          mode="determinate"
+          value="{{ adsService.importProgVal }}"
+          matTooltip="{{ adsService.importProgStatus }}"
+        ></mat-progress-bar>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="top-header" @topAnimate>
+    <a href="#/vehicles"> <em class="pixel-icons icon-arrow-back"></em> </a>
+    <div class="left-border"></div>
+    <span>
+      <div class="header-icon-sec">
+        <em
+          class="pixel-icons {{
+            appService.adDetails['channel_icon']
+              ? appService.adDetails['channel_icon']
+              : 'icon-custom-ad'
+          }}"
+        ></em>
+      </div>
+    </span>
+
+    <h2
+      class="heading"
+      *ngIf="adDetails"
+      id="header-content"
+      style="width:100%"
+    >
+      {{ appService.adDetails ? appService.adDetails.vehicle : '' }} Week#{{
+        adDetails ? appService.adDetails.week_no : ''
+      }}
+      <span
+        class="adStatus"
+        [ngStyle]="{
+          background: adDetails.status.background,
+          color: adDetails.status.color
+        }"
+        >{{ adDetails ? adDetails.status.code : '' }}</span
+      >
+    </h2>
+    <div
+      class="pi-error  prog-error"
+      style="width:100%"
+      *ngIf="adsService.isImportProgess"
+    >
+      <p style="text-align: end;">Edits are restricted.</p>
+      <mat-progress-bar
+        mode="determinate"
+        value="{{ adsService.importProgVal }}"
+        matTooltip="{{ adsService.importProgStatus }}"
+      ></mat-progress-bar>
+    </div>
+  </div> -->
+  <pi-master-detail-view
+    class="ads-view"
+    [ngClass]="{ 'ads-view': !adsService.hideHeader }"
+  >
+    <pi-master-view class="left-view" @rightAnimate>
+      <div class="left-header"></div>
+      <mat-list class="inner-detail-list">
+        <mat-list-item
+          *ngFor="let list of subheadersList"
+          routerLink="/vehicles/{{ routeUrl }}/{{ list.url }}"
+          routerLinkActive="active"
+        >
+          <div class="list">
+            <div><em class="{{ list.iconClass }}"></em></div>
+            <span class="mat-h3">{{ list.value }}</span>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </pi-master-view>
+
+    <pi-detail-view [ngClass]="{ importProg: adsService.isImportProgess }">
+      <router-outlet></router-outlet>
+    </pi-detail-view>
+  </pi-master-detail-view>
+</div>

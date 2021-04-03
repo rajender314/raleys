@@ -1,0 +1,113 @@
+<div *ngIf="userDetails">
+  <form [formGroup]="userDetailForm">
+    <div class="right-header">
+      <div class="info">
+        <div class="info-left">
+          <div fxLayout="column" class="image-upload">
+            <label (click)="uploadLogo()" class="browse-file">
+              <a
+                >{{
+                  state.selectedItem.logo == '' ||
+                  state.selectedItem.logo == default_logo
+                    ? 'Add'
+                    : 'Edit'
+                }}
+              </a>
+            </label>
+            <div class="image" *ngIf="state.selectedItem.logo != ''">
+              <img [src]="state.selectedItem.logo" alt="Logo" />
+            </div>
+          </div>
+          <div class="user-left-info">
+            <h3 class="text-capital">{{ userDetails?.fullname }}</h3>
+          </div>
+        </div>
+        <div class="reset_pwd primary-color" (click)="sendEmailConfirmation()">
+          <em
+            *ngIf="userDetails.password_set != 1"
+            class="material-icons envelope"
+            >email</em
+          >{{
+            userDetails.password_set == 1
+              ? 'Reset Password'
+              : 'Resend Activation Link'
+          }}
+        </div>
+      </div>
+    </div>
+
+    <div class="general-details">
+      <div class="detail-section" *ngFor="let group of state.contact_profile">
+        <div class="edit-section">
+          <div class="form-attributes" *ngFor="let field of group.section">
+            <pi-form-field class="input-field">
+              <label class="label-name">{{ field.label }}</label>
+              <span class="required" *ngIf="field.required"> *</span>
+              <div class="value" *ngIf="field.type == 'readonly'">
+                {{ field.value }}
+              </div>
+              <input
+                type="text"
+                *ngIf="field.type == 'text' || field.type == 'email'"
+                class="ak-field-text"
+                formControlName="{{ field.name }}"
+              />
+              <select
+                type="text"
+                class="ak-field-select user-type"
+                *ngIf="field.type == 'select' && field.name == 'user_types_id'"
+                formControlName="{{ field.name }}"
+                disabled
+              >
+                <ng-container *ngFor="let option of state[field.options]">
+                  <option [value]="option._id">{{ option.name }}</option>
+                </ng-container>
+              </select>
+              <select
+                type="text"
+                class="ak-field-select"
+                *ngIf="field.type == 'select' && field.name == 'company'"
+                formControlName="{{ field.name }}"
+              >
+                <ng-container *ngFor="let option of state[field.options]">
+                  <option [value]="option._id">{{ option.name }}</option>
+                </ng-container>
+              </select>
+
+              <div>
+                <mat-button-toggle-group
+                  *ngIf="field.type == 'button'"
+                  [disabled]="disableCheck"
+                  formControlName="{{ field.name }}"
+                >
+                  <mat-button-toggle value="true"> Active </mat-button-toggle>
+                  <mat-button-toggle value="false">
+                    Inactive
+                  </mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
+              <div
+                class="pi-error"
+                *ngIf="
+                  userDetailForm.controls[field.name].hasError('required') ||
+                  userDetailForm.controls[field.name].hasError('whitespace')
+                "
+              >
+                Please Enter {{ field.label }}
+              </div>
+              <div
+                class="pi-error"
+                *ngIf="
+                  !userDetailForm.controls[field.name].hasError('required') &&
+                  userDetailForm.controls[field.name].hasError('pattern')
+                "
+              >
+                Please Enter Valid Email
+              </div>
+            </pi-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

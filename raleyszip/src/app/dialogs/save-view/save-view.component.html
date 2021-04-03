@@ -1,0 +1,71 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>Save {{ type }}</h2>
+  <button
+    (click)="closeDialog()"
+    mat-icon-button
+    mat-dialog-close
+    tabindex="-1"
+  >
+    <em class="pixel-icons icon-close"></em>
+  </button>
+</div>
+<mat-dialog-content class="save-view-container">
+  <pi-field-group>
+    <pi-form-field [label]="UiMessages.inputPlaceholder">
+      <input
+        type="text"
+        pi-input
+        name="name"
+        [(ngModel)]="view_name"
+        (ngModelChange)="onViewNameChange($event)"
+      />
+    </pi-form-field>
+  </pi-field-group>
+
+  <pi-field-group *ngIf="type != 'Report'">
+    <pi-form-field
+      [label]="share_type.label"
+      *ngFor="let share_type of sharing_types"
+    >
+      <input
+        type="radio"
+        pi-input
+        name="shareType"
+        [(ngModel)]="shareType"
+        [value]="share_type.value"
+      />
+    </pi-form-field>
+  </pi-field-group>
+
+  <pi-field-group *ngIf="shareType === 2">
+    <pi-select
+      [label]="UiMessages.shareWith"
+      [options]="usersList"
+      name="shareWith"
+      [multi]="true"
+      [(ngModel)]="shared_users"
+      idKey="id"
+      nameKey="fullname"
+    ></pi-select>
+  </pi-field-group>
+</mat-dialog-content>
+
+<div class="mat-dialog-footer">
+  <div class="pi-error error-block">
+    <span *ngIf="errorMsg">{{ errorMessage }}</span>
+  </div>
+  <div class="btn-actions">
+    <button class="mat-button" pi-button color="subtle" (click)="closeDialog()">
+      Cancel
+    </button>
+    <button
+      pi-button
+      color="accent"
+      class="mat-raised-button"
+      [disabled]="!view_name || (shareType === 2 && !shared_users.length)"
+      (click)="saveViewFilters()"
+    >
+      {{ shareType === 3 ? 'Save Report' : 'Save & Share View' }}
+    </button>
+  </div>
+</div>

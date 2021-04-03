@@ -1,0 +1,76 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>{{ mode }} Stores</h2>
+  <span (click)="close()"> <em class="pixel-icons icon-close"></em> </span>
+</div>
+
+<mat-tab-group
+  [selectedIndex]="selectedTab"
+  (selectedTabChange)="test($event)"
+  *ngIf="adStoresInfo"
+>
+  <mat-tab
+    class="mat-tabs"
+    label="Selected Stores ({{ adStoresInfo.selected_stores }})"
+  ></mat-tab>
+  <mat-tab
+    class="mat-tabs"
+    label="UnSelected Stores  ({{ adStoresInfo.available_stores }})"
+  ></mat-tab>
+  <mat-tab
+    class="mat-tabs"
+    label="All Stores ({{ adStoresInfo.all_stores }})"
+  ></mat-tab>
+</mat-tab-group>
+<div class="stores-content">
+  <ag-grid-angular
+    *ngIf="rowData?.length"
+    class="ag-theme-balham grid stores-grid lazy-load-grid  "
+    [ngClass]="{
+      'fade-in': gridVisibility,
+      showGrid: gridVisibility,
+      'no-pointer-events': !pointerEvents
+    }"
+    [rowData]="rowData"
+    [animateRows]="true"
+    [enableSorting]="true"
+    [enableColResize]="true"
+    rowHeight="40"
+    [columnDefs]="columnDefs"
+    (gridReady)="onGridReady($event)"
+    [rowSelection]="'multiple'"
+    [rowMultiSelectWithClick]="true"
+    [suppressColumnVirtualisation]="true"
+    [suppressDragLeaveHidesColumns]="true"
+    (rowSelected)="onRowSelected($event)"
+  >
+  </ag-grid-angular>
+  <div class="no-data-grid" *ngIf="!rowData.length && !progress">
+    <p>No Stores Found</p>
+
+    <button
+      pi-button
+      color="accent"
+      (click)="changeTab()"
+      *ngIf="selectedTab == 0"
+    >
+      Add Stores
+    </button>
+  </div>
+  <div class="loader" *ngIf="dataLoad && !noData"></div>
+  <div class="loader-text no-data-grid" *ngIf="dataLoad && !noData">
+    Loading, please wait...
+  </div>
+</div>
+
+<div class="button-actions box mat-dialog-footer">
+  <button pi-button (click)="close()" color="subtle">Cancel</button>
+  <button
+    pi-button
+    color="accent"
+    [disabled]="disableUpdateBtn"
+    class="apply-btn"
+    (click)="update()"
+  >
+    {{ mode === 'Add' ? 'Add Stores' : 'Update Stores' }}
+  </button>
+</div>

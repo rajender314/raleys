@@ -1,0 +1,125 @@
+<pi-master-detail-view
+  size="sm"
+  [showDetail]="selectedPage"
+  *ngIf="totalData.length"
+>
+  <pi-master-view>
+    <div class="page-list" *ngIf="totalData.length">
+      <div
+        *ngFor="let data of totalData; let i = index"
+        [ngClass]="{ active: data.page == selectedBaseTitle }"
+        class="cursor page-item"
+      >
+        <div
+          class="base-title"
+          [ngClass]="{ active: data.page == selectedBaseTitle }"
+          (click)="dropdownTrigger(data)"
+        >
+          <em
+            class="pixel-icons arrow icon-arrow-right {{
+              data.show ? 'arrow-up' : 'icon-arrow-right'
+            }}"
+          ></em>
+          page {{ data.page }}
+        </div>
+        <div class="base-list" [class.invisible]="!data.show">
+          <div
+            *ngFor="let base of data.base"
+            [ngClass]="{
+              active:
+                data.page == selectedBaseTitle && base.value == selectedBase
+            }"
+            (click)="selectedVal(base, data)"
+            class="cursor base-item"
+          >
+            {{ base.value }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </pi-master-view>
+  <pi-detail-view>
+    <div class="page-designer" *ngIf="totalData.length">
+      <div class="toolbar">
+        <div
+          class="item cursor"
+          (click)="selectTool('block')"
+          [class.active]="selectedTool === 'block'"
+          title="Mod"
+        >
+          <em class="material-icons">picture_in_picture</em>
+        </div>
+        <div
+          class="item cursor"
+          (click)="selectTool('layout')"
+          [class.active]="selectedTool === 'layout'"
+          title="Mod Group"
+        >
+          <em class="material-icons">grid_on</em>
+        </div>
+        <div class="seperator"><em class="material-icons">more_horiz</em></div>
+        <div
+          class="item cursor"
+          (click)="$event.stopPropagation(); toggleInfo()"
+          [class.active]="showPageInfo"
+        >
+          <em class="material-icons">settings</em>
+          <div
+            class="info"
+            (click)="$event.stopPropagation()"
+            *ngIf="showPageInfo"
+          >
+            <pi-field-group>
+              <pi-form-field label="Rows">
+                <input
+                  type="text"
+                  pi-input
+                  value="{{ selectedPage.rows }}"
+                  readonly
+                />
+              </pi-form-field>
+              <span class="cross">x</span>
+              <pi-form-field label="Cols">
+                <input
+                  type="text"
+                  pi-input
+                  value="{{ selectedPage.cols }}"
+                  readonly
+                />
+              </pi-form-field>
+            </pi-field-group>
+            <pi-field-group label="Size">
+              <pi-form-field>
+                <input type="text" pi-input value="9" readonly />
+              </pi-form-field>
+              <span class="cross">x</span>
+              <pi-form-field>
+                <input type="text" pi-input value="21" readonly />
+              </pi-form-field>
+            </pi-field-group>
+          </div>
+        </div>
+      </div>
+      <div
+        @rightAnimate
+        class="page"
+        [ngStyle]="{
+          'width.px': selectedPage.width + 40,
+          'height.px': selectedPage.height + 600
+        }"
+        *ngIf="selectedPage"
+      >
+        <app-grid-layout-designer
+          [layout]="selectedPage"
+          [blockType]="selectedTool"
+          (onCreate)="onCreate($event)"
+          (onDeleteBlock)="deleteBlock($event)"
+        ></app-grid-layout-designer>
+      </div>
+    </div>
+  </pi-detail-view>
+</pi-master-detail-view>
+<div class="no-data-grid" *ngIf="!totalData.length && !progress">
+  <em class="pixel-icons icon-design"></em>
+  <p>Pages Not Found.</p>
+</div>

@@ -1,0 +1,61 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title [innerHtml]="data.title"></h2>
+  <!-- <button mat-icon-button mat-dialog-close tabindex="-1">
+    <em class="pixel-icons icon-close"></em>
+  </button> -->
+  <span (click)="closeDialog()">
+    <em class="pixel-icons icon-close"></em>
+  </span>
+</div>
+<mat-dialog-content>
+  <!-- nameKey -->
+  <form [formGroup]="filtersForm" class="form-flex" autocomplete="off">
+    <pi-form-field>
+      <label class="label-name">User Role</label>
+      <pi-select
+        [options]="data.userTypes"
+        idKey="_id"
+        formControlName="user_role"
+        [multi]="true"
+      ></pi-select>
+    </pi-form-field>
+    <pi-form-field>
+      <label class="label-name">Companies</label>
+      <pi-select
+        [options]="data.companies"
+        idKey="_id"
+        formControlName="company"
+        [multi]="true"
+      ></pi-select>
+    </pi-form-field>
+    <pi-form-field>
+      <label class="label-name">Status</label>
+      <pi-select
+        [options]="data.statusList"
+        formControlName="status"
+        [multi]="true"
+      ></pi-select>
+    </pi-form-field>
+  </form>
+</mat-dialog-content>
+
+<div class="mat-dialog-footer">
+  <div>
+    <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+    <button
+      pi-button
+      color="accent"
+      (click)="applyFilters(filtersForm)"
+      [disabled]="
+        filtersForm.pristine ||
+        !(
+          filtersForm.value.user_role.length ||
+          filtersForm.value.company.length ||
+          filtersForm.value.status.length
+        )
+      "
+    >
+      Apply
+    </button>
+  </div>
+</div>

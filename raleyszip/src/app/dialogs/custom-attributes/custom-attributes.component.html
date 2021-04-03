@@ -1,0 +1,189 @@
+<!-- <div class="mat-dialog-heading">
+  <h2 mat-dialog-title>
+    <div>
+      <span class="custom-attr-heading">
+        Custom Attributes
+      </span>
+    </div>
+  </h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <em class="pixel-icons icon-close"></em>
+  </button>
+</div> -->
+
+<!-- <div class="mat-dialog-heading">
+  <div class="closeModal">
+    <em class="pixel-icons icon-arrow-back cursor" (click)="close()"></em>
+  </div>
+</div> -->
+
+<div class="inner-section">
+  <div class="config-labels">
+    <div class="left-sec">
+      <div class="flex-end">
+        <div class="attr-header-sec">
+          <button mat-icon-button mat-dialog-close tabindex="-1">
+            <em class="pixel-icons icon-arrow-back"></em>
+          </button>
+          <!-- <em mat-dialog-closeclass="pixel-icons icon-arrow-back"></em> -->
+          <div class="left-border"></div>
+          <h2 class="custom-attr-heading">Custom Attributes</h2>
+        </div>
+        <div>
+          <em
+            class="pixel-icons icon-plus  c-pointer m-r10 addModal"
+            (click)="addCustomAttributes()"
+            title="Add Custom Attribute"
+          ></em>
+        </div>
+      </div>
+      <div class="heading">
+        <app-search
+          [search]="search"
+          [class.invisible]="noData && searchingBox.searchOpts.value == ''"
+          (onSearch)="onSearch($event)"
+          #searchingBox
+        ></app-search>
+      </div>
+      <mat-list class="inner-detail-list">
+        <div *ngFor="let list of rowData">
+          <mat-list-item
+            (click)="getSelectedAttr(list)"
+            [class.active]="
+              list.id === currentAttribute.id && !addingNewAttribute
+            "
+          >
+            <div>{{ list.label }}</div>
+          </mat-list-item>
+        </div>
+      </mat-list>
+      <div class="no-data-grid" *ngIf="!loading && noData">
+        <em class="pixel-icons icon-duplicate"></em>
+        <p>Data Not Found</p>
+      </div>
+      <div class="loader" *ngIf="loading && noData"></div>
+      <div class="loader-text no-data-grid" *ngIf="loading && noData">
+        Loading, please wait...
+      </div>
+    </div>
+    <div class="right-sec">
+      <div
+        class="heading-sec"
+        *ngIf="(!noData || addingNewAttribute) && !loading"
+      >
+        <h2 class="heading config-heading">
+          {{
+            addingNewAttribute == true
+              ? ' Add new attribute'
+              : currentAttributeName
+          }}
+        </h2>
+        <!-- <button mat-icon-button mat-dialog-close tabindex="-1">
+          <em class="pixel-icons icon-close"></em>
+        </button> -->
+      </div>
+      <div *ngIf="(!noData || addingNewAttribute) && !loading">
+        <div class="right-label-sec">
+          <form [formGroup]="customAttribsForm" class="form-flex">
+            <pi-form-field label="Label">
+              <input pi-input formControlName="label" />
+              <div
+                class="pi-error"
+                *ngIf="
+                  customAttribsForm.controls.label.hasError('required') &&
+                  submitted
+                "
+              >
+                Please Enter Label
+              </div>
+              <div
+                class="pi-error"
+                *ngIf="
+                  errorMsg &&
+                  (customAttribsForm.controls.label.value &&
+                    customAttribsForm.controls.label.value === labelName)
+                "
+              >
+                {{ errorMsg }}
+              </div>
+            </pi-form-field>
+
+            <pi-select
+              label="Type"
+              [options]="typesList"
+              formControlName="type"
+            ></pi-select>
+            <div
+              class="pi-error"
+              *ngIf="
+                customAttribsForm.controls.type.hasError('required') &&
+                submitted
+              "
+            >
+              Please Select Type
+            </div>
+            <pi-form-field label="Status">
+              <mat-button-toggle-group formControlName="status">
+                <mat-button-toggle [value]="one"> Active </mat-button-toggle>
+                <mat-button-toggle [value]="two">Inactive</mat-button-toggle>
+              </mat-button-toggle-group>
+            </pi-form-field>
+
+            <div class="checkbox-sec">
+              <pi-form-field label="Mandatory">
+                <input type="checkbox" pi-input formControlName="mandatory" />
+              </pi-form-field>
+              <pi-form-field label="Display in Grid">
+                <input
+                  type="checkbox"
+                  pi-input
+                  formControlName="display_grid"
+                />
+              </pi-form-field>
+            </div>
+
+            <div class="footer" *ngIf="!customAttribsForm.pristine">
+              <div class="btn-actions">
+                <div class="box">
+                  <button mat-button (click)="cancel()" class="cancel-btn">
+                    Cancel
+                  </button>
+                  <button
+                    pi-button
+                    color="accent"
+                    class="save-btn"
+                    [disabled]="customAttribsForm.pristine"
+                    (click)="saveAttribute(customAttribsForm)"
+                  >
+                    {{ updatingCustomAttrInfo === true ? 'Saving...' : 'Save' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div
+        class="no-data-grid"
+        *ngIf="!loading && noData && !addingNewAttribute"
+      >
+        <em class="pixel-icons icon-duplicate"></em>
+        <p>Data Not Found</p>
+
+        <button
+          pi-button
+          color="accent"
+          class="save-btn"
+          (click)="addCustomAttributes()"
+          *ngIf="searchingBox.searchOpts.value == ''"
+        >
+          Add New Attribute
+        </button>
+      </div>
+      <div class="loader" *ngIf="loading"></div>
+      <div class="loader-text no-data-grid" *ngIf="loading">
+        Loading, please wait...
+      </div>
+    </div>
+  </div>
+</div>

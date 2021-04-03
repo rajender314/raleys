@@ -1,0 +1,426 @@
+<mat-sidenav-container>
+  <mat-sidenav-content class="offer-import-dialog" @rightAnimate>
+    <div
+      class="settings-section sku "
+      *ngIf="!isNxtScreen && !isPreview && currentState === 'EXCEL'"
+    >
+      <div class="mat-dialog-heading">
+        <div class="section-inner-header">
+          <em (click)="close()" class="pixel-icons icon-arrow-back"></em>
+          <div class="left-border"></div>
+          <h2 class="heading mat-dialog-title">Import {{ impData.title }}</h2>
+        </div>
+      </div>
+      <div class="inner-section">
+        <div class="import-sku">
+          <!-- <app-excel-uploader
+            (importSuccess)="importSuccess($event)"
+            (importStarts)="importStarts($event)"
+            (fileUploadDone)="fileUploadDone($event)"
+            (fileUploadStart)="fileUploadStart($event)"
+            [importdata]="impData"
+          >
+          </app-excel-uploader> -->
+          <app-chunk-uploader
+            (fileUploadDone)="fileUploadDone($event)"
+            (fileUploadStart)="fileUploadStart($event)"
+            [importdata]="impData"
+          >
+          </app-chunk-uploader>
+        </div>
+        <div class="import-history-details">
+          <div class="import-history-heading">
+            <h2 class="heading">Import History</h2>
+            <!-- <span
+            class="primary-color"
+            (click)="seeTotalImportHistory('getUpcHistory', listData)"
+            >See All</span
+          > -->
+          </div>
+          <div class="import-history-body">
+            <div class="history-data" *ngFor="let data of itemsHistory">
+              <div class="left-sec">
+                <div class="user-img">
+                  <img src="{{ data.cloud_path }}" alt="image" />
+                </div>
+                {{ data.created_by }} Imported
+                <a
+                  [matTooltip]="data.original_filename"
+                  href="{{ data.cloud_download_path }}"
+                  class="primary-color"
+                  >{{ data.original_filename }}</a
+                >
+              </div>
+
+              <span>{{ data.gt_date_added }}</span>
+            </div>
+            <div class="no-history" *ngIf="!itemsHistory.length && !progress">
+              History Not Found
+            </div>
+          </div>
+        </div>
+        <div class="loader" *ngIf="!noData && progress"></div>
+        <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+          Loading, please wait...
+        </div>
+      </div>
+    </div>
+    <div
+      class="settings-section sku fullHeightDailog twoScroll"
+      *ngIf="!isNxtScreen && !isPreview && currentState === 'BOX'"
+    >
+      <div class="section-header mat-dialog-heading">
+        <div class="section-inner-header">
+          <em (click)="close()" class="pixel-icons icon-arrow-back"></em>
+          <div class="left-border"></div>
+          <h2 class="heading mat-dialog-title">Import Box Files</h2>
+        </div>
+      </div>
+      <div class="inner-section">
+        <div
+          class="box-files-list"
+          [ngClass]="{ 'alert-dialog': alreadyBoxImported }"
+        >
+          <!-- *ngIf="!alreadyBoxImported && !progressBox && !importing" -->
+          <pi-field-group
+            label="List of Box Files"
+            direction="column"
+            *ngIf="boxFiles.length && !importing"
+          >
+            <pi-form-field
+              label="{{ boxFile.name }}"
+              *ngFor="let boxFile of boxFiles"
+            >
+              <input
+                type="radio"
+                pi-input
+                name="boxFile"
+                (click)="boxFileSelection(boxFile)"
+              />
+            </pi-form-field>
+          </pi-field-group>
+
+          <div *ngIf="alreadyBoxImported && !progressBox && !importing">
+            <div [innerHTML]="alreadyBoxImportMessage"></div>
+            <h5>Do You Want to Continue</h5>
+          </div>
+          <div class="loading-msg" *ngIf="!boxFiles.length && noData">
+            No Box Files Found
+          </div>
+          <div
+            class="loader"
+            *ngIf="!noData && progressBox && fetchingBoxFiles"
+          ></div>
+          <div
+            *ngIf="!noData && progressBox && fetchingBoxFiles"
+            class="loading-msg"
+          >
+            Fetching files, Please wait ...
+          </div>
+
+          <div class="loader" *ngIf="importing && !fetchingBoxFiles"></div>
+          <div *ngIf="importing && !fetchingBoxFiles" class="loading-msg">
+            Fetching Items Please wait ...
+          </div>
+        </div>
+        <p class="invalid-error error text-capital" *ngIf="boxErrorMsg != ''">
+          {{ boxErrorMsg }}
+        </p>
+
+        <div
+          class="import-history-details"
+          *ngIf="boxFiles.length && !importing"
+        >
+          <div class="import-history-heading">
+            <h2 class="heading">Import History</h2>
+            <!-- <span
+              class="primary-color"
+              (click)="seeTotalImportHistory('getUpcHistory', listData)"
+              >See All</span
+            > -->
+          </div>
+          <div class="import-history-body">
+            <div class="history-data" *ngFor="let data of itemsHistory">
+              <div class="left-sec">
+                <div class="user-img">
+                  <img src="{{ data.cloud_path }}" alt="image" />
+                </div>
+                {{ data.created_by }} Imported
+                <a
+                  [matTooltip]="data.original_filename"
+                  href="{{ data.cloud_download_path }}"
+                  class="primary-color"
+                  >{{ data.original_filename }}</a
+                >
+              </div>
+
+              <span>{{ data.gt_date_added }}</span>
+            </div>
+            <div class="no-history" *ngIf="!itemsHistory.length">
+              History Not Found
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-sec" *ngIf="isNxtScreen && !isPreview">
+      <div
+        class="import-main-sec settings-section"
+        *ngIf="!progress && !success"
+        [ngClass]="{ itemsAvai: dataLength }"
+      >
+        <div class="mat-dialog-heading">
+          <div class="section-inner-header">
+            <em
+              (click)="closeDialog()"
+              class="pixel-icons icon-arrow-back"
+            ></em>
+            <div class="left-border"></div>
+            <h2 mat-dialog-title>Select Columns to Import</h2>
+          </div>
+        </div>
+        <div class="row-view">
+          <div class="col-options">
+            <div class="import-content">
+              <form [formGroup]="importSkuForm">
+                <div
+                  formArrayName="skuAttributes"
+                  class="sku-attributes"
+                  [ngClass]="{ boxAttributes: !dataLength }"
+                >
+                  <div
+                    *ngFor="
+                      let attribute of skuAttributes.controls;
+                      let i = index
+                    "
+                    class="attr-fields"
+                  >
+                    <p *ngIf="i == 0" class="sub-header">Filters</p>
+                    <p *ngIf="i == 2" class="sub-header">Column Mapping</p>
+
+                    <pi-form-field
+                      [formGroupName]="i"
+                      [ngClass]="i <= 3 ? 'top-margin' : ''"
+                    >
+                      <label class="label-name">{{
+                        skuAttributesData[i]?.name
+                      }}</label>
+                      <span *ngIf="skuAttributesData[i]?.mandatory == 1"
+                        >*</span
+                      >
+                      <!-- 
+                      <pi-select *ngIf="skuAttributesData[i]?.key == 'end_date_filter'"
+                      idKey="key"
+                      nameKey="End date filter"
+                      formControlName="selected_field"
+                      (onChange)="valChanged(importSkuForm)"
+                    ></pi-select> -->
+                      <div
+                        class="structure-select from-to-datefield"
+                        *ngIf="skuAttributesData[i]?.key == 'end_date_filter'"
+                      >
+                        <div class="date-picker-field">
+                          <input
+                            readonly="true"
+                            pi-input
+                            ngxDaterangepickerMd
+                            [dateLimit]="15"
+                            [minDate]="minDateValid"
+                            [maxDate]="maxDateValid"
+                            [autoApply]="true"
+                            class="form-control"
+                            formControlName="selected_field"
+                          />
+                        </div>
+                        <div class="date-picker-icon-sec">
+                          <div class="date-picker-icon"></div>
+                        </div>
+                      </div>
+                      <pi-select
+                        *ngIf="skuAttributesData[i]?.key == 'stores_filter'"
+                        idKey="key"
+                        nameKey="label"
+                        [options]="storesArr"
+                        [multi]="true"
+                        formControlName="selected_field"
+                        (onChange)="valChanged(importSkuForm)"
+                      ></pi-select>
+                      <pi-select
+                        *ngIf="
+                          skuAttributesData[i]?.key != 'end_date_filter' &&
+                          skuAttributesData[i]?.key != 'stores_filter'
+                        "
+                        [options]="selectOptions"
+                        idKey="key"
+                        nameKey="label"
+                        formControlName="selected_field"
+                        (onChange)="valChanged(importSkuForm)"
+                      ></pi-select>
+                    </pi-form-field>
+                    <div
+                      class="pi-error"
+                      *ngIf="
+                        importSkuForm.controls.skuAttributes.controls[i]
+                          .invalid && submitted
+                      "
+                    >
+                      Please Select {{ skuAttributesData[i]?.name }}
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- <div class="col-radio" *ngIf="dataLength">
+            <pi-field-group
+              label="Records Missing Mandatory Attributes"
+              direction="column"
+            >
+              <pi-form-field
+                label="{{ header.name }}"
+                *ngFor="let header of radioGrp2"
+              >
+                <input
+                  type="radio"
+                  pi-input
+                  name="{{ header.key }}"
+                  (click)="check1(header, $event)"
+                  [checked]="header.empty_fields == emptyFields"
+                />
+              </pi-form-field>
+            </pi-field-group>
+            <pi-field-group label="Empty Fields" direction="column">
+              <pi-form-field
+                label="{{ header.name }}"
+                *ngFor="let header of radioGrp1"
+              >
+                <input
+                  type="radio"
+                  pi-input
+                  name="{{ header.key }}"
+                  (click)="check2(header, $event)"
+                  [checked]="header.missing_records == missingRecords"
+                />
+              </pi-form-field>
+            </pi-field-group>
+          </div> -->
+        </div>
+      </div>
+      <div class="overlay-msgs" *ngIf="progress || success">
+        <div *ngIf="progress && !success">
+          <div class="loader"></div>
+          <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+            Importing Items Please Wait
+          </div>
+        </div>
+        <div *ngIf="success && !progress">
+          <!-- <img  src="{{ successImg }}" alt="image.png" /> -->
+          <p class="loader-text no-data-grid">{{ importMsg }}</p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="preview-grid settings-section"
+      *ngIf="!isNxtScreen && isPreview"
+    >
+      <div class="section-header mat-dialog-heading">
+        <div class="section-inner-header">
+          <em (click)="backToScreen()" class="pixel-icons icon-arrow-back"></em>
+          <div class="left-border"></div>
+          <h2 class="heading mat-dialog-title">Import Preview</h2>
+        </div>
+      </div>
+      <p class="preview-confirm">
+        The following updates will be made per the uploaded file. Please review
+        and Confirm the Import.
+      </p>
+      <ag-grid-angular
+        *ngIf="rowData?.length && !progress && !success"
+        class="ag-theme-balham stores-grid"
+        [class.toggleClass]="toggleClass"
+        [rowData]="rowData"
+        [animateRows]="true"
+        rowHeight="40"
+        [enableSorting]="true"
+        [enableColResize]="true"
+        [columnDefs]="columnDefs"
+        (gridReady)="onGridReady($event)"
+      >
+      </ag-grid-angular>
+      <!-- <p class="invalid-error  error text-capital no-data-grid" *ngIf="previewError != ''">
+        {{ previewError }}
+      </p> -->
+      <div class="overlay-msgs" *ngIf="progress || success">
+        <div *ngIf="progress && !success">
+          <div class="loader"></div>
+          <div class="loader-text no-data-grid" *ngIf="!noData && progress">
+            Importing Items Please Wait
+          </div>
+        </div>
+        <div *ngIf="success && !progress">
+          <!-- <img  src="{{ successImg }}" alt="image.png" /> -->
+          <p class="loader-text no-data-grid">Items Imported Successfully</p>
+        </div>
+      </div>
+      <div class="no-data-grid" *ngIf="!rowData.length && !toggleClass">
+        {{ previewError }}
+      </div>
+      <div class="no-data-grid" *ngIf="toggleClass">
+        Loading, please wait...
+      </div>
+    </div>
+    <div class="mat-dialog-footer  import-dialog-footer">
+      <div class="import-dialog-footer-inner-sec">
+        <div
+          class="buttons-footer button-actions"
+          *ngIf="!isNxtScreen && !displayNone && isPreview"
+        >
+          <button pi-button color="subtle" (click)="backToScreen()">
+            Cancel
+          </button>
+          <button
+            pi-button
+            color="accent"
+            [disabled]="!rowData.length"
+            (click)="save(importSkuForm)"
+          >
+            Import
+          </button>
+        </div>
+
+        <div
+          class="buttons-footer button-actions"
+          *ngIf="isNxtScreen && !isPreview && !displayNone"
+        >
+          <button pi-button (click)="closeDialog()" color="subtle">
+            Cancel
+          </button>
+          <button
+            pi-button
+            color="accent"
+            class="apply-btn"
+            (click)="viewScreen(importSkuForm)"
+          >
+            Preview
+          </button>
+        </div>
+
+        <div
+          class="buttons-footer button-actions"
+          *ngIf="!isNxtScreen && !isPreview"
+        >
+          <button pi-button (click)="close()" color="subtle">Cancel</button>
+          <button
+            pi-button
+            color="accent"
+            class="apply-btn"
+            (click)="nextNav()"
+            [disabled]="!fileUploadStatus"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,10 @@
+<div class="snackbar-container">
+  <div class="success" *ngIf="data.status == 'success'">
+    <mat-icon>check_circle</mat-icon>
+    <div *ngIf="data">{{ data.msg }}</div>
+  </div>
+  <div class="success" *ngIf="data.status == 'fail'">
+    <mat-icon>error_outline</mat-icon>
+    <div *ngIf="data">{{ data.msg }}</div>
+  </div>
+</div>

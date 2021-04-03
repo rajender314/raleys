@@ -1,0 +1,63 @@
+<div class="stores-container">
+  <div class="section-header">
+    <div class="section-header-inner-sec">
+      <div class="second-header">
+        <!-- <em class="pixel-icons icon-store-1"></em> -->
+        <div
+          class="header-img-sec"
+          [ngStyle]="{ 'background-image': 'url(' + noStores + ')' }"
+        ></div>
+        <h3 class="sub-heading">Stores</h3>
+      </div>
+      <div class="ad-options">
+        <button
+          class="ak-button ak-button__appearance-default"
+          pi-button
+          (click)="adStores()"
+        >
+          {{ rowData.length ? 'Edit' : 'Add' }} Stores
+          <!-- <em class="pixel-icons icon-arrow-down"></em> -->
+        </button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="progress">
+    <div class="loader"></div>
+    <div class="loader-text no-data-grid">Loading, please wait...</div>
+  </div>
+  <div class="stores-grid">
+    <ag-grid-angular
+      class="ag-theme-balham grid stores-grid lazy-load-grid  "
+      [ngClass]="{
+        'fade-in': gridVisibility,
+        showGrid: gridVisibility,
+        'no-pointer-events': !pointerEvents
+      }"
+      [rowData]="rowData"
+      rowHeight="40"
+      [animateRows]="true"
+      [enableSorting]="true"
+      [enableColResize]="true"
+      [columnDefs]="columnDefs"
+      [suppressColumnVirtualisation]="true"
+      [suppressDragLeaveHidesColumns]="true"
+      (gridReady)="onGridReady($event)"
+      *ngIf="rowData.length && !progress"
+    >
+    </ag-grid-angular>
+    <div class="no-data" *ngIf="!rowData.length && !progress">
+      <div class="icon"><img [src]="noStores" alt="no-image.png" /></div>
+      <p>No Stores Added Yet</p>
+      <button pi-button color="accent" (click)="adStores()">Add Stores</button>
+    </div>
+  </div>
+  <div class="count-section">
+    <h4 class="sec-header" *ngIf="storesCount">Stores({{ storesCount }})</h4>
+    <span class="separator-pipe" *ngIf="storesCount">|</span>
+    <h4 class="sec-header" *ngIf="storesCount">
+      Versions({{ versionsCount }})
+    </h4>
+    <span class="separator-pipe" *ngIf="storesCount">|</span>
+    <h4 class="sec-header" *ngIf="storesCount">Markets({{ marketsCount }})</h4>
+  </div>
+</div>

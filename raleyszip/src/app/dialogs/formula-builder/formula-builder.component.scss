@@ -1,0 +1,132 @@
+@import "../../../assets/styles/variable";
+
+.formula-builder-content {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  .formula-builder-container {
+    overflow: auto;
+    flex: 1;
+    .fbWrapper {
+      display: flex;
+      .operation-section {
+        width: 80%;
+        .input-boxes {
+          .basic-operand-container {
+            // width: 950px;
+            // display: flex;
+            // align-items: flex-start;
+            // justify-content: space-around;
+            .operator-sec {
+              width: 280px;
+              display: inline-flex;
+              flex-wrap: wrap;
+              margin-right: 15px;
+              @media screen and (max-width: 1600px) and (min-width: 1360px) {
+                width: 30%;
+              }
+              .operator-inner-sec {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+      .actions-section {
+        width: 20%;
+        margin-left: 15px;
+        position: relative;
+        top: 28px;
+        .action-btns {
+          display: flex;
+          margin: 10px 0px;
+          justify-content: flex-end;
+          .box {
+            @media screen and (max-width: 1600px) and (min-width: 1360px) {
+              text-align: right;
+              button {
+                margin-bottom: 15px;
+              }
+            }
+          }
+          button {
+            margin-left: 10px;
+          }
+        }
+        .formula {
+          display: flex;
+          /* align-items: flex-start; */
+          justify-content: center;
+          min-height: 200px;
+          flex-direction: column;
+          border: 1px solid #ccc;
+          margin-bottom: 25px;
+          // margin-right: 25px;
+          p {
+            margin: 0px 10px 5px;
+            display: flex;
+            justify-content: center;
+          }
+        }
+      }
+      .result-section {
+        .pi-form-field {
+          width: 280px;
+          @media screen and (max-width: 1600px) and (min-width: 1360px) {
+            width: 55%;
+          }
+        }
+      }
+    }
+  }
+  .formula-content {
+    margin-top: 20px;
+    .formula {
+      border: 1px solid #dcdfeb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background-color: $input-bg-color;
+      padding: 10px;
+      .content-header {
+        // margin-bottom: 0px;
+        margin: 10px 0px;
+      }
+      .content-body {
+        margin: 0;
+        overflow: auto;
+        height: 90px;
+      }
+    }
+  }
+}
+.txt-center {
+  text-align: center;
+}
+
+.mat-dialog-actions {
+  .box {
+    margin: 0px;
+    border-top: 1px solid #dcdfeb;
+    padding: 10px 0;
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: right;
+    // max-width: 936px;
+    background: #fff;
+    z-index: 1;
+  }
+}
+
+.formula-section {
+}
+.invisible {
+  display: none;
+}

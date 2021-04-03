@@ -1,0 +1,1164 @@
+<div>
+  <pi-master-detail-view class="editmod-dialog">
+    <pi-master-view [ngClass]="{ 'slider-active': leftSliderValue }">
+      <div class="specifications">
+        <div class="specifications-header">
+          <em class="pixel-icons icon-arrow-back cursor" (click)="close()"></em>
+          <em
+            class="pixel-icons icon-arrow-left cursor"
+            (click)="leftSlider('')"
+          ></em>
+          <h2>
+            Signage({{
+              (
+                selectedPageData
+                | modFilter
+                  : { signageName: searchWord, statusName: searchWord }
+                  : false
+              ).length
+            }})
+          </h2>
+        </div>
+        <div class="search-sec search-field">
+          <app-search
+            [search]="search"
+            #searchingBox
+            (onSearch)="onSearch($event, 'modSearch')"
+          ></app-search>
+        </div>
+        <!-- side nav specslist to add into the form -->
+        <mat-list class="inner-detail-list">
+          <div class="spects-list spects-nav-list" *ngIf="!refreshData">
+            <mat-list-item
+              *ngFor="
+                let modInfo of (selectedPageData
+                  | modFilter
+                    : { signageName: searchWord, statusName: searchWord }
+                    : false);
+                let i = index
+              "
+              (click)="getActiveMod(modInfo, '', i)"
+              [ngClass]="{
+                activeMod: activeModData.signage_id == modInfo.signage_id
+              }"
+            >
+              <div class="specs-with-menu">
+                <div class="specs-with-inner-menu">
+                  <p class="text">Sign {{ modInfo?.signage_number }}</p>
+                  <!-- <span
+                    [ngClass]="
+                      modInfo.status == 1
+                        ? 'mod-status-pending'
+                        : 'mod-status-complete'
+                    "
+                  >
+                    {{ modInfo.status == 1 ? 'Pending' : 'Completed' }}
+                  </span> -->
+                </div>
+              </div>
+            </mat-list-item>
+            <p
+              class="no-mod-data"
+              *ngIf="
+                (
+                  selectedPageData
+                  | modFilter
+                    : { signageName: searchWord, statusName: searchWord }
+                    : false
+                ).length === 0
+              "
+            >
+              No Data Found.
+            </p>
+            <p
+              *ngIf="
+                (
+                  selectedPageData
+                  | modFilter
+                    : { signageName: searchWord, statusName: searchWord }
+                    : false
+                ).length != 0
+              "
+              (ngInit)="getModData($event)"
+              [modData]="
+                selectedPageData
+                  | modFilter
+                    : { signageName: searchWord, statusName: searchWord }
+                    : false
+              "
+            ></p>
+          </div>
+        </mat-list>
+        <!-- side nav of specslist  close here -->
+      </div>
+    </pi-master-view>
+    <pi-detail-view class="right-section">
+      <div
+        class="form-details"
+        *ngIf="
+          (
+            selectedPageData
+            | modFilter
+              : { signageName: searchWord, statusName: searchWord }
+              : false
+          ).length != 0
+        "
+      >
+        <div class="specs-header">
+          <div class="mat-dialog-heading">
+            <!-- <em
+                      class="pixel-icons icon-arrow-back cursor"
+                      (click)="close()"
+                    ></em> -->
+            <!-- <div class="left-border"></div> -->
+            <h2 mat-dialog-title>Sign {{ activeModData.signage_number }}</h2>
+          </div>
+          <!-- <div
+            (click)="splitMod()"
+            *ngIf="this.selectedRowsData.promotions.length"
+          >
+            Split Mod
+          </div> -->
+          <div
+            class="button-actions box edit-mod-actions "
+            [ngClass]="{ 'not-allowed': adsService.isImportProgess }"
+          >
+            <!-- <span><em class="pixel-icons icon-delete-copy"></em></span> -->
+            <!-- <button
+              [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+              class="ak-button ak-button__appearance-default"
+              pi-button
+              (click)="splitMod()"
+              *ngIf="this.selectedRowsData.promotions.length"
+            >
+              Split Mod
+            </button> -->
+            <button
+              pi-button
+              [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+              color="accent"
+              class="apply-btn"
+              (click)="openAddPromo('blank-ads')"
+              *ngIf="isBlank"
+            >
+              Add Promotion
+            </button>
+            <button
+              pi-button
+              [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+              color="accent"
+              class="apply-btn"
+              (click)="saveModData()"
+              [disabled]="!enableSaveBtn"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="tab-sec">
+          <span class="tab-header">Promotions: </span>
+          <mat-tab-group
+            [selectedIndex]="selectedTabIndex"
+            (selectedTabChange)="promotionTabChanged($event)"
+            *ngIf="activeModData.promotions.length && !noData"
+          >
+            <mat-tab
+              class="mat-tabs"
+              label="{{ label.promo_id }}"
+              *ngFor="let label of activeModData.promotions"
+            >
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+        <div class="modal-container">
+          <!-- Promotions view grid-->
+          <div>
+            <div *ngIf="!dataLoad && !noData" class="promotion-tabs-grid">
+              <h2 class="sub-heading">
+                Current Promotion ({{ rowData?.length }})
+              </h2>
+              <ag-grid-angular
+                @rightAnimate
+                class="ag-theme-balham grid offers-list lazy-load-grid"
+                *ngIf="rowData?.length"
+                [ngClass]="{
+                  'fade-in': gridVisibility,
+                  showGrid: gridVisibility,
+                  'no-pointer-events': !pointerEvents
+                }"
+                [rowData]="rowData"
+                [animateRows]="true"
+                rowHeight="40"
+                [enableRangeSelection]="true"
+                [enableFilter]="true"
+                [enableSorting]="true"
+                [enableColResize]="true"
+                [columnDefs]="columnDefs"
+                [domLayout]="autoHeight"
+                (gridReady)="onGridReady($event)"
+                [suppressColumnVirtualisation]="true"
+                [suppressRowClickSelection]="true"
+                [getRowNodeId]="getRowNodeId"
+                [rowSelection]="'multiple'"
+                [rowMultiSelectWithClick]="true"
+                (rowSelected)="onRowSelected($event)"
+              >
+              </ag-grid-angular>
+              <!-- <mat-accordion>
+                <mat-expansion-panel [expanded]="true">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title
+                      ><em class="pixel-icons icon-events"></em> Current Promotion
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  
+                </mat-expansion-panel>
+              </mat-accordion> -->
+            </div>
+
+            <!--  revision 1 grid -->
+            <div *ngIf="revision1PromoData?.length" class="revision1-grid">
+              <h2 class="sub-heading">
+                Revision 1 ({{ revision1PromoData?.length }})
+              </h2>
+              <ag-grid-angular
+                @rightAnimate
+                class="ag-theme-balham grid offers-list lazy-load-grid"
+                [ngClass]="{
+                  'fade-in': gridVisibilityRev1,
+                  showGrid: gridVisibilityRev1,
+                  'no-pointer-events': !pointerEventsRev1
+                }"
+                [rowData]="revision1PromoData"
+                [animateRows]="true"
+                rowHeight="40"
+                [enableFilter]="true"
+                [enableSorting]="true"
+                [enableColResize]="true"
+                [columnDefs]="columnDefsRev"
+                [domLayout]="autoHeight"
+                (gridReady)="onGridReadyRev1($event)"
+              >
+              </ag-grid-angular>
+              <!-- <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      <em class="pixel-icons icon-revision"></em>Revision 1
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  
+                </mat-expansion-panel>
+              </mat-accordion> -->
+            </div>
+
+            <!-- revision 2 grid-->
+            <div *ngIf="revision2PromoData?.length" class="revision2-grid">
+              <h2 class="sub-heading">
+                Revision 2 ({{ revision2PromoData?.length }})
+              </h2>
+              <ag-grid-angular
+                @rightAnimate
+                class="ag-theme-balham grid offers-list lazy-load-grid"
+                [ngClass]="{
+                  'fade-in': gridVisibilityRev2,
+                  showGrid: gridVisibilityRev2,
+                  'no-pointer-events': !pointerEventsRev2
+                }"
+                [rowData]="revision2PromoData"
+                [animateRows]="true"
+                rowHeight="40"
+                [enableFilter]="true"
+                [enableSorting]="true"
+                [enableColResize]="true"
+                [columnDefs]="columnDefsRev"
+                [domLayout]="autoHeight"
+                (gridReady)="onGridReadyRev2($event)"
+              >
+              </ag-grid-angular>
+              <!-- <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      <em class="pixel-icons icon-revision"></em>Revision 2
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  
+                </mat-expansion-panel>
+              </mat-accordion> -->
+            </div>
+          </div>
+
+          <!-- noData referes to promiotions count-->
+          <div class="loader" *ngIf="dataLoad && !noData"></div>
+          <div class="loader-text no-data-grid" *ngIf="dataLoad && !noData">
+            <p>Loading Please Wait...</p>
+          </div>
+          <div
+            class="loader-text no-data-grid no-page-content-sec"
+            *ngIf="noData"
+          >
+            <em class="pixel-icons icon-events"></em>
+
+            <p class="no-page-content-content">No Promotions Found</p>
+          </div>
+          <!-- </div> -->
+          <!--this code is for no table found section-->
+          <!-- <div class="no-data-grid">Data Not Found</div>  -->
+        </div>
+      </div>
+      <div
+        class="preview-sec-main"
+        *ngIf="
+          (
+            selectedPageData
+            | modFilter
+              : { signageName: searchWord, statusName: searchWord }
+              : false
+          ).length != 0
+        "
+      >
+        <div class="page-preview">
+          <div
+            class="page-preview-header"
+            [ngClass]="{ 'signage-preview-header': this.currentHeader.length }"
+          >
+            <div class="page-preview-left-header">
+              <p class="page-preview-title">{{ this.currentHeader }}</p>
+            </div>
+            <div class="page-preview-right-header">
+              <!-- <p class="version-count">8 versions</p> -->
+            </div>
+          </div>
+          <div
+            class="page-preview-content"
+            [ngClass]="[
+              activeModData?.headline ||
+              activeModData?.underline ||
+              activeModData?.regular_price
+                ? 'signage-preview-content'
+                : ''
+            ]"
+          >
+            <div class="page-preview-left-content">
+              <p
+                class="page-preview-main-content"
+                [ngClass]="{
+                  'no-content':
+                    !activeModData?.headline && !activeModData?.underline
+                }"
+                [matTooltip]="activeModData?.headline"
+              >
+                {{
+                  activeModData?.headline
+                    ? activeModData.headline.substring(0, 15)
+                    : ''
+                }}
+                <span
+                  *ngIf="
+                    activeModData.headline && activeModData.headline.length > 15
+                  "
+                  >...</span
+                >
+              </p>
+              <p
+                class="page-preview-main-content w-30"
+                [ngClass]="{
+                  'no-content':
+                    !activeModData?.headline && !activeModData?.underline
+                }"
+              ></p>
+              <p
+                class="page-preview-sub-content"
+                [ngClass]="{
+                  'no-content':
+                    !activeModData?.headline && !activeModData?.underline
+                }"
+                [matTooltip]="activeModData?.underline"
+              >
+                {{
+                  activeModData?.underline
+                    ? activeModData?.underline.substring(0, 20)
+                    : ''
+                }}
+                <span
+                  *ngIf="
+                    activeModData?.underline &&
+                    activeModData?.underline.length > 20
+                  "
+                  >...</span
+                >
+              </p>
+              <p
+                class="page-preview-sub-content"
+                [ngClass]="{
+                  'no-content':
+                    !activeModData?.headline && !activeModData?.underline
+                }"
+              ></p>
+              <p
+                class="page-preview-sub-content"
+                [ngClass]="{
+                  'no-content':
+                    !activeModData?.headline && !activeModData?.underline
+                }"
+              ></p>
+              <p
+                class="page-preview-sub-content w-30"
+                [ngClass]="{
+                  'no-content':
+                    !activeModData?.headline && !activeModData?.underline
+                }"
+              ></p>
+            </div>
+            <div class="page-preview-right-content">
+              <div>
+                <p
+                  class=" offer-type"
+                  *ngIf="activeModData?.offer_type_name"
+                  [matTooltip]="activeModData?.offer_type_name"
+                >
+                  {{ activeModData?.offer_type_name }}
+                </p>
+              </div>
+              <div class="price-sec">
+                <p
+                  class="page-preview-cost"
+                  *ngIf="activeModData?.regular_price"
+                >
+                  ${{ activeModData?.regular_price }}
+                </p>
+                <!-- <p class="page-preview-cost" *ngIf="!activeModData?.regular_price">
+                      --
+                    </p> -->
+                <p class="text-center" *ngIf="activeModData?.regular_price">
+                  {{ activeModData?.uom | uppercase }}
+                </p>
+              </div>
+
+              <!-- <p
+                class="page-preview-cost"
+                [matTooltip]="
+                  activeModData?.regular_price ? activeModData?.regular_price : ''
+                "
+              >
+                ${{ activeModData?.regular_price ? activeModData?.regular_price : '' }}
+              </p> -->
+            </div>
+          </div>
+          <div
+            class="page-preview-images"
+            [ngClass]="{
+              'no-preview-images': !activeModData?.logos.length
+            }"
+          >
+            <div class="page-preview-images-header"><p>Logos</p></div>
+            <div class="page-preview-images-content">
+              <ng-container *ngIf="activeModData?.logos.length">
+                <div
+                  class="image"
+                  *ngFor="
+                    let image of (activeModData?.logos | slice: 0:2);
+                    let i = index
+                  "
+                >
+                  <img [src]="image.previewUrl" />
+                  <span class="options"
+                    ><em
+                      class="pixel-icons icon-delete-copy"
+                      (click)="
+                        deletePreviewItems(
+                          'image',
+                          'delete',
+                          'deltePreviewItems',
+                          image
+                        )
+                      "
+                    ></em
+                  ></span>
+                </div>
+              </ng-container>
+              <ng-container
+                *ngIf="!activeModData?.logos.length"
+                class="no-preview-images"
+              >
+                <div class="image no-border"><img [src]="image_url" /></div>
+                <div class="image no-border"><img [src]="image_url" /></div>
+                <!-- <div class="image no-border"><img [src]="image_url" /></div>
+                <div class="image no-border"><img [src]="image_url" /></div> -->
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="ad-details-sec">
+          <div class="ad-details-header"><p>Sign Details</p></div>
+          <div
+            class="ad-details-content"
+            [ngClass]="{ 'not-allowed': adsService.isImportProgess }"
+          >
+            <form
+              [formGroup]="editModForm"
+              [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+            >
+              <div class="ad-details-add-more">
+                <div class="input-field not-allowed">
+                  <pi-form-field
+                    label="Department Group
+                                      "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="dept_group"
+                      readonly="false"
+                      style="cursor:not-allowed; pointer-events: none;"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field label="Header">
+                    <pi-select
+                      [options]="headerCreativeArray"
+                      formControlName="header_id"
+                      (onChange)="change($event, 'header_id')"
+                    >
+                    </pi-select>
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field label="Headline">
+                    <input
+                      type="text"
+                      matInput
+                      pi-input
+                      (input)="valChanged('headline')"
+                      formControlName="headline"
+                      [matAutocomplete]="autoHeadline"
+                    />
+                    <mat-autocomplete #autoHeadline="matAutocomplete">
+                      <mat-option
+                        *ngFor="let headline of headlinesListOptions"
+                        [value]="headline"
+                      >
+                        {{ headline }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </pi-form-field>
+                </div>
+
+                <div class="input-field">
+                  <pi-form-field label="Underline">
+                    <input
+                      type="text"
+                      matInput
+                      pi-input
+                      (input)="valChanged('underline')"
+                      formControlName="underline"
+                      [matAutocomplete]="autoUnderline"
+                    />
+                    <mat-autocomplete #autoUnderline="matAutocomplete">
+                      <mat-option
+                        *ngFor="let underline of underlineListOptions"
+                        [value]="underline"
+                      >
+                        {{ underline }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </pi-form-field>
+                </div>
+                <!-- <div class="input-field">
+                  <pi-form-field label="Sign Creative">
+                    <pi-select
+                      [options]="signCreativeArray"
+                      formControlName="sign_creative_id"
+                      (onChange)="change($event)"
+                    ></pi-select>
+                  </pi-form-field>
+                </div> -->
+
+                <div class="input-field">
+                  <pi-form-field label="UOM">
+                    <pi-select
+                      [options]="uomArray"
+                      formControlName="uom"
+                      (onChange)="change($event, 'uom')"
+                    ></pi-select>
+                  </pi-form-field>
+                </div>
+                <!-- <div class="input-field">
+                  <pi-form-field
+                    label="Regular Retail*
+                  "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="regular_price"
+                      (input)="valChanged('regular_price')"
+                    />
+                  </pi-form-field>
+                  <div
+                    class="pi-error"
+                    *ngIf="
+                      editModForm.controls['regular_price'].hasError('required') &&
+                      submitted
+                    "
+                  >
+                    Please enter retail price.
+                  </div>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Sale Price*
+                  "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="sale_price"
+                      (input)="valChanged()"
+                    />
+                  </pi-form-field>
+                  <div
+                    class="pi-error"
+                    *ngIf="
+                      editModForm.controls['sale_price'].hasError('required') &&
+                      submitted
+                    "
+                  >
+                    Please enter sale price.
+                  </div>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Single Item Price
+                  "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="single_item_price"
+                      (input)="valChanged()"
+                    />
+                  </pi-form-field>
+                
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Quantity
+                  "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="quantity"
+                      (input)="valChangedQty($event, 'quantity')"
+                    />
+                  </pi-form-field>
+                
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Limit
+                  "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="limit"
+                      (input)="valChangedQty2($event, 'limit')"
+                    />
+                  </pi-form-field>
+                
+                </div> -->
+                <div class="input-field">
+                  <pi-form-field label="CRV">
+                    <pi-select
+                      [options]="crvArray"
+                      formControlName="crv"
+                      (onChange)="change($event)"
+                    ></pi-select>
+                  </pi-form-field>
+                </div>
+
+                <div class="input-field">
+                  <pi-form-field
+                    label="Bmsm Price
+                    "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="bmsm_price"
+                      (input)="valChanged('bmsm_price')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Bmsm Qty
+                      "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="bmsm_qty"
+                      (input)="valChanged('bmsm_qty')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Promo Price
+                        "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="promo_price"
+                      (input)="valChanged('promo_price')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Promo Qty
+                        "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="promo_qty"
+                      (input)="valChanged('promo_qty')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Regular Price
+                          "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="regular_price"
+                      (input)="valChanged('regular_price')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Regular Qty
+                            "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="regular_qty"
+                      (input)="valChanged('regular_qty')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Buy X
+                              "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="buy_x"
+                      (input)="valChanged('buy_x')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Get X
+                                "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="get_x"
+                      (input)="valChanged('get_x')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Get Item
+                                  "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="get_item"
+                      (input)="valChanged('get_item')"
+                      [maxlength]="1000"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Limit Quantity
+                                    "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="limit_quantity"
+                      (input)="valChanged('limit_quantity')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Save Amount
+                                      "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="save_amount"
+                      (input)="valChanged('save_amount')"
+                    />
+                  </pi-form-field>
+                </div>
+                <div class="input-field">
+                  <pi-form-field label="Save Copy">
+                    <pi-select
+                      [options]="saveCopyOptions"
+                      formControlName="save_copy"
+                      (onChange)="change($event, 'save_copy')"
+                    ></pi-select>
+                  </pi-form-field>
+                </div>
+
+                <pi-form-field label="From - To Date*">
+                  <div class="structure-select from-to-datefield">
+                    <div class="date-picker-field">
+                      <input
+                        readonly="true"
+                        pi-input
+                        formControlName="from_to_date"
+                        ngxDaterangepickerMd
+                        [dateLimit]="15"
+                        [autoApply]="true"
+                        class="form-control"
+                        (datesUpdated)="dateValueChange($event)"
+                      />
+                    </div>
+                    <div class="date-picker-icon-sec">
+                      <div class="date-picker-icon"></div>
+                    </div>
+                  </div>
+                  <div class="pi-error" *ngIf="showDateValidation && submitted">
+                    Please select From - To Date.
+                  </div>
+                </pi-form-field>
+                <div class="input-field">
+                  <pi-form-field
+                    label="Market
+                                  "
+                  >
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="market"
+                      (input)="valChanged()"
+                    />
+                  </pi-form-field>
+                </div>
+
+                <pi-form-field label="Notes">
+                  <textarea
+                    pi-input
+                    formControlName="notes"
+                    (input)="valChanged()"
+                  ></textarea>
+                </pi-form-field>
+              </div>
+              <!-- images, icons,logos search block-->
+              <div class="ad-details-additional-values search-field-sec">
+                <div class="search-sec">
+                  <pi-form-field label="Logos">
+                    <app-search
+                      [search]="search"
+                      [type]="edit - mod - search"
+                      (onSearch)="onSearch($event, 'images')"
+                    >
+                    </app-search>
+                  </pi-form-field>
+                </div>
+
+                <div class="input-field full-width-field">
+                  <pi-form-field label="8 Up ">
+                    <input
+                      type="text"
+                      pi-input
+                      maxlength="9"
+                      formControlName="qty_3x8"
+                      onkeydown="if(event.key==='.'){event.preventDefault();}"
+                      (input)="valChangedQty($event, 'qty_3x8')"
+                    />
+                  </pi-form-field>
+                  <!-- <div
+                    class="pi-error"
+                    *ngIf="editModForm.controls['qty_3x8'].hasError('pattern')"
+                  >
+                    Please enter numbers only.
+                  </div> -->
+                </div>
+                <div class="input-field full-width-field">
+                  <pi-form-field label="5.5x3.5 ">
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="qty_5x3_5"
+                      maxlength="9"
+                      (input)="valChangedQty($event, 'qty_5x3_5')"
+                      onkeydown="if(event.key==='.'){event.preventDefault();}"
+                    />
+                  </pi-form-field>
+                  <!-- <div
+                    class="pi-error"
+                    *ngIf="
+                      editModForm.controls['qty_5x3_5'].hasError('pattern')
+                    "
+                  >
+                    Please enter numbers only.
+                  </div> -->
+                </div>
+                <div class="input-field full-width-field">
+                  <pi-form-field label="11x7 ">
+                    <input
+                      type="text"
+                      pi-input
+                      formControlName="qty_7x11"
+                      maxlength="9"
+                      (input)="valChangedQty($event, 'qty_7x11')"
+                      onkeydown="if(event.key==='.'){event.preventDefault();}"
+                    />
+                  </pi-form-field>
+                  <!-- <div
+                    class="pi-error"
+                    *ngIf="editModForm.controls['qty_7x11'].hasError('pattern')"
+                  >
+                    Please enter numbers only.
+                  </div> -->
+                </div>
+              </div>
+
+              <!-- <div class="ad-details-header no-box-layout-header">
+                <p>Pricing</p>
+              </div> -->
+              <!-- <div class="ad-details-additional-values no-box-layout-body">
+                <div class="input-field select-field full-width-field">
+                  <pi-form-field label="Offer type">
+                    <pi-select
+                      [options]="offerTypeArray"
+                      [inactiveOptions]="offerTypeInactive"
+                      formControlName="offer_type_id"
+                      (onChange)="changeOfferType('offer_type_id', $event)"
+                    ></pi-select>
+                  </pi-form-field>
+                </div>
+                <div formArrayName="pricing_values" *ngIf="formReady">
+                  <div
+                    class="input-field full-width-field"
+                    *ngFor="let field of pricingHeaders; let i = index"
+                  >
+                    <pi-form-field
+                      label="{{ field.name }}"
+                      [formGroupName]="i"
+                      [matTooltip]="field.tooltip"
+                    >
+                      <input
+                        *ngIf="field.type == 'price'"
+                        type="text"
+                        (input)="valChangedInOffer(field)"
+                        pi-input
+                        formControlName="{{ field.key }}"
+                      />
+                      <input
+                        *ngIf="field.type == 'number'"
+                        type="text"
+                        (input)="valChangedInOffer(field)"
+                        pi-input
+                        formControlName="{{ field.key }}"
+                      />
+                      <input
+                        *ngIf="field.type == 'text'"
+                        type="text"
+                        (input)="valChangedInOffer(field)"
+                        pi-input
+                        formControlName="{{ field.key }}"
+                      />
+                      <pi-form-field>
+                        <textarea
+                          *ngIf="field.type == 'paragraph_text'"
+                          pi-input
+                          (input)="valChangedInOffer()"
+                          formControlName="{{ field.key }}"
+                        ></textarea>
+
+                        <input
+                          *ngIf="field.type == 'calculated'"
+                          type="text"
+                          formControlName="{{ field.key }}"
+                          pi-input
+                          [disabled]="true"
+                        />
+                      </pi-form-field>
+                  
+                      <pi-select
+                        *ngIf="field.type == 'multiple_choice'"
+                        [options]="field.options"
+                        formControlName="{{ field.key }}"
+                        multi="true"
+                        idKey="key"
+                        nameKey="value"
+                        (onChange)="change('', $event)"
+                      ></pi-select>
+                      <pi-select
+                        *ngIf="field.key == 'save_copy'"
+                        [options]="saveCopyOptions"
+                        formControlName="{{ field.key }}"
+                        (onChange)="change('', $event)"
+                      ></pi-select>
+
+                      <pi-field-group
+                        direction="column"
+                        *ngIf="field.type == 'checkboxes'"
+                        class="selective-sec"
+                      >
+                        <pi-form-field
+                          *ngFor="let unt of field.options"
+                          label="{{ unt.value }}"
+                        >
+                          <input
+                            type="checkbox"
+                            pi-input
+                            (change)="chkBoxChnged(unt.key)"
+                            formControlName="{{ unt.key }}"
+                            [checked]="unt.checked"
+                          />
+                        </pi-form-field>
+                      </pi-field-group>
+
+                   
+                      <pi-field-group
+                        direction="column"
+                        *ngIf="field.type == 'radio'"
+                        class="selective-sec"
+                      >
+                        <pi-form-field
+                          *ngFor="let unt of field.options"
+                          label="{{ unt.value }}"
+                        >
+                          <input
+                            type="radio"
+                            pi-input
+                            name="{{ field.key }}"
+                            formControlName="{{ field.key }}"
+                            value="{{ unt.value }}"
+                            (change)="change('', $event)"
+                          />
+                        </pi-form-field>
+                      </pi-field-group>
+                      <pi-select
+                        *ngIf="
+                          field.type == 'dropdown' &&
+                          field.key != 'dept_callout' &&
+                          field.key != 'save_copy'
+                        "
+                        [options]="field.options"
+                        idKey="key"
+                        nameKey="value"
+                        formControlName="{{ field.key }}"
+                        (onChange)="change('', $event)"
+                      ></pi-select>
+                      <mat-form-field
+                        class="example-full-width"
+                        *ngIf="field.type == 'auto_suggest'"
+                      >
+                        <input
+                          type="text"
+                          class="edit-form-field"
+                          aria-label="Number"
+                          matInput
+                          formControlName="{{ field.key }}"
+                          [matAutocomplete]="auto"
+                        />
+                        <mat-autocomplete #auto="matAutocomplete">
+                          <mat-option
+                            *ngFor="let option of field.options"
+                            [value]="option.value"
+                          >
+                            {{ option.value }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                      <div
+                        class="structure-select"
+                        *ngIf="field.type == 'date_range'"
+                      >
+                        <div class="date-picker-field">
+                          <input
+                            formControlName="{{ field.key }}"
+                            ngxDaterangepickerMd
+                            [autoApply]="true"
+                            class="form-control"
+                            pi-input
+                          />
+                        </div>
+                        <div class="date-picker-icon-sec">
+                          <div class="date-picker-icon"></div>
+                        </div>
+                      </div>
+                      <div
+                        *ngIf="field.type == 'date'"
+                        class="structure-select"
+                      >
+                        <div class="date-picker-field">
+                          <input
+                            class="datepicker"
+                            pi-input
+                            formControlName="{{ field.key }}"
+                            [matDatepicker]="picker3"
+                            placeholder="Select Date"
+                            [readonly]="true"
+                          />
+                          <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker3"
+                          ></mat-datepicker-toggle>
+                          <mat-datepicker #picker3></mat-datepicker>
+                        </div>
+                      </div>
+                    </pi-form-field>
+                  </div>
+                </div>
+                <div class="align-to-secloader" *ngIf="!formReady"></div>
+                
+              </div> -->
+            </form>
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="
+          (
+            selectedPageData
+            | modFilter
+              : { signageName: searchWord, statusName: searchWord }
+              : false
+          ).length === 0
+        "
+      >
+        <div class="loader-text no-data-grid"><p>No Data Found.</p></div>
+      </div>
+    </pi-detail-view>
+  </pi-master-detail-view>
+</div>

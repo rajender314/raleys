@@ -1,0 +1,188 @@
+:host {
+  display: block;
+  height: 100%;
+  position: relative;
+  > ::ng-deep .pi-master-detail-view > .pi-master-view {
+    width: 130px;
+    border-right: 1px solid #c8cbd4;
+    overflow: auto;
+  }
+  ::ng-deep .pi-nav-list-container {
+    background: inherit;
+    color: inherit;
+  }
+  ::ng-deep .pi-nav-list {
+    .nav-link:hover {
+      background: rgba(57, 37, 137, 0.1);
+    }
+    .nav-link:active,
+    .nav-link.active {
+      background: rgba(57, 37, 137, 0.2);
+    }
+  }
+  ::ng-deep .pi-detail-view {
+    position: relative;
+  }
+}
+.page-designer {
+  height: 100%;
+  overflow: auto;
+  background: #dcdde5;
+  .toolbar {
+    position: absolute;
+    left: 10px;
+    top: 30px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    cursor: default;
+    .item {
+      padding: 12px;
+      position: relative;
+      transition: background 0.2s ease;
+      &:first-child {
+        border-radius: 3px 3px 0 0;
+      }
+      &:last-child {
+        border-radius: 0 0 3px 3px;
+      }
+      &:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
+      &:active,
+      &.active {
+        background: rgba(0, 0, 0, 0.8);
+      }
+    }
+    .seperator {
+      text-align: center;
+      height: 22px;
+    }
+    .info {
+      background: #fff;
+      color: #333;
+      width: 200px;
+      padding: 16px;
+      position: absolute;
+      z-index: 1;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+      border-radius: 3px;
+      top: 0;
+      left: 60px;
+      .pi-field-group {
+        margin-top: 8px;
+        position: relative;
+      }
+      .cross {
+        position: absolute;
+        left: 80px;
+        top: 37px;
+      }
+    }
+  }
+  .page {
+    background: #fff;
+    margin: 30px auto;
+    padding: 20px;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.page-list {
+  background: transparent;
+  padding-top: 15px;
+  .page-item {
+    padding: 0;
+    font-size: 16px;
+    text-transform: capitalize;
+    // border-bottom: 1px solid #d7dbdd;
+    .base-title {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      color: #485570;
+      font-family: "SF-Pro-Text-Medium", Sans-Serif;
+      text-transform: uppercase;
+      font-size: 14px;
+      .arrow {
+        font-size: 16px;
+        color: #42526e;
+        display: flex;
+        align-items: center;
+        transform: rotate(0);
+        -webkit-transform: rotate(0);
+        -moz-transform: rotate(0);
+        -ms-transform: rotate(0);
+        -o-transform: rotate(0);
+        transition: transform 0.3s ease-in-out;
+        -webkit-transition: -webkit-transform 0.3s ease-in-out;
+        -moz-transition: -webkit-transform 0.3s ease-in-out;
+        -ms-transition: -webkit-transform 0.3s ease-in-out;
+        -o-transition: -webkit-transform 0.3s ease-in-out;
+        &.arrow-up {
+          transform: rotate(90deg);
+          -webkit-transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -o-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+        }
+      }
+    }
+    .base-list {
+      overflow: hidden;
+      .base-item {
+        color: #717886;
+        text-transform: capitalize;
+        font-size: 13px;
+        height: 30px;
+        line-height: 30px;
+        min-height: 30px;
+        font-family: "SF-Pro-Text-Regular", Sans-Serif;
+        display: inline-table;
+        padding: 0 20px;
+        border-radius: 5px;
+        margin-left: 20px;
+        margin-bottom: 5px;
+        &.active {
+          // background: #cbd4e1;
+          background: #e9ecf5;
+        }
+      }
+      &.invisible {
+        height: 0;
+      }
+    }
+  }
+  ul,
+  li {
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style-type: none;
+  }
+  .mat-tree-node {
+    min-height: 40px;
+    color: #485570;
+    font-family: "SF-Pro-Text-Medium", Sans-Serif;
+    text-transform: uppercase;
+    li {
+      color: #717886;
+      text-transform: capitalize;
+      font-size: 13px;
+      height: 30px;
+      line-height: 30px;
+      min-height: 30px;
+      font-family: "SF-Pro-Text-bold", Sans-Serif;
+      display: inline-table;
+      padding: 0 15px;
+      border-radius: 5px;
+      &.active {
+        background: #cbd4e1;
+      }
+    }
+  }
+}
+.example-tree-invisible {
+  display: none;
+}

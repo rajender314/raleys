@@ -1,0 +1,129 @@
+<div *ngIf="permission['top-level'] == 1">
+  <!-- permission.children &&  -->
+  <mat-accordion>
+    <mat-expansion-panel
+      (opened)="panelOpenState = true"
+      (closed)="panelOpenState = false"
+    >
+      <mat-expansion-panel-header
+        [collapsedHeight]="'48px'"
+        [expandedHeight]="'48px'"
+      >
+        <mat-panel-title>
+          <div class="panel-icons">
+            <h4 *ngIf="permission['top-level'] == 1">{{ permission.name }}</h4>
+            <div
+              class="permission-name"
+              *ngIf="permission['top-level'] != 1"
+              [ngClass]="{ 'child-level': permission['top-level'] == 3 }"
+            >
+              {{ permission.name }}
+            </div>
+          </div>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div></div>
+      <div *ngIf="permission.children" class="permission-block">
+        <div>
+          <app-user-permissions
+            *ngFor="let child of permission.children; let i = index"
+            [permission]="child"
+            [class.child-permission-border]="permission['top-level'] > 2"
+            class="child-permission"
+          ></app-user-permissions>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+<div *ngIf="permission['top-level'] != 1">
+  <!-- !permission.children ||  -->
+  <div
+    class="permission-label"
+    *ngIf="permission['top-level'] == 2 && permission['name'] != 'OTHERS'"
+  >
+    {{ permission.name }}
+  </div>
+  <p class="sub-text" *ngIf="permission['name'] == 'OFFER SUB PERMISSIONS'">
+    *You cannot add offers with Hide and Read Offer Type permissions.
+  </p>
+  <div
+    class="permission-name"
+    [ngClass]="{ 'inner-child': permission['top-level'] == 4 }"
+  >
+    <mat-form-field
+      class="custom-input permission"
+      *ngIf="permission.type === 'select'"
+      floatPlaceholder="never"
+    >
+      <mat-select
+        [(ngModel)]="permission.selectedValue"
+        [disabled]="disableDropdown"
+        (selectionChange)="check(permission, permission.selectedValue)"
+      >
+        <mat-option
+          *ngFor="let option of permission.options"
+          [value]="option.id"
+        >
+          {{ option.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="permission.type === 'radio'" class="item radio_btn">
+      <pi-form-field
+        [label]="option.name"
+        *ngFor="let option of permission.children"
+      >
+        <input
+          type="radio"
+          pi-input
+          name="offerType"
+          class="permission item"
+          [checked]="option.checked"
+          (click)="
+            check(option, $event, permission.children); enableSave(option)
+          "
+        />
+      </pi-form-field>
+    </div>
+
+    <div
+      *ngIf="permission.type === 'checkbox' && permission.children"
+      class="item"
+    >
+      <div class="item" *ngFor="let option of permission.children">
+        <pi-form-field label="{{ option.name }}">
+          <input
+            type="checkbox"
+            pi-input
+            [(ngModel)]="option.checked"
+            [checked]="option.checked"
+            [disabled]="option.disabled"
+            (change)="check(option); enableSave(option)"
+            class="example-margin"
+          />
+        </pi-form-field>
+        <div
+          *ngIf="option.type === 'checkbox' && option.children"
+          class="item child"
+        >
+          <div class="item" *ngFor="let opt of option.children">
+            <pi-form-field label="{{ opt.name }}">
+              <input
+                type="checkbox"
+                pi-input
+                [disabled]="opt.disabled"
+                [(ngModel)]="opt.checked"
+                [checked]="opt.checked"
+                (change)="enableSave(option); check(opt)"
+                class="example-margin"
+              />
+            </pi-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<mat-sidenav-container
+  class="settings-container ads-grid-container grid-container"
+>
+  <mat-sidenav-content>
+    <div class="ads-grid-section">
+      <div class="section-header">
+        <div
+          class="header-adReports"
+          [ngClass]="{ 'align-cntnt': this.adReports.length }"
+        >
+          <em class="{{ listData?.iconClass }}"></em>
+          <h3 class="sub-heading">{{ listData?.value }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="ad-reports-container">
+      <div class="ad-report-card" *ngIf="adReports.length">
+        <div class="report-headers">
+          <!-- <div class="header-name">Report Name</div> -->
+          <!-- <div class="header-name">Created Date</div> -->
+        </div>
+        <div
+          class="ad-reports-list"
+          *ngFor="let adReport of adReports; let i = index"
+        >
+          <div class="ad-report-name">
+            {{ adReport.name }} <span>created at </span>
+            <span class="ad-report-date"> {{ adReport.date_added }}</span>
+          </div>
+          <!-- <div class="ad-report-date">{{ adReport.date_added }}</div> -->
+          <div class="ad-report-action-btns">
+            <button pi-button class="view-btn" (click)="adPreview(adReport)">
+              View
+            </button>
+            <button
+              pi-button
+              class="export-btn"
+              color="accent"
+              (click)="adDownload(adReport)"
+            >
+              <!-- <mat-spinner class="md spinner" diameter="18"></mat-spinner> -->
+
+              <!-- [disabled]="adReport.downloadBtn == 'Downloading'" -->
+
+              <span> {{ adReport.downloadBtn }}</span>
+              <div
+                class="dwnld-spinner spinner"
+                *ngIf="adReport.downloadBtn == 'Downloading'"
+              >
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+              </div>
+            </button>
+            <span class="delete-btn" (click)="delRep(adReport)"
+              ><em class="pixel-icons icon-delete"></em
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="no-data-grid" *ngIf="noData && !dataLoad">
+      <em class="{{ listData?.iconClass }}"></em>
+      <p>Reports Not Found.</p>
+      <button
+        pi-button
+        class="export-btn"
+        color="accent"
+        (click)="addReports()"
+      >
+        Add Reports
+      </button>
+      <!-- <div class="stores-bg">
+      <img [src]="noReports" alt="no-image.png" /></div>
+    <span class="text">Reports Not Found</span>
+    <button pi-button color="accent" (click)="addReports()">Add Reports</button> -->
+    </div>
+    <div class="loader-sm" *ngIf="dataLoad && !noData"></div>
+    <div class="loader-text no-data-grid" *ngIf="dataLoad && !noData">
+      Loading, please wait...
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

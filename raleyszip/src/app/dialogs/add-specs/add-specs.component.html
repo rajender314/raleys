@@ -1,0 +1,372 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>{{ data.title }}</h2>
+  <!-- <button mat-icon-button mat-dialog-close tabindex="-1">
+    <em class="pixel-icons icon-close"></em>
+  </button> -->
+</div>
+<mat-dialog-content>
+  <form [formGroup]="addSpec" *ngIf="addSpecMode">
+    <pi-form-field class="m-t">
+      <label class="label-name">Label</label>
+      <span
+        class="required"
+        [ngClass]="{ error: addSpec.controls.label.hasError('required') }"
+      >
+        *</span
+      >
+      <input type="text" pi-input formControlName="label" />
+      <div
+        class="pi-error"
+        *ngIf="addSpec.controls.label.hasError('required') && submitted"
+      >
+        Please enter Label
+      </div>
+      <div class="pi-error">{{ errorMsg }}</div>
+    </pi-form-field>
+    <div *ngIf="data.flag != 'auto_suggest'">
+      <pi-form-field>
+        <label class="label-name">Status</label>
+        <pi-select [options]="statusList" formControlName="status"></pi-select>
+      </pi-form-field>
+      <pi-form-field>
+        <label class="label-name">Type</label>
+        <span
+          class="required"
+          [ngClass]="{
+            error: addSpec.controls.ui_element_id.hasError('required')
+          }"
+        >
+          *</span
+        >
+        <pi-select
+          idKey="_id"
+          nameKey="name"
+          [options]="UIElements"
+          formControlName="ui_element_id"
+          (onChange)="getValue($event)"
+        ></pi-select>
+
+        <div
+          *ngIf="
+            limitValues == 'single_line_text' ||
+            limitValues == 'number' ||
+            limitValues == 'paragraph_text'
+          "
+        >
+          <pi-field-group formGroupName="limits">
+            <pi-form-field label="Min Limit">
+              <input type="number" pi-input formControlName="min_limit" />
+            </pi-form-field>
+
+            <pi-form-field label="Max Limit">
+              <input type="number" pi-input formControlName="max_limit" />
+            </pi-form-field>
+
+            <pi-form-field label="Max Length">
+              <input type="number" pi-input formControlName="max_length" />
+            </pi-form-field>
+          </pi-field-group>
+        </div>
+      </pi-form-field>
+      <pi-form-field>
+        <label class="label-name">Form Type</label>
+        <span
+          class="required"
+          [ngClass]="{ error: addSpec.controls.form_type.hasError('required') }"
+          >*</span
+        >
+        <pi-select
+          class="addSpec-form-types"
+          [options]="formTypes"
+          formControlName="form_type"
+          [class.specInputDisabled]="!data.fromSpecPage"
+        ></pi-select>
+        <div
+          class="pi-error"
+          *ngIf="addSpec.controls.form_type.hasError('required') && submitted"
+        >
+          Please select Form Type
+        </div>
+        <!-- <div class="pi-error">{{ errorMsg }}</div> -->
+      </pi-form-field>
+    </div>
+  </form>
+  <!-- <form *ngIf="editSpecMode" [formGroup]="editSpecsForm" class="form-flex">
+    <pi-form-field>
+      <label class="label-name">Form Spec Name</label>
+      <input pi-input formControlName="label" />
+      <div class="pi-error" *ngIf="
+                                editSpecsForm.controls.label.hasError('required') &&
+                                submitted
+                              ">
+        Please Enter Form Spec Name
+      </div>
+      <div class="pi-error">{{ errorMsg }}</div>
+    </pi-form-field>
+    <pi-field-group>
+      <pi-select label="Status" [options]="statusList" formControlName="status"></pi-select>
+      <pi-select label="Type" idKey="_id" nameKey="name" [options]="UIElements" formControlName="ui_element_id">
+      </pi-select>
+    </pi-field-group>
+  
+    <div formGroupName="settings">
+      <pi-form-field label="Mandatory">
+        <input type="checkbox" pi-input formControlName="mandatory" />
+      </pi-form-field>
+    </div>
+  
+  
+    <div *ngIf="selectedSpecLabels.key == 'multiple_choice'">
+      <mat-radio-group class="choices-wrapper">
+        <label>Choices</label>
+        <div class="choices">
+          <div class="header">
+            <span class="radio">Default</span>
+            <span class="text">Value</span>
+            <span class="toggle">Status</span>
+          </div>
+          <div class="body" formArrayName="options">
+            <div class="choice-box-empty" *ngIf="!selectedSpecLabels.options.length">
+              <div class="no-data-grid">Data Not Found</div>
+            </div>
+            <div *ngFor="
+                                                  let choice of selectedSpecLabels.options;
+                                                  let i = index
+                                                " class="choice-box" [formGroupName]="i">
+              <pi-form-field label=" " class="custom-radio">
+                <input type="radio" pi-input color="primary" [value]="selectedSpecLabels.options[i].value" />
+              </pi-form-field>
+              <pi-form-field class="m-t">
+                <input type="text" pi-input formControlName="value" maxlength="64" />
+                <div class="pi-error" *ngIf="
+                                                      editSpecsForm.controls.options.controls[
+                                                        i
+                                                      ].controls.value.hasError('required') &&
+                                                      submitted
+                                                    ">
+                  Please Enter Value
+                </div>
+              </pi-form-field>
+  
+              <div class="toggle">
+                <mat-slide-toggle color="primary" class="toggle" formControlName="status"></mat-slide-toggle>
+              </div>
+  
+              <div class="actions">
+                <span (click)="removeControl(i)" *ngIf="availableOptions <= i" [class.disable]="
+                                                      selectedSpecLabels.options.length == 1
+                                                    " class="remove cursor">
+                  <em class="material-icons">remove</em>
+                </span>
+                <span (click)="addControl()" *ngIf="i >= availableOptions - 1" [class.disable]="
+                                                      selectedSpecLabels.options.length ==
+                                                      maxAliases
+                                                    " class="add cursor">
+                  <em class="pixel-icons icon-plus"></em>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-radio-group>
+    </div>
+  
+    <div *ngIf="selectedSpecLabels.key == 'dropdown'">
+      <mat-radio-group class="choices-wrapper">
+        <label>Choices</label>
+        <div class="choices">
+          <div class="header">
+            <span class="radio">Default</span>
+            <span class="text">Value</span>
+            <span class="toggle">Status</span>
+          </div>
+          <div class="body" formArrayName="options">
+            <div class="choice-box-empty" *ngIf="!selectedSpecLabels.options.length">
+              <div class="no-data-grid">Data Not Found</div>
+            </div>
+            <div *ngFor="
+                                                  let choice of selectedSpecLabels.options;
+                                                  let i = index
+                                                " class="choice-box" [formGroupName]="i">
+              <pi-form-field label=" " class="custom-radio">
+                <input type="radio" pi-input color="primary" [value]="selectedSpecLabels.options[i].value" />
+              </pi-form-field>
+              <pi-form-field class="m-t">
+                <input type="text" pi-input formControlName="value" maxlength="64" />
+              </pi-form-field>
+  
+              <div class="toggle">
+                <mat-slide-toggle color="primary" class="toggle" formControlName="status"></mat-slide-toggle>
+              </div>
+              <div class="actions">
+                <span (click)="removeControl(i)" *ngIf="availableOptions <= i" [class.disable]="
+                                                      selectedSpecLabels.options.length == 1
+                                                    " class="remove cursor">
+                  <em class="material-icons">remove</em>
+                </span>
+                <span (click)="addControl()" *ngIf="i >= availableOptions - 1" [class.disable]="
+                                                      selectedSpecLabels.options.length ==
+                                                      maxAliases
+                                                    " class="add cursor">
+                  <em class="pixel-icons icon-plus"></em>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-radio-group>
+    </div>
+  
+    <div *ngIf="selectedSpecLabels.key == 'paragraph_text'">
+      <pi-field-group>
+        <div style="min-width: 100px;" formGroupName="settings">
+          <pi-select label="Size" [options]="sizes" formControlName="size"></pi-select>
+        </div>
+        <pi-form-field label="Predefined Value">
+          <input type="text" pi-input name="predefined_value" formControlName="value" />
+        </pi-form-field>
+      </pi-field-group>
+    </div>
+  
+    <div *ngIf="selectedSpecLabels.key == 'single_line_text'">
+      <pi-field-group>
+        <div style="min-width: 100px;" formGroupName="settings">
+          <pi-select label="Size" [options]="sizes" formControlName="size"></pi-select>
+        </div>
+        <pi-form-field label="Predefined Value">
+          <input type="text" pi-input name="predefined_value" formControlName="value" />
+        </pi-form-field>
+      </pi-field-group>
+    </div>
+  
+    <div *ngIf="selectedSpecLabels.key == 'checkboxes'">
+      <mat-radio-group class="choices-wrapper">
+        <label>Choices</label>
+        <div class="choices">
+          <div class="header">
+            <span class="radio">Default</span>
+            <span class="text">Value</span>
+            <span class="toggle">Status</span>
+          </div>
+          <div class="body" formArrayName="options">
+            <div class="choice-box-empty" *ngIf="!selectedSpecLabels.options.length">
+              <div class="no-data-grid">Data Not Found</div>
+            </div>
+            <div *ngFor="
+                                                  let choice of selectedSpecLabels.options;
+                                                  let i = index
+                                                " class="choice-box" [formGroupName]="i">
+              <pi-form-field label=" " class="custom-radio">
+                <input type="radio" pi-input color="primary" [value]="selectedSpecLabels.options[i].value" />
+              </pi-form-field>
+              <pi-form-field class="m-t">
+                <input type="text" pi-input formControlName="value" maxlength="64" />
+              </pi-form-field>
+  
+              <div class="toggle">
+                <mat-slide-toggle color="primary" class="toggle" formControlName="status"></mat-slide-toggle>
+              </div>
+              <div class="actions">
+                <span (click)="removeControl(i)" *ngIf="availableOptions <= i" [class.disable]="
+                                                      selectedSpecLabels.options.length == 1
+                                                    " class="remove cursor">
+                  <em class="material-icons">remove</em>
+                </span>
+                <span (click)="addControl()" *ngIf="i >= availableOptions - 1" [class.disable]="
+                                                      selectedSpecLabels.options.length ==
+                                                      maxAliases
+                                                    " class="add cursor">
+                  <em class="pixel-icons icon-plus"></em>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-radio-group>
+    </div>
+  
+    <div *ngIf="selectedSpecLabels.key == 'number'">
+      <pi-field-group>
+        <div style="min-width: 100px;" formGroupName="settings">
+          <pi-select label="Size" [options]="decimalDigits" formControlName="decimal"></pi-select>
+        </div>
+        <pi-form-field label="Predefined Value">
+          <input type="text" pi-input name="predefined_value" formControlName="value" />
+        </pi-form-field>
+      </pi-field-group>
+    </div>
+  
+    <div *ngIf="selectedSpecLabels.key == 'date'">
+      <pi-form-field label="Date" class="structure-select">
+        <div class="date-picker-field">
+          <input class="datepicker" pi-input [disabled]="true" [matDatepicker]="picker" placeholder="Select Date" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </div>
+      </pi-form-field>
+    </div>
+  
+    <div *ngIf="selectedSpecLabels.key == 'auto_suggest'">
+      <div class="choices-wrapper">
+        <label>Choices</label>
+        <div class="choices">
+          <div class="header">
+            <span class="text">Value</span>
+            <span class="toggle">Status</span>
+          </div>
+          <div class="body" formArrayName="options">
+            <div class="choice-box-empty" *ngIf="!selectedSpecLabels.options.length">
+              <div class="no-data-grid">Data Not Found</div>
+            </div>
+            <div *ngFor="
+                                                  let choice of selectedSpecLabels.options;
+                                                  let i = index
+                                                " class="choice-box" [formGroupName]="i">
+              <pi-form-field class="m-t">
+                <input type="text" pi-input formControlName="value" maxlength="64" />
+              </pi-form-field>
+  
+              <div class="toggle">
+                <mat-slide-toggle color="primary" class="toggle" formControlName="status"></mat-slide-toggle>
+              </div>
+              <div class="actions">
+                <span (click)="removeControl(i)" *ngIf="availableOptions <= i" [class.disable]="
+                                                      selectedSpecLabels.options.length == 1
+                                                    " class="remove cursor">
+                  <em class="material-icons">remove</em>
+                </span>
+                <span (click)="addControl()" *ngIf="i >= availableOptions - 1" [class.disable]="
+                                                      selectedSpecLabels.options.length ==
+                                                      maxAliases
+                                                    " class="add cursor">
+                  <em class="pixel-icons icon-plus"></em>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <pi-form-field label="Tooltip/Help">
+      <textarea pi-input name="description" formControlName="tooltip" maxlength="1024"></textarea>
+      <span class="field-note">Enter text of 1024 characters or less.</span>
+    </pi-form-field>
+    <div class="footer" *ngIf="selectedSpecLabels">
+      <button pi-button color="subtle" (click)="resetForm(selectedSpecLabels)">
+        Cancel
+      </button>
+      <button pi-button color="accent" [disabled]="editSpecsForm.pristine && options.pristine"
+        (click)="saveDetails(editSpecsForm)">
+        Save
+      </button>
+    </div>
+  
+  </form> -->
+</mat-dialog-content>
+<div class="mat-dialog-actions mat-dialog-footer mat-dialog-footer-empty-error">
+  <div class="box">
+    <button pi-button color="subtle" (click)="close()">Cancel</button>
+    <button pi-button color="accent" (click)="save(addSpec)">Save</button>
+  </div>
+</div>

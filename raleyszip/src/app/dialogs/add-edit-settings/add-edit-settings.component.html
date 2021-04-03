@@ -1,0 +1,446 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>
+    {{ data.type == 'edit' ? 'Edit' : 'Add' }} {{ listData?.label }}
+  </h2>
+  <!-- <button mat-icon-button mat-dialog-close tabindex="-1">
+    <i class="pixel-icons icon-close"></i>
+  </button> -->
+</div>
+<mat-dialog-content
+  class="custom-mat-dialog-content"
+  [ngClass]="{ 'icons-content': listData.key === 'ICONS' }"
+>
+  <form [formGroup]="settingsListForm">
+    <div formArrayName="settingsFormValues">
+      <ng-container *ngFor="let field of headersData; let i = index">
+        <!-- [label]="headersData[i]?.name"  -->
+        <!-- <pi-select *ngIf="headersData[i]?.key == 'dropdown'" [options]="statusList" [formControlName]="headersData[i]?.db_column_key"></pi-select> -->
+        <pi-form-field [formGroupName]="i">
+          <label class="label-name"
+            >{{ headersData[i]?.label | titlecase }}
+          </label>
+          <span
+            class="required"
+            *ngIf="headersData[i]?.form_save_value.settings.mandatory"
+          >
+            *</span
+          >
+          <!-- <div *ngFor="let field of headersData; let i = index"> -->
+          <!-- [label]="headersData[i]?.name"  
+          *ngIf="headersData[i]?.key != 'last_modified'" -->
+          <!-- <pi-form-field [formGroupName]="i">
+              <label class="label-name">{{ field.label | titlecase }} </label>
+              <span class="required" *ngIf="field.form_save_value.settings.mandatory">{{ field.form_save_value.settings.mandatory ? '*' : '' }}
+              </span> -->
+          <input
+            type="text"
+            *ngIf="
+              headersData[i]?.key == 'single_line_text' &&
+              headersData[i]?.db_column_key != 'icon_tags'
+            "
+            class="ak-field-text"
+            [formControlName]="headersData[i]?.db_column_key"
+            pi-input
+          />
+          <div
+            class="pi-error "
+            *ngIf="headersData[i]?.db_column_key === 'name'"
+          >
+            <span class="already-exist-msg">{{ error }}</span>
+          </div>
+          <input
+            type="text"
+            *ngIf="
+              headersData[i]?.key == 'single_line_text' &&
+              headersData[i]?.db_column_key == 'icon_tags'
+            "
+            class="ak-field-text"
+            [formControlName]="headersData[i]?.db_column_key"
+            pi-input
+            id="{{ headersData[i]?.db_column_key }}"
+            (input)="valChanged($event)"
+            [(ngModel)]="tagsList"
+          />
+
+          <!-- <input type="number" *ngIf="field.key == 'number'" pi-input formControlName="{{ field.db_column_key }}" /> -->
+          <!-- <pi-select *ngIf="headersData[i]?.key == 'status'" [options]="statusList" [formControlName]="headersData[i]?.key"></pi-select> -->
+          <!-- <pi-select *ngIf="headersData[i]?.key == 'mod_type_color_name'" [options]="modColors" [formControlName]="headersData[i]?.key"></pi-select> -->
+          <!-- <textarea rows="4" formControlName="{{ field.db_column_key }}" pi-input *ngIf="field.key == 'paragraph_text'"></textarea>
+              <div *ngIf="field.key == 'checkboxes'">
+                <div *ngFor="let option of field.options">
+                  <pi-form-field label="{{ option.value }}">
+                    <input type="checkbox" pi-input formControlName="{{ field.db_column_key }}" />
+                  </pi-form-field>
+                </div>
+              </div> -->
+          <!-- <pi-select
+            *ngIf="headersData[i]?.key == 'dropdown'"
+            [options]="statusList"
+            [formControlName]="headersData[i]?.db_column_key"
+          ></pi-select> -->
+
+          <ng-container *ngIf="headersData[i]?.key == 'dropdown'">
+            <pi-select
+              *ngIf="headersData[i]?.db_column_key == 'status'"
+              [options]="headersData[i]?.options"
+              formControlName="{{ field.db_column_key }}"
+              nameKey="label"
+              idKey="value"
+            >
+            </pi-select>
+            <pi-select
+              *ngIf="headersData[i]?.db_column_key != 'status'"
+              [options]="headersData[i]?.options"
+              formControlName="{{ field.db_column_key }}"
+            >
+            </pi-select>
+          </ng-container>
+
+          <ng-container>
+            <pi-select
+              *ngIf="
+                headersData[i]?.key == 'multiple_choice' &&
+                headersData[i]?.db_column_key == 'division_id'
+              "
+              [options]="headersData[i]?.options"
+              formControlName="{{ field.db_column_key }}"
+              nameKey="divname"
+              idKey="divcode"
+              [multi]="true"
+              class="divsions_list"
+            >
+            </pi-select>
+
+            <pi-select
+              *ngIf="
+                headersData[i]?.key == 'multiple_choice' &&
+                headersData[i]?.db_column_key != 'division_id'
+              "
+              [options]="headersData[i]?.options"
+              formControlName="{{ field.db_column_key }}"
+              [multi]="true"
+            >
+            </pi-select>
+          </ng-container>
+
+          <!-- <pi-select
+            *ngIf="headersData[i]?.db_column_key === 'status'"
+            [options]="statusList"
+            [multi]="headersData[i]?.settings.multi"
+            [formControlName]="headersData[i]?.db_column_key"
+          ></pi-select> -->
+          <!-- <pi-select
+            *ngIf="headersData[i]?.db_column_key === 'icon_tags'"
+            [options]="tagsList"
+            [multi]="headersData[i]?.settings.multi"
+            [formControlName]="headersData[i]?.db_column_key"
+          ></pi-select> -->
+
+          <!-- <pi-select
+            *ngIf="headersData[i]?.db_column_key === 'offer_types'"
+            [options]="offerTypes"
+            [multi]="headersData[i]?.settings.multi"
+            [formControlName]="headersData[i]?.db_column_key"
+          ></pi-select>
+          <pi-select
+            *ngIf="headersData[i]?.db_column_key === 'mod_type_color_id'"
+            [options]="modColors"
+            [multi]="headersData[i]?.settings.multi"
+            [formControlName]="headersData[i]?.db_column_key"
+          ></pi-select>
+
+          <pi-select
+            *ngIf="headersData[i]?.db_column_key === 'vehicle_type'"
+            [options]="vehiclesData"
+            [multi]="headersData[i]?.settings.multi"
+            [formControlName]="headersData[i]?.db_column_key"
+          ></pi-select>
+          <pi-select
+            *ngIf="headersData[i]?.db_column_key === 'division_id'"
+            [options]="divisonsList"
+            [multi]="headersData[i]?.settings.multi"
+            nameKey="divname"
+            [formControlName]="headersData[i]?.db_column_key"
+          ></pi-select> -->
+
+          <div class="msgs">
+            <!-- settingsListForm.controls[field.key].hasError('required') &&  -->
+            <!-- <div class="pi-error" *ngIf="headersData[i]?.key == 'name'">
+              {{ error }}
+            </div> -->
+            <div
+              class="pi-error"
+              *ngIf="
+                settingsListForm.controls.settingsFormValues.controls[
+                  i
+                ].controls[field.db_column_key].hasError('required') &&
+                submitted &&
+                field.key == 'dropdown'
+              "
+            >
+              Please Select {{ field.label | titlecase }}
+            </div>
+
+            <div
+              class="pi-error"
+              *ngIf="
+                settingsListForm.controls.settingsFormValues.controls[i]
+                  .controls[field.db_column_key].invalid &&
+                submitted &&
+                (settingsListForm.controls.settingsFormValues.controls[i]
+                  .controls[field.db_column_key].value != '' &&
+                  settingsListForm.controls.settingsFormValues.controls[i]
+                    .controls[field.db_column_key].value != null) &&
+                field.db_column_key == 'no_of_mods'
+              "
+            >
+              Number of Mods value should be between 1 and 100
+            </div>
+
+            <div
+              class="pi-error"
+              *ngIf="
+                (settingsListForm.controls.settingsFormValues.controls[
+                  i
+                ].controls[field.db_column_key].hasError('required') ||
+                  settingsListForm.controls.settingsFormValues.controls[
+                    i
+                  ].controls[field.db_column_key].hasError('whitespace')) &&
+                submitted &&
+                field.key != 'dropdown'
+              "
+            >
+              Please Enter {{ field.label }}
+            </div>
+            <!-- <div class="pi-error" *ngIf="
+                  settingsListForm.controls.settingsFormValues.controls[
+                    i
+                  ].controls[field.key].hasError('required') &&
+                  submitted
+                ">
+              Please Select {{ field.label | titlecase }}
+            </div> -->
+            <!-- settingsListForm.controls[field.key].hasError('required') &&  -->
+            <!-- <div class="pi-error" *ngIf="
+                  settingsListForm.controls.settingsFormValues.controls[
+                    i
+                  ].controls[(headersData[i]?.key)].hasError('required') &&
+                  submitted && headersData[i]?.type=='text' ">
+              Please Enter
+              <span class="sub">{{ headersData[i].name | titlecase }}</span>
+            </div>
+            <div class="pi-error" *ngIf="
+                  settingsListForm.controls.settingsFormValues.controls[
+                    i
+                  ].controls[(headersData[i]?.key)].hasError('required') &&
+                  submitted && headersData[i]?.type=='no_of_mods' ">
+              Please Enter
+              <span class="sub">{{ headersData[i].name | titlecase }}</span>
+            </div>
+            <div class=" pi-error " *ngIf=" settingsListForm.controls.settingsFormValues.controls[ i ].controls[(headersData[i]?.key)].hasError(
+              'required') && submitted && headersData[i]?.type=='select' ">
+              Please Select {{ headersData[i].name | titlecase }}
+            </div> -->
+          </div>
+        </pi-form-field>
+      </ng-container>
+    </div>
+    <div class="display-selected-icons" *ngIf="listData.key == 'ICONS'">
+      <p class="sel-images-header">Selected Images</p>
+      <div class="images-section pos-rel">
+        <div class="total-assets" *ngIf="selectedAssestsArray?.length">
+          <span
+            *ngFor="let asset of (selectedAssestsArray | slice: 0:4)"
+            class="asset-coll"
+            (click)="assetOperations(asset)"
+          >
+            <div
+              class="images-container"
+              [ngClass]="{ active: asset.default ? asset.default : false }"
+            >
+              <img
+                [src]="asset.thumbUrl"
+                alt="{{ asset.asset_name }}"
+                class="images-preview"
+              />
+              <img
+                class="del-icon cursor"
+                src="{{ deleteLogo }}"
+                alt="delete"
+                (click)="deleteImg(asset)"
+              />
+              <a (click)="defaultImg(asset)">Default</a>
+            </div>
+          </span>
+        </div>
+        <div
+          class="no-data"
+          *ngIf="!selectedAssestsArray?.length && listData.key == 'ICONS'"
+        >
+          <p class="text-center">No Images Selected Yet</p>
+        </div>
+      </div>
+    </div>
+    <p
+      *ngIf="listData.key == 'ICONS' && this.selectedAssestsArray.length > 3"
+      class="note pi-error"
+    >
+      Maximum of 4 images will be selected against an Icon.
+    </p>
+  </form>
+  <div class="icons-view-section" *ngIf="listData.key == 'ICONS'">
+    <mat-tab-group>
+      <mat-tab class="mat-tabs pos-rel" label="Search {{ listData.label }}">
+        <div class="search-sec">
+          <!-- <app-search
+            [search]="search"
+            (onSearch)="onSearch($event)"
+          ></app-search> -->
+          <pi-form-field leftIcon="true">
+            <pi-icon name="icon-search"></pi-icon>
+            <input
+              type="text"
+              pi-input
+              [placeholder]="'Search...'"
+              [(ngModel)]="imageAssestsInfo.search"
+              (keyup.enter)="searchAsset()"
+            />
+            <pi-icon
+              *ngIf="imageAssestsInfo.search"
+              (click)="
+                $event.stopPropagation();
+                imageAssestsInfo.search = '';
+                clearVal()
+              "
+              name="icon-close"
+            ></pi-icon>
+          </pi-form-field>
+          <button
+            pi-button
+            (click)="searchAsset()"
+            color="accent"
+            class="asset-search-btn"
+            [disabled]="this.selectedAssestsArray.length > 3 || progress"
+          >
+            Search
+          </button>
+        </div>
+        <div
+          class="images-section"
+          *ngIf="assestsCollection?.length"
+          infinite-scroll
+          [infiniteScrollDistance]="2"
+          [infiniteScrollThrottle]="19"
+          (scrolled)="onScrollDown()"
+          [infiniteScrollDisabled]="toggleClass"
+          [scrollWindow]="false"
+        >
+          <div class="total-assets" *ngIf="assestsCollection?.length">
+            <span
+              *ngFor="let asset of assestsCollection"
+              class="asset-coll "
+              [ngClass]="{
+                'not-allowed': this.selectedAssestsArray.length > 3,
+                cursor: this.selectedAssestsArray.length < 4
+              }"
+              (click)="assetSelected(asset)"
+            >
+              <div
+                class="images-container"
+                [ngClass]="{
+                  active: asset.selected,
+                  'not-allowed': this.selectedAssestsArray.length > 3,
+                  cursor: this.selectedAssestsArray.length < 4
+                }"
+              >
+                <!-- <div
+                  class="brand-img-overlay "
+                  [ngClass]="{
+                    active: asset.selected,
+                    'not-allowed': this.selectedAssestsArray.length > 3,
+                    cursor: this.selectedAssestsArray.length < 4
+                  }"
+                ></div> -->
+                <img
+                  [src]="asset.thumbUrl"
+                  alt="asset.asset_name"
+                  class="images-preview"
+                />
+              </div>
+              <p class="asset-name" [matTooltip]="asset.file_name">
+                {{
+                  asset.file_name ? asset.file_name?.substring(0, 25) : '---'
+                }}
+                <span *ngIf="asset.file_name && asset.file_name.length > 25"
+                  >...</span
+                >
+              </p>
+              <div class="meta-data">
+                <span class="text-ellipsis" [matTooltip]="asset.color_profile">
+                  {{ asset.color_profile ? asset.color_profile : '---' }}
+                </span>
+                <span class="text-ellipsis" [matTooltip]="asset.file_size">
+                  {{ asset.file_size ? asset.file_size : '---' }}
+                </span>
+              </div>
+            </span>
+          </div>
+          <div class="spinner no-margin" *ngIf="toggleClass">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+        </div>
+        <div
+          class="no-data"
+          *ngIf="noData && !progress && !assestsCollection?.length"
+        >
+          <p>{{ searchMsg }}</p>
+        </div>
+        <!-- <div
+          class="intail-search"
+          *ngIf="noData && !progress && !assestsCollection?.length"
+        >
+          <pi-icon name="icon-search"></pi-icon>
+          <p>{{ searchMsg }}</p>
+        </div> -->
+        <!-- <div class="loader" *ngIf="progress"> -->
+        <!-- </div> -->
+        <div class="loader" *ngIf="progress"></div>
+        <div class=" spinner-content loading-msg" *ngIf="progress">
+          Fetching Icons
+        </div>
+      </mat-tab>
+      <mat-tab
+        class="mat-tabs"
+        label="Upload {{ listData.label }}"
+        [ngClass]="{
+          'not-allowed': this.selectedAssests.length > 3,
+          cursor: this.selectedAssests.length < 4
+        }"
+      >
+        <app-upload-img
+          [ngClass]="{
+            'not-allowed': this.selectedAssests.length > 3,
+            cursor: this.selectedAssests.length < 4
+          }"
+          (onUpload)="onUpload($event)"
+          [triggerFunc]="triggerFunc"
+        ></app-upload-img>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</mat-dialog-content>
+<div class="mat-dialog-actions mat-dialog-footer">
+  <div class="box">
+    <button pi-button color="subtle" (click)="closeDialog()">Cancel</button>
+    <button
+      pi-button
+      color="accent"
+      [disabled]="settingsListForm.pristine && !enableSave"
+      (click)="updateList(settingsListForm)"
+    >
+      {{ data.type == 'edit' ? 'Update' : 'Add' }} {{ listData?.label }}
+    </button>
+  </div>
+</div>

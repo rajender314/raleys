@@ -1,0 +1,53 @@
+<div class="mat-dialog-heading">
+  <h2 mat-dialog-title>
+    <em class="{{ listData?.iconClass }}"></em> {{ listData?.value }}
+  </h2>
+  <button mat-icon-button mat-dialog-close tabindex="-1">
+    <em class="pixel-icons icon-close"></em>
+  </button>
+</div>
+
+<mat-sidenav-container class="settings-container grid-container">
+  <mat-sidenav-content>
+    <div class="">
+      <div class="inner-section">
+        <ag-grid-angular
+          class="ag-theme-balham grid"
+          *ngIf="rowData?.length"
+          [rowData]="rowData"
+          [animateRows]="true"
+          rowHeight="38"
+          [columnDefs]="columnDefs"
+          [domLayout]="autoHeight"
+          (gridReady)="onGridReady($event)"
+          (cellValueChanged)="onCellValueChanged($event)"
+          (cellClicked)="onCellClicked($event)"
+          [rowSelection]="'single'"
+          (rowSelected)="onRowSelected($event)"
+        >
+        </ag-grid-angular>
+      </div>
+      <div class="pi-error error-block">
+        <span *ngIf="errorMsg != ''">{{ errorMsg }}</span>
+      </div>
+      <div class="footer">
+        <div class="left-view">
+          <div class="total" *ngIf="totalCount">
+            <label>total count:</label> <span>{{ totalCount }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="loader" *ngIf="dataLoad && !noData"></div>
+      <div class="loading-msg" *ngIf="dataLoad && !noData">
+        Loading, please wait
+      </div>
+      <div class="no-data-grid" *ngIf="noData">Promotions Not Found</div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<div class="button-actions box" *ngIf="!dataLoad && data.from === 'promotion'">
+  <button pi-button (click)="closeDialog()" color="subtle">Cancel</button>
+  <button pi-button color="accent" class="apply-btn" (click)="update()">
+    update
+  </button>
+</div>

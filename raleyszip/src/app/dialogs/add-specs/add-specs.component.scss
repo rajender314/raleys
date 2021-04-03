@@ -1,0 +1,20 @@
+pi-form-field {
+  .specInputDisabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    // pi-field{
+    //     .pi-select-input{
+    //         pointer-events: none;
+    //     }
+    // }
+  }
+}
+
+.mat-dialog-content {
+  overflow: auto;
+  padding: 20px !important;
+  margin-bottom: 0 !important;
+  color: #172b4d;
+  min-height: 100px !important;
+  max-height: 68vh;
+}

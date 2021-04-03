@@ -1,0 +1,91 @@
+<div class="campaigns-container tabs-view" *ngIf="!loader">
+  <div class="section-header">
+    <em class="pixel-icons icon-upload-and-compare"></em>
+    <h2 class="heading">Upload and Compare</h2>
+  </div>
+  <div class="campaigns-section tab-view">
+    <!-- [selectedIndex]="selectedTab" -->
+
+    <mat-tab-group (selectedTabChange)="tabChange($event)">
+      <mat-tab class="mat-tabs" label="Check File">
+        <app-excel-uploader
+          (importSuccess)="importSuccess($event)"
+          (importStarts)="importStarts($event)"
+          (fileUploadDone)="fileUploadDone($event)"
+          (fileUploadStart)="fileUploadStart($event)"
+          [importdata]="impData"
+        >
+        </app-excel-uploader>
+
+        <div class="import-btn">
+          <button
+            pi-button
+            color="accent"
+            (click)="importData()"
+            [disabled]="!uploadDone"
+          >
+            {{ importBtn }}
+          </button>
+        </div>
+        <div class="pi-error" *ngIf="checkError != ''">{{ checkError }}</div>
+      </mat-tab>
+      <mat-tab class="mat-tabs" label="Compare Files">
+        <p class="heading-tab">Upload File A</p>
+        <app-excel-uploader
+          [ngClass]="{
+            'not-allowed': this.CompExptBtn === 'Comparing Please Wait ...'
+          }"
+          (importSuccess)="importSuccess($event)"
+          (importStarts)="importStarts($event)"
+          (fileUploadDone)="proof1UploadDone($event)"
+          (fileUploadStart)="proof1UploadStart($event)"
+          (crush)="proof1Import($event)"
+          (dwnldCrush)="proof1Export($event)"
+          [importdata]="impData1"
+          [impSucces]="impSucces"
+          [prog1]="prog1"
+        >
+        </app-excel-uploader>
+        <p class="heading-tab">Upload File B</p>
+        <!-- previously,  Upload Proof 1, Proof 2-->
+        <app-excel-uploader
+          [ngClass]="{
+            'not-allowed': this.CompExptBtn === 'Comparing Please Wait'
+          }"
+          (importSuccess)="importSuccess($event)"
+          (importStarts)="importStarts($event)"
+          (fileUploadDone)="proof2UploadDone($event)"
+          (fileUploadStart)="proof2UploadStart($event)"
+          (crush)="proof2Import($event)"
+          (dwnldCrush)="proof2Export($event)"
+          [importdata]="impData2"
+          [impSucces1]="impSucces1"
+          [prog2]="prog2"
+        >
+        </app-excel-uploader>
+        <div class="import-btn">
+          <button
+            pi-button
+            color="accent"
+            (click)="cmpExport()"
+            [disabled]="!(proof1ImpScs && proof2ImpScs)"
+          >
+            {{ CompExptBtn }}
+            <div
+              class="dwnld-spinner spinner"
+              *ngIf="this.CompExptBtn === 'Comparing Please Wait'"
+            >
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+          </button>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
+<div class="loader" *ngIf="loader"></div>
+<div class="loader-text no-data-grid" *ngIf="loader">
+  Loading, please wait...
+</div>

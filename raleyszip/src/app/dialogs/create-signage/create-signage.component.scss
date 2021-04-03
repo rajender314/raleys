@@ -1,0 +1,86 @@
+@import "../../../assets/styles/mixins";
+.mat-dialog-heading {
+  @include flex(space-between, flex-start !important);
+  flex-wrap: wrap;
+  .left-header {
+    @include flex(center, flex-start);
+    .header-dropdown {
+      margin-left: 15px;
+      .pi-form-field {
+        width: 360px !important;
+        max-width: 360px !important;
+        @media screen and (max-width: 767px) {
+          width: 225px !important;
+          max-width: 225px !important;
+          margin-bottom: 10px;
+        }
+      }
+      ::ng-deep .pi-select-input {
+        &:hover {
+          background-color: #fff;
+        }
+        pi-icon[name="icon-close"] {
+          position: absolute !important;
+          top: 0 !important;
+          left: auto !important;
+          right: 0 !important;
+          .icon-close {
+            position: unset !important;
+            top: 0 !important;
+            left: 0 !important;
+            @include d-flex;
+          }
+        }
+        .selected-list {
+          max-height: 60px;
+        }
+      }
+    }
+    .pi-form-field {
+      margin-top: 0;
+    }
+  }
+}
+
+.mat-dialog-content {
+  // margin-bottom: 0 !important;
+  // padding: 20px !important;
+  .create-signage-container {
+    min-height: 360px;
+    max-height: 360px;
+    position: relative;
+  }
+}
+
+::ng-deep .ag-theme-balham {
+  .ag-body-viewport {
+    height: calc(
+      360px - 40px
+    ); // 40px = 32px (height of the header) + 6px (height of the scrollbar) + 2px (border, top and bottom - 1px each, of the grid)
+    .ag-pinned-left-cols-container {
+      .ag-row {
+        .ag-cell-wrapper {
+          margin: 0 auto;
+        }
+        .ag-selection-checkbox {
+          span {
+            position: unset !important;
+            top: 0 !important;
+          }
+        }
+        .custom-radio {
+          .ag-icon-checkbox-unchecked {
+            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00IC00KSI+CiAgICA8cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMjAiLz4KICAgIDxjaXJjbGUgY3g9IjUiIGN5PSI1IiByPSI1IiBmaWxsPSIjRkZGIiBzdHJva2U9IiNDQ0NCRDEiIHN0cm9rZS13aWR0aD0iMS42NjciIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUgNSkiLz4KICA8L2c+Cjwvc3ZnPgo=);
+            background-size: 16px 16px !important;
+            background-repeat: no-repeat;
+          }
+          .ag-icon-checkbox-checked:empty {
+            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj4KICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00IC00KSI+CiAgICA8cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMjAiLz4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUgNSkiPgogICAgICA8Y2lyY2xlIGN4PSI1IiBjeT0iNSIgcj0iNSIgZmlsbD0iIzM5MjQ4OSIgc3Ryb2tlPSIjMzkyNDg5IiBzdHJva2Utd2lkdGg9IjEuNjY3Ii8+CiAgICAgIDxwYXRoIGZpbGw9IiNGRkYiIGQ9Ik01LDcuNSBDNi4zODA3MTE4Nyw3LjUgNy41LDYuMzgwNzExODcgNy41LDUgQzcuNSwzLjYxOTI4ODEzIDYuMzgwNzExODcsMi41IDUsMi41IEMzLjYxOTI4ODEzLDIuNSAyLjUsMy42MTkyODgxMyAyLjUsNSBDMi41LDYuMzgwNzExODcgMy42MTkyODgxMyw3LjUgNSw3LjUgWiIvPgogICAgPC9nPgogIDwvZz4KPC9zdmc+Cg==);
+            background-size: 16px 16px !important;
+            background-repeat: no-repeat;
+          }
+        }
+      }
+    }
+  }
+}

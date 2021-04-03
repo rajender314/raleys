@@ -1,0 +1,20 @@
+<div class="custom-pagination-panel">
+  <em
+    class="pixel-icons icon-arrow-left"
+    (click)="loadMore('prev')"
+    [ngClass]="{ disabled: active[1] }"
+  ></em>
+  <div
+    class="pagination-items"
+    *ngFor="let num of (numbers | slice: minLimit:maxLimit); let i = index"
+    (click)="loadMore(num)"
+    [ngClass]="{ active: active[num] }"
+  >
+    {{ num }}
+  </div>
+  <em
+    class="pixel-icons icon-arrow-right"
+    (click)="loadMore('next')"
+    [ngClass]="{ disabled: active[numbers.length] }"
+  ></em>
+</div>

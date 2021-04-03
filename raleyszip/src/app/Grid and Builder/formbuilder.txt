@@ -1,0 +1,76 @@
+/* Data format for form builder*/
+
+    section: [
+        {
+            name: 'name',
+            type: 'text',
+            required: true,
+            label: 'Campaign Name',
+            value: '',
+            rowDrag: true
+        },
+        {
+            name: 'marketing_goal',
+            type: 'text',
+            required: '',
+            label: 'Marketing Goal',
+            value: ''
+        },
+        {
+            name: 'begin_date',
+            type: 'date',
+            required: true,
+            label: 'Start Date',
+            value: ''
+        },
+        {
+            name: 'end_date',
+            type: 'date',
+            required: true,
+            label: 'End Date',
+            value: ''
+        },
+        {
+            name: 'status',
+            type: 'button',
+            required: '',
+            label: 'Status',
+            value: ''
+        }
+    ],
+/* --End-- */    
+
+/* Defualt Functions in  form builder*/
+
+     /* Intailize Form*/
+        createForm(): void {
+            this.structureValues = this.fb.group({
+            name: ['', Validators.required],
+            marketing_goal: '',
+            begin_date: [null, Validators.required],
+            end_date: ['', Validators.required],
+            status: ''
+            });   
+        }
+    /* --End-- */
+
+    /* Bind Form values */
+        bindFormValues(): void {
+            this.structureValues.patchValue({
+            name: 'value',
+            marketing_goal: 'value',
+            begin_date: date in ISO format,
+            end_date: date in ISO format,
+            status: 'value'
+            });
+        }    
+    /* --End-- */
+
+    /* To Change Date to ISO format */
+    formatDate(param) {
+        const date: Date = new Date(param);
+        return date.toISOString().substring(0, 10);
+    }
+    /* --End-- */
+
+/* --End-- */

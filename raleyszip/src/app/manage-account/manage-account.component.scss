@@ -1,0 +1,98 @@
+.manage-account {
+  justify-content: center;
+  .manage-container {
+    max-width: 1000px;
+    width: 100%;
+    margin: 10px auto;
+    text-align: center;
+    .mat-tab-body-wrapper {
+      overflow: inherit;
+      display: block;
+    }
+    .mat-tab-label {
+      padding: 0 0;
+      min-width: inherit;
+      margin-right: 20px;
+    }
+    .personal-details {
+      margin-top: 40px;
+      .profile-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 1px solid #dedede;
+        margin-right: 40px;
+        position: relative;
+        overflow: hidden;
+        .image {
+          img {
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            max-height: 100%;
+            max-width: 100%;
+            margin: auto;
+          }
+        }
+      }
+      .user-fields {
+        flex: 0 0 40%;
+      }
+    }
+    .change-pwd {
+      margin-top: 40px;
+      overflow: hidden;
+      .user-fields {
+        width: 40%;
+        float: left;
+        margin-top: -20px;
+      }
+    }
+    .pwd-syntax {
+      max-width: 340px;
+      padding: 20px;
+      border-radius: 5px;
+      border: 1px solid #d7e7f6;
+      background-color: #f2f9ff;
+      float: left;
+      margin-left: 40px;
+      h4 {
+        margin: 0 0 12px 0;
+      }
+      .check {
+        margin: 8px 0;
+        em {
+          font-size: 18px;
+          margin-right: 5px;
+          &.success {
+            color: green;
+          }
+        }
+      }
+    }
+  }
+
+  .pi-disabled {
+    pi-select {
+      .pi-field {
+        cursor: not-allowed;
+        .pi-select-input {
+          background-color: #f4f5f7;
+          border-color: transparent;
+          color: #a5adba;
+          cursor: not-allowed;
+          resize: none;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}
+.text-danger {
+  color: #de0101;
+}
+.text-success {
+  color: #518c37;
+}

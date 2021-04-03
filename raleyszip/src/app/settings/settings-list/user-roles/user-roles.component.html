@@ -1,0 +1,119 @@
+<mat-sidenav-container class="settings-container grid-container">
+  <mat-sidenav-content>
+    <div class="settings-section configuaration form_builder">
+      <div class="inner-section">
+        <div class="config-labels">
+          <div class="left-sec">
+            <div class="heading">
+              <div class="flex-end">
+                <h2 class="config-heading">User Roles</h2>
+                <em
+                  class="pixel-icons icon-plus addModal"
+                  (click)="addUserRole()"
+                ></em>
+              </div>
+              <app-search
+                [search]="search"
+                (onSearch)="onSearch($event)"
+                #searchingBox
+              ></app-search>
+            </div>
+            <div class="inner-detail-list">
+              <ng-container *ngIf="!loading && !noData">
+                <mat-list>
+                  <div *ngFor="let userRole of userRolesList.userRoles">
+                    <mat-list-item
+                      (click)="getSelectedUserRole(userRole)"
+                      [class.active]="userRole.id === currentRoleInfo.id"
+                    >
+                      <div>{{ userRole.name }}</div>
+                    </mat-list-item>
+                  </div>
+                </mat-list>
+              </ng-container>
+              <div class="no-data" *ngIf="!loading && noData">
+                <p>Data Not Found</p>
+              </div>
+            </div>
+            <div class="loader" *ngIf="loading && noData"></div>
+            <div class="loader-text no-data-grid" *ngIf="loading && noData">
+              Loading, please wait...
+            </div>
+          </div>
+          <div class="right-sec">
+            <div class="role-details" *ngIf="!loading && !noData">
+              <h2 class="heading config-heading">{{ currentRoleName }}</h2>
+              <div class="form-details">
+                <div class="form-details-content">
+                  <form [formGroup]="userRolesForm" class="form-flex">
+                    <pi-form-field label="Role Name">
+                      <input
+                        type="text"
+                        pi-input
+                        formControlName="name"
+                        (input)="valChanged($event)"
+                      />
+                    </pi-form-field>
+                    <pi-form-field label="Description">
+                      <textarea
+                        pi-input
+                        formControlName="description"
+                        [minRows]="5"
+                        (input)="valChanged($event)"
+                      ></textarea>
+                    </pi-form-field>
+                    <span class="smaller-text"
+                      >Enter text of 300 characters or less.</span
+                    >
+                    <pi-form-field label="Status">
+                      <!-- <pi-select
+                                [options]="statusOptions"
+                                formControlName="status"
+                                (onChange)="valChanged($event)"
+                              ></pi-select> -->
+                      <mat-button-toggle-group
+                        formControlName="status"
+                        (change)="valChanged($event)"
+                      >
+                        <mat-button-toggle [value]="one">
+                          Active
+                        </mat-button-toggle>
+                        <mat-button-toggle [value]="two"
+                          >Inactive</mat-button-toggle
+                        >
+                      </mat-button-toggle-group>
+                    </pi-form-field>
+                  </form>
+                  <!-- dynamic content goes here-->
+                  <app-user-roles
+                    (updatedValues)="updatedUserRolePermissions($event)"
+                    [userRoles]="userRolePermissions"
+                  >
+                  </app-user-roles>
+                  <!-- dynamic content goes here-->
+                </div>
+              </div>
+              <div class="footer" *ngIf="edit && !loading && !noData">
+                <button mat-button (click)="resetPerData()" class="cancel-btn">
+                  Cancel
+                </button>
+                <button
+                  pi-button
+                  color="accent"
+                  class="save-btn"
+                  [disabled]="updatingUserInfo"
+                  (click)="updateUserRole(userRolesForm)"
+                >
+                  {{ updatingUserInfo === true ? 'Saving...' : 'Save' }}
+                </button>
+              </div>
+            </div>
+            <div class="no-data" *ngIf="!loading && noData">
+              <p>Data Not Found</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

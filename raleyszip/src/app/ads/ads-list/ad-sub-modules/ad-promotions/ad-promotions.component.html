@@ -1,0 +1,220 @@
+<mat-sidenav-container
+  class="settings-container ads-grid-container grid-container"
+>
+  <mat-sidenav-content>
+    <div class="ads-grid-section">
+      <div class="section-header">
+        <em class="{{ listData?.iconClass }}"></em>
+        <h3 class="sub-heading">
+          {{ listData?.value
+          }}<span *ngIf="totalCount"> ({{ totalCount }})</span>
+        </h3>
+
+        <div class="page-list">
+          <pi-form-field
+            class="page-select"
+            *ngIf="savedViewOptions.length > 1"
+          >
+            <pi-select
+              [options]="savedViewOptions"
+              [(ngModel)]="savedViewValue"
+              nameKey="name"
+              idKey="_id"
+              autocomplete="off"
+              placeholder="Select Views"
+              (onChange)="getSelectedView($event)"
+            >
+            </pi-select>
+          </pi-form-field>
+        </div>
+        <div class="nav-sec">
+          <div
+            class="box nav-sec"
+            *ngIf="rowData?.length || selectedDepartment"
+          >
+            <button
+              pi-button
+              (click)="createSignage()"
+              *ngIf="selectedSignageRows.length"
+              [ngClass]="{
+                'no-hover-click': adsService.isImportProgess
+              }"
+            >
+              Create Signage
+            </button>
+            <pi-form-field class="page-select">
+              <pi-select
+                [options]="deptList"
+                [(ngModel)]="selectedDepartment"
+                autocomplete="off"
+                placeholder="Select Dept."
+                (onChange)="getPromotionsByDept($event)"
+              >
+              </pi-select>
+            </pi-form-field>
+            <span [ngClass]="{ 'not-allowed': !this.canRedoDone }">
+              <span
+                class="revert-btn  cursor"
+                (click)="domRevisions('redo')"
+                [ngClass]="{
+                  'pointer-event': !this.canRedoDone,
+                  'no-hover-click': adsService.isImportProgess
+                }"
+              >
+                <em class="pixel-icons icon-redo"></em> <span> Redo</span>
+              </span>
+            </span>
+            <span [ngClass]="{ 'not-allowed': !this.canUndoDone }">
+              <span
+                class="revert-btn  cursor"
+                (click)="domRevisions('undo')"
+                [ngClass]="{
+                  'pointer-event':
+                    !this.canUndoDone || this.currentDomVersion == 0,
+                  'no-hover-click': adsService.isImportProgess
+                }"
+              >
+                <em class="pixel-icons icon-undo"></em> <span>Undo</span>
+              </span>
+            </span>
+            <button
+              pi-button
+              (click)="openSaveView()"
+              [disabled]="!rowData?.length"
+            >
+              Save View
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="inner-section">
+        <ag-grid-angular
+          @rightAnimate
+          class="ag-theme-balham grid offers-list lazy-load-grid"
+          *ngIf="rowData?.length"
+          [ngClass]="{
+            'fade-in': gridVisibility,
+            showGrid: gridVisibility,
+            'no-pointer-events': !pointerEvents
+          }"
+          [rowData]="rowData"
+          [animateRows]="true"
+          rowHeight="40"
+          [enableRangeSelection]="true"
+          [enableFilter]="true"
+          [suppressDragLeaveHidesColumns]="true"
+          [suppressCopyRowsToClipboard]="true"
+          [suppressMakeColumnVisibleAfterUnGroup]="true"
+          [rowGroupPanelShow]="rowGroupPanelShow"
+          [enableSorting]="true"
+          [enableColResize]="true"
+          [sideBar]="true"
+          [columnDefs]="columnDefs"
+          [domLayout]="autoHeight"
+          [rowClassRules]="rowClassRules"
+          (gridReady)="onGridReady($event)"
+          [suppressColumnVirtualisation]="true"
+          [rowSelection]="'multiple'"
+          [autoGroupColumnDef]="autoGroupColumnDef"
+          (cellEditingStarted)="cellEditingStarted($event)"
+          (cellEditingStopped)="cellEditingStopped($event)"
+          (cellValueChanged)="onCellValueChanged($event)"
+          (cellClicked)="onCellClicked($event)"
+          (cellDoubleClicked)="onCellDoubleClicked($event)"
+          (filterChanged)="onFilterChanged($event)"
+          (columnRowGroupChanged)="onColumnRowGroupChanged($event)"
+          [frameworkComponents]="frameworkComponents"
+          [getRowNodeId]="getRowNodeId"
+          [suppressKeyboardEvent]="suppressKeyboardEvent"
+          [suppressRowClickSelection]="true"
+          (rowSelected)="onRowSelected($event)"
+        >
+        </ag-grid-angular>
+        <div class="no-data" *ngIf="noData">
+          <div class="icon"><em class="{{ listData?.iconClass }}"></em></div>
+          <p>Promotions Not Found.</p>
+        </div>
+      </div>
+
+      <div class="footer" *ngIf="totalCount">
+        <div class="left-view">
+          <div class="total">
+            <label>total count:</label> <span>{{ totalCount }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="loader" *ngIf="dataLoad && !noData"></div>
+      <div class="loader-text no-data-grid" *ngIf="!noData && dataLoad">
+        Loading, please wait...
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<mat-sidenav-container class="history-sidenav">
+  <mat-sidenav #promoRevisions mode="over" position="end">
+    <div class="revisions-heading">
+      <h3>Revision History</h3>
+      <span (click)="promoRevisions.close()"
+        ><em class="pixel-icons icon-close"></em
+      ></span>
+    </div>
+    <div
+      class="revisions-body"
+      infinite-scroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="19"
+      (scrolled)="onScrollDown()"
+      [scrollWindow]="false"
+    >
+      <div class="history-data" *ngFor="let record of revisionsHistoryData">
+        <div class="label-content">
+          <div class="label">Header Name</div>
+          <div class="content">{{ record.column_name }}</div>
+        </div>
+        <!-- <div class="include-icon">
+          <div class="label-content">
+            <div class="label">Old Value</div>
+            <div class="content">{{ record.old_value }}</div>
+          </div>
+          <div
+            class="redo-icon"
+            (click)="updateRecord(record)"
+            [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+          >
+            <img src="{{ image_url }}/restore.svg" alt="no-image" />
+          </div>
+        </div> -->
+        <div class="label-content with-icon">
+          <div class="label">Old Value</div>
+          <div class="content">{{ record.old_value }}</div>
+          <div
+            class="redo-icon"
+            (click)="updateRecord(record)"
+            [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+          >
+            <img src="{{ image_url }}/restore.svg" alt="no-image" />
+          </div>
+        </div>
+        <div class="label-content">
+          <div class="label">New Value</div>
+          <div class="content">{{ record.new_value }}</div>
+        </div>
+        <div class="label-content">
+          <div class="label">Time Stamp</div>
+          <div class="content">{{ record.last_modified }}</div>
+        </div>
+      </div>
+      <div class="no-data" *ngIf="!revProgress && !revisionsHistoryData.length">
+        <p>Revisions Not Found</p>
+      </div>
+    </div>
+    <div class="loader" *ngIf="revProgress"></div>
+    <div
+      class="loader-text no-data-grid"
+      *ngIf="revProgress && !revisionsHistoryData.length"
+    >
+      Loading, please wait...
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

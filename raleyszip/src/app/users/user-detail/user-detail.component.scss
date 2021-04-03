@@ -1,0 +1,139 @@
+.right-header {
+  padding: 20px 0px;
+  .image-upload {
+    height: 62px;
+    width: 62px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #dedede;
+    justify-content: center;
+    position: relative;
+    &:hover {
+      .browse-file {
+        display: block;
+      }
+    }
+    .image {
+      img {
+        // height: 62px;
+        width: 62px;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .browse-file {
+      display: none;
+      cursor: pointer;
+      z-index: 1;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      background-color: #4d5c82;
+      opacity: 0.5;
+      color: #fff;
+    }
+  }
+  .info {
+    color: rgba(23, 43, 77, 0.8);
+    display: flex;
+    // max-width: 844px;
+    justify-content: space-between;
+    .info-left {
+      display: flex;
+      align-items: center;
+      .user-left-info {
+        display: flex;
+        flex-direction: column;
+        margin-left: 12px;
+        h3 {
+          font-weight: 600;
+        }
+      }
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      em {
+        cursor: pointer;
+      }
+    }
+    .reset_pwd {
+      display: flex;
+      align-items: center;
+      font-size: 15px;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      margin-right: 6px;
+      font-family: "SF-Pro-Text-Medium", Sans-Serif;
+      text-transform: uppercase;
+      font-size: 14px;
+      em {
+        &.envelope {
+          font-size: 18px;
+          margin-right: 4px;
+        }
+      }
+    }
+  }
+}
+
+.detail-section {
+  padding: 0;
+  line-height: 24px;
+  position: relative;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  max-width: 897px;
+  .view-section {
+    margin-bottom: 8px;
+    label {
+      color: rgba(23, 43, 77, 0.6);
+    }
+  }
+  .user-type {
+    cursor: not-allowed;
+    color: rgba(0, 0, 0, 0.38);
+  }
+  .ak-field-select:not(.user-type) {
+    cursor: pointer;
+  }
+  .actions {
+    &.edit {
+      position: absolute;
+      right: 20px;
+      top: 12px;
+      cursor: pointer;
+    }
+    &.multiple {
+      position: relative;
+      right: auto;
+      top: auto;
+      justify-content: flex-end;
+      display: flex;
+      padding: 16px 0 0;
+      border-top: 1px dashed #ddd;
+      margin-top: 16px;
+    }
+  }
+  .edit-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0 0;
+    .form-attributes {
+      width: calc(50% - 15px);
+      padding: 6px 0;
+      .pi-form-field {
+        margin-top: 2px;
+      }
+    }
+    .ak-field-select,
+    .ak-field-text {
+      padding: 6px 6px;
+    }
+  }
+}

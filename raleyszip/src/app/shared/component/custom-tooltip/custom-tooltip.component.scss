@@ -1,0 +1,26 @@
+:host {
+  position: absolute;
+  width: auto;
+  height: auto;
+  background: transparent;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity all ease-in-out;
+}
+
+:host.ag-tooltip-hiding {
+  opacity: 0;
+}
+
+.custom-tooltip div {
+  // margin: 5px;
+  white-space: nowrap;
+  color: #fff !important;
+
+  font-size: 12px !important;
+  letter-spacing: 0.2px !important;
+}
+
+.custom-tooltip p:first-of-type {
+  font-weight: bold;
+}

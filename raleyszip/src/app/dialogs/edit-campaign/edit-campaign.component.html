@@ -1,0 +1,157 @@
+<div class="mat-dialog-heading" *ngIf="!dataLoad">
+  <h2 mat-dialog-title>
+    {{ data.mode == 'create' ? 'Create' : 'Edit' }} {{ data.title }}
+  </h2>
+  <span (click)="close()"> <em class="pixel-icons icon-close"></em> </span>
+</div>
+<div class="loader" *ngIf="dataLoad"></div>
+<div class="loading-msg" *ngIf="dataLoad">
+  {{ data.mode == 'create' ? 'Creating' : 'Updating' }} {{ data.title }} Please
+  Wait ...
+</div>
+<div class="mat-dialog-content custom-mat-dialog-content">
+  <form [formGroup]="editListForm" class="modal-container" *ngIf="!dataLoad">
+    <div formArrayName="editFormValues">
+      <div *ngFor="let field of data.section; let i = index">
+        <pi-form-field [formGroupName]="i">
+          <label class="label-name">{{ field.label | titlecase }}</label>
+          <span
+            class="required"
+            *ngIf="field.form_save_value.settings.mandatory"
+            >*</span
+          >
+          <div class="structure-select" *ngIf="field.key == 'single_line_text'">
+            <input
+              type="text"
+              formControlName="{{ field.db_column_key }}"
+              pi-input
+            />
+            <div
+              class="pi-error"
+              *ngIf="
+                editListForm.controls.editFormValues.controls &&
+                (editListForm.controls.editFormValues.controls[i].controls[
+                  field.db_column_key
+                ].hasError('required') ||
+                  editListForm.controls.editFormValues.controls[i].controls[
+                    field.db_column_key
+                  ].hasError('whitespace')) &&
+                submitted
+              "
+            >
+              Please Enter {{ field.label | titlecase }}
+            </div>
+            <div class="pi-error" *ngIf="field.db_column_key == 'name'">
+              {{ errorMsg }}
+            </div>
+          </div>
+          <div class="structure-select" *ngIf="field.key == 'date'">
+            <div
+              class="date-picker-field"
+              *ngIf="field.db_column_key == 'start_date'"
+            >
+              <input
+                class="datepicker"
+                placeholder="Select Date"
+                formControlName="{{ field.db_column_key }}"
+                (click)="openCalendar(picker1)"
+                [min]="minDate['start_date']"
+                [max]="maxDate['start_date']"
+                (focus)="openCalendar(picker1)"
+                [matDatepicker]="picker1"
+                (dateChange)="dateValueChange(field, $event)"
+                pi-input
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker1"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </div>
+            <div
+              class="date-picker-field"
+              *ngIf="field.db_column_key == 'end_date'"
+            >
+              <input
+                class="datepicker"
+                placeholder="Select Date"
+                formControlName="{{ field.db_column_key }}"
+                (click)="openCalendar(picker1)"
+                (focus)="openCalendar(picker1)"
+                [matDatepicker]="picker1"
+                [min]="minDate['end_date']"
+                [max]="maxDate['end_date']"
+                (dateChange)="dateValueChange(field, $event)"
+                pi-input
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker1"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </div>
+          </div>
+          <div class="structure-select" *ngIf="field.key == 'button'">
+            <div>
+              <mat-button-toggle-group
+                [disabled]="disableCheck"
+                formControlName="{{ field.db_column_key }}"
+              >
+                <mat-button-toggle [value]="1"> Active</mat-button-toggle>
+                <mat-button-toggle [value]="2"> Inactive</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+          <ng-container *ngIf="field.key == 'dropdown'">
+            <pi-select
+              [options]="field.options"
+              [nameKey]="'label'"
+              [idKey]="'value'"
+              formControlName="{{ field.db_column_key }}"
+              *ngIf="field.db_column_key == 'status'"
+            ></pi-select>
+            <pi-select
+              [options]="eventTypes"
+              formControlName="{{ field.db_column_key }}"
+              *ngIf="field.db_column_key == 'event_type'"
+            ></pi-select>
+          </ng-container>
+          <div *ngIf="field.key == 'textarea'">
+            <textarea
+              rows="5"
+              formControlName="{{ field.db_column_key }}"
+            ></textarea>
+          </div>
+        </pi-form-field>
+        <div
+          class="pi-error"
+          *ngIf="
+            editListForm.controls.editFormValues.controls &&
+            editListForm.controls.editFormValues.controls[i].controls[
+              field.db_column_key
+            ].hasError('required') &&
+            submitted &&
+            field.type != 'Single Line Text'
+          "
+        >
+          Please Select {{ field.label | titlecase }}
+        </div>
+      </div>
+    </div>
+    <!-- <div class="pi-error">{{ errorMsg }}</div> -->
+  </form>
+</div>
+<div class="mat-dialog-footer">
+  <div class="button-actions box" *ngIf="!dataLoad">
+    <button pi-button (click)="close()" color="subtle">Cancel</button>
+    <button
+      pi-button
+      color="accent"
+      class="apply-btn"
+      (click)="update(editListForm)"
+      [disabled]="editListForm.pristine"
+    >
+      {{ data.mode == 'create' ? 'Create' : 'Update' }} {{ data.title }}
+    </button>
+  </div>
+</div>

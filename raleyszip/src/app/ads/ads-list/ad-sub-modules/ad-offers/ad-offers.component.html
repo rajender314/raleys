@@ -1,0 +1,254 @@
+<mat-sidenav-container
+  class="settings-container ads-grid-container grid-container"
+>
+  <mat-sidenav-content>
+    <div class="ads-grid-section">
+      <div class="section-header">
+        <div class="header-savedViews">
+          <em class="{{ listData?.iconClass }}"></em>
+          <h3 class="sub-heading">
+            {{ listData?.value
+            }}<span *ngIf="totalCount"> ({{ totalCount }})</span>
+          </h3>
+          <div class="page-list" *ngIf="!(dataLoad && !noData)">
+            <pi-form-field
+              class="page-select"
+              *ngIf="savedViewOptions.length > 1"
+            >
+              <pi-select
+                [options]="savedViewOptions"
+                [(ngModel)]="savedViewValue"
+                nameKey="name"
+                idKey="_id"
+                placeholder="Select Views"
+                (onChange)="getSelectedView($event)"
+              >
+              </pi-select>
+            </pi-form-field>
+          </div>
+        </div>
+        <div class="nav-sec save-import">
+          <div class="box nav-sec save-view-btn" *ngIf="rowData?.length">
+            <span [ngClass]="{ 'not-allowed': !this.canRedoDone }">
+              <span
+                class="revert-btn  cursor"
+                (click)="domRevisions('redo')"
+                [ngClass]="{
+                  'pointer-event': !this.canRedoDone,
+                  'no-hover-click': adsService.isImportProgess
+                }"
+              >
+                <em class="pixel-icons icon-redo"></em> <span> Redo</span>
+              </span>
+            </span>
+            <span [ngClass]="{ 'not-allowed': !this.canUndoDone }">
+              <span
+                class="revert-btn cursor"
+                (click)="domRevisions('undo')"
+                [ngClass]="{
+                  'pointer-event':
+                    !this.canUndoDone || this.currentDomVersion == 0,
+                  'no-hover-click': adsService.isImportProgess
+                }"
+              >
+                <em class="pixel-icons icon-undo"></em> <span>Undo</span>
+              </span>
+            </span>
+            <button pi-button (click)="openSaveView()">Save View</button>
+            <button
+              pi-button
+              (click)="exportData()"
+              style="margin-left:15px;cursor:pointer;"
+              *ngIf="rowData?.length"
+            >
+              Export
+            </button>
+          </div>
+          <div
+            title="Import"
+            [ngClass]="{ hidden: !enableImportPer }"
+            class="offer-import-btn"
+            #menuTrigger="matMenuTrigger"
+            [matMenuTriggerFor]="menu"
+          >
+            <span
+              *ngIf="!(dataLoad && !noData)"
+              pi-button
+              color="accent"
+              mat-icon-button
+            >
+              Import
+            </span>
+            <span
+              *ngIf="!(dataLoad && !noData)"
+              pi-button
+              color="accent"
+              mat-icon-button
+              class="icon-arrow-down-button"
+            >
+              <em class="pixel-icons icon-arrow-down"></em
+            ></span>
+            <mat-menu #menu="matMenu" class="import-menu">
+              <button mat-menu-item (click)="importExcelDailog()">
+                <em class="pixel-icons icon-import"></em> Import From CSV
+              </button>
+              <!-- <button mat-menu-item (click)="importBoxDailog()">
+                <em class="pixel-icons icon-import"></em> Import From BOX
+              </button> -->
+            </mat-menu>
+          </div>
+          <!-- <div
+            style="margin-left: 10px;    cursor: pointer;
+          "
+            matTooltip="SKU Export"
+            (click)="exportData()"
+            *ngIf="rowData?.length"
+          >
+            <em class="pixel-icons icon-export"></em>
+          </div> -->
+        </div>
+      </div>
+      <!-- [class.hideTheGrid]="gridVisibility" -->
+
+      <div class="inner-section" id="myGrid">
+        <ag-grid-angular
+          @rightAnimate
+          class="ag-theme-balham grid offers-list lazy-load-grid fade-in  showGrid"
+          [animateRows]="true"
+          rowHeight="40"
+          [enableRangeSelection]="true"
+          [enableFilter]="true"
+          [suppressCopyRowsToClipboard]="true"
+          [suppressDragLeaveHidesColumns]="true"
+          [suppressMakeColumnVisibleAfterUnGroup]="true"
+          [rowGroupPanelShow]="rowGroupPanelShow"
+          [enableSorting]="false"
+          [enableColResize]="true"
+          [sideBar]="true"
+          [rowClassRules]="rowClassRules"
+          (gridReady)="onGridReady($event)"
+          (cellEditingStarted)="cellEditingStarted($event)"
+          (cellEditingStopped)="cellEditingStopped($event)"
+          [autoGroupColumnDef]="autoGroupColumnDef"
+          [suppressColumnVirtualisation]="true"
+          [rowSelection]="rowSelection"
+          (cellValueChanged)="onCellValueChanged($event)"
+          (cellDoubleClicked)="onCellDoubleClicked($event)"
+          (cellClicked)="onCellClicked($event)"
+          (cellMouseOver)="onCellMouseOver($event)"
+          (filterChanged)="onFilterChanged($event)"
+          (columnRowGroupChanged)="onColumnRowGroupChanged($event)"
+          [frameworkComponents]="frameworkComponents"
+          [getRowNodeId]="getRowNodeId"
+          [rowModelType]="'infinite'"
+          [maxConcurrentDatasourceRequests]="1"
+          [cacheOverflowSize]="3"
+          [infiniteInitialRowCount]="0"
+          [cacheBlockSize]="10000"
+          [maxBlocksInCache]="10"
+        >
+        </ag-grid-angular>
+        <div class="no-data" *ngIf="noData && !dataLoad">
+          <div class="icon"><em class="{{ listData?.iconClass }}"></em></div>
+          <p>Please import items to view offers.</p>
+        </div>
+      </div>
+      <ng-container *ngIf="totalCount && rowData?.length">
+        <div class="footer">
+          <div class="left-view">
+            <div class="total">
+              <label>total count:</label> <span>{{ totalCount }}</span>
+            </div>
+          </div>
+          <div class="right-view" *ngIf="rowData?.length">
+            <div class="total">
+              <label>Items On Page:</label> <span>{{ rowData?.length }}</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <div class="loader" *ngIf="dataLoad && !noData"></div>
+      <div class="loader-text no-data-grid" *ngIf="dataLoad && !noData">
+        <span> Loading, please wait...</span>
+        <!-- <div class="lod-spinner spinner">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div> -->
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<mat-sidenav-container class="history-sidenav">
+  <mat-sidenav #offerRevisions mode="over" position="end">
+    <div class="revisions-heading">
+      <h3>Revision History</h3>
+      <span (click)="offerRevisions.close()"
+        ><em class="pixel-icons icon-close"></em
+      ></span>
+    </div>
+    <div
+      class="revisions-body"
+      infinite-scroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="19"
+      (scrolled)="onScrollDown()"
+      [scrollWindow]="false"
+    >
+      <div class="history-data" *ngFor="let record of revisionsHistoryData">
+        <div class="label-content">
+          <div class="label">Header Name</div>
+          <div class="content">{{ record.column_name }}</div>
+        </div>
+        <!-- <div class="include-icon">
+          <div class="label-content">
+            <div class="label">Old Value</div>
+            <div class="content">
+              {{ record.old_name ? record.old_name : record.old_value }}
+            </div>
+          </div>
+          <div
+            class="redo-icon"
+            [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+            (click)="updateRecord(record)"
+          >
+            <img src="{{ image_url }}/restore.svg" alt="no-image" />
+          </div>
+        </div> -->
+        <div class="label-content with-icon">
+          <div class="label">Old Value</div>
+          <div class="content">
+            {{ record.old_name ? record.old_name : record.old_value }}
+          </div>
+          <div
+            class="redo-icon"
+            [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+            (click)="updateRecord(record)"
+          >
+            <img src="{{ image_url }}/restore.svg" alt="no-image" />
+          </div>
+        </div>
+        <div class="label-content">
+          <div class="label">New Value</div>
+          <div class="content">
+            {{ record.new_name ? record.new_name : record.new_value }}
+          </div>
+        </div>
+        <div class="label-content">
+          <div class="label">Time Stamp</div>
+          <div class="content">{{ record.last_modified }}</div>
+        </div>
+      </div>
+      <div class="no-data" *ngIf="!revProgress && !revisionsHistoryData.length">
+        <p>Revisions Not Found</p>
+      </div>
+    </div>
+    <div class="loader" *ngIf="revProgress"></div>
+    <div
+      class="loader-text no-data-grid"
+      *ngIf="revProgress && !revisionsHistoryData.length"
+    >
+      Loading, please wait...
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

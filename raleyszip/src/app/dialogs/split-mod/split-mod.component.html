@@ -1,0 +1,117 @@
+<div class="mat-dialog-heading" *ngIf="!process">
+  <h2 mat-dialog-title>Split Mod</h2>
+</div>
+<mat-dialog-content>
+  <div *ngIf="!process">
+    <div class="split-mod-body">
+      <span class="confirm-del-msg select-page-title"
+        >Selected UPCs will be added to the selected page & mod version.</span
+      >
+    </div>
+
+    <div class="page-list" *ngIf="pagesInfo?.length">
+      <pi-form-field class="page-select-field" label="Select Page">
+        <pi-select
+          [options]="pagesInfo"
+          [(ngModel)]="selectedPage"
+          nameKey="name"
+          placeholder="Select pages"
+          (onChange)="onPageSelected($event)"
+        >
+        </pi-select>
+      </pi-form-field>
+    </div>
+
+    <div class="radio mod-detail-sec">
+      <div class="mod-detail-sel-header">
+        <p class="select-mod-title">Select Mods</p>
+        <p class="add-mod-text" (click)="modView('open')">Add Mod</p>
+      </div>
+      <div class="add-mod-popup" *ngIf="modValue">
+        <span class="close-icon" (click)="modView('')"
+          ><em class="pixel-icons icon-close"></em
+        ></span>
+        <p class="add-mod-label">Mod Order</p>
+        <pi-form-field class="add-mod-input-field" label="">
+          <input
+            type="text"
+            pi-input
+            name="'mod'"
+            [(ngModel)]="newModOrder"
+            [maxlength]="5"
+          />
+          <p class="pi-error">{{ createMOdError }}</p>
+        </pi-form-field>
+
+        <div class="btn-sec">
+          <button
+            pi-button
+            color="accent"
+            class="mat-raised-button"
+            (click)="addMod()"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+
+      <div class="mod-pills" #modPills>
+        <div class="loader" *ngIf="spinner"></div>
+        <div *ngIf="!spinner && pageDetails?.mod_details.length">
+          <div
+            *ngFor="let mod of pageDetails?.mod_details"
+            class="mod-detail"
+            (click)="change(mod.mod_id)"
+            [ngClass]="{ active: mod.mod_id == selectedMod }"
+          >
+            MOD {{ mod.mod_order }}
+            <!-- <span class="dept-name">{{
+            mod.mod_dept_group ? mod.mod_dept_group : '--'
+          }}</span> -->
+            <span
+              ><mat-icon class="mat-icon material-icons check-icon"
+                >check</mat-icon
+              ></span
+            >
+          </div>
+        </div>
+      </div>
+      <!-- <pi-field-group direction="column">
+      <pi-form-field
+        label="{{ mod.mod_order }}"
+        *ngFor="let mod of pageDetails.mod_details"
+      >
+        <input
+          type="radio"
+          pi-input
+          name="'mod'"
+          (ngModelChange)="change($event)"
+          [value]="mod.mod_id"
+          [(ngModel)]="selectedMod"
+        />
+      </pi-form-field>
+    </pi-field-group> -->
+    </div>
+  </div>
+</mat-dialog-content>
+<div class=" mat-dialog-footer " *ngIf="!process">
+  <div><!-- <p class="pi-error">{{createMOdError}}</p> --></div>
+  <div class="btn-actions box">
+    <button class="mat-button" pi-button color="subtle" (click)="closeDialog()">
+      Cancel
+    </button>
+    <button
+      pi-button
+      color="accent"
+      class="mat-raised-button"
+      [disabled]="btnDisable"
+      (click)="splitingMod()"
+    >
+      Proceed
+    </button>
+  </div>
+</div>
+<div class="confirmation-sec">
+  <div class="loader-sm" *ngIf="process"></div>
+  <div class="loading-msg" *ngIf="process">Spliting Please wait ...</div>
+</div>

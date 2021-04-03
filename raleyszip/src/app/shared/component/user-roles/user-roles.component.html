@@ -1,0 +1,36 @@
+<!-- details of a particular use role will be displayed -->
+<form [formGroup]="userRolesForm" class="form-flex user-roles-form">
+  <div class="dynamic-form-content" formArrayName="dynamicFields">
+    <ng-container
+      *ngFor="let root of formArray?.controls; let rootIndex = index"
+    >
+      <div
+        class="d-flex dynamic-form-inner-content"
+        [formGroupName]="rootIndex"
+      >
+        <h3 class="label-heading">{{ root.get('label')?.value }}</h3>
+        <div formGroupName="children" class="children-permissions">
+          <ng-container
+            *ngFor="
+              let child of root.get('children')?.controls;
+              let childIndex = index
+            "
+          >
+            <div class="d-flex child-header" [formGroupName]="childIndex">
+              <span>{{ child.get('label')?.value }}</span>
+              <div>
+                <mat-button-toggle-group
+                  formControlName="checked"
+                  (change)="onToggleChange(formArray)"
+                >
+                  <mat-button-toggle value="false">No</mat-button-toggle>
+                  <mat-button-toggle value="true"> Yes </mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</form>

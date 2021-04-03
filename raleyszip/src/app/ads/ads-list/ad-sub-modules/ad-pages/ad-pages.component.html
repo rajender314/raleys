@@ -1,0 +1,396 @@
+<div *ngIf="!editingMod" class="ads-grid-section ad-pages-sec ">
+  <div class="section-header" [ngClass]="{ 'w-100': !pagesInfo.length }">
+    <em class="{{ currentTabData?.iconClass }}"></em>
+    <h3 class="sub-heading">{{ currentTabData?.value }}</h3>
+    <div class="page-list" *ngIf="pagesInfo?.length">
+      <pi-form-field class="page-select">
+        <pi-select
+          [options]="pagesInfo"
+          [(ngModel)]="selectedPage"
+          nameKey="name"
+          placeholder="Select pages"
+          (onChange)="onPageSelected($event)"
+        >
+        </pi-select>
+      </pi-form-field>
+    </div>
+
+    <div class="nav-sec">
+      <!--   
+        <div class="ad-options">
+          <button
+            class="ak-button ak-button__appearance-default"
+            pi-button
+            #menuTrigger="matMenuTrigger"
+            [matMenuTriggerFor]="menu"
+          >
+            Create Mod
+          </button>
+          <button
+            class="ak-button ak-button__appearance-default icon-arrow-down-button"
+            pi-button
+            #menuTrigger="matMenuTrigger"
+            [matMenuTriggerFor]="menu"
+          >
+            <em class="pixel-icons icon-arrow-down"></em>
+          </button>
+          <mat-menu #menu="matMenu" class="ad-export">
+           
+            <button mat-menu-item (click)="createBlankMod('blank-mod')">
+              Blank Mod
+            </button>
+          </mat-menu>
+        </div> -->
+    </div>
+
+    <mat-dialog-content class="add-blank-mod">
+      <div
+        class="blank-mod"
+        [ngClass]="{ 'no-hover-click1': !pageDetails[0]?.mod_details.length }"
+      >
+        <div
+          class="radio mod-detail-sec"
+          [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+        >
+          <div class="mod-detail-sel-header">
+            <!-- <p class="select-mod-title">Select Mods</p> -->
+            <p class="add-mod-text" (click)="modView('open')">Add Blank Mod</p>
+          </div>
+          <div class="add-mod-popup" *ngIf="modValue">
+            <span class="close-icon" (click)="modView('')"
+              ><em class="pixel-icons icon-close"></em
+            ></span>
+            <p class="add-mod-label">Mod Order</p>
+            <pi-form-field class="add-mod-input-field" label="">
+              <input
+                type="text"
+                pi-input
+                name="'mod'"
+                [(ngModel)]="newModOrder"
+                [maxlength]="5"
+              />
+              <p class="pi-error">{{ createMOdError }}</p>
+            </pi-form-field>
+
+            <div class="btn-sec">
+              <button
+                pi-button
+                color="accent"
+                class="mat-raised-button"
+                (click)="createBlankMod()"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
+          <!-- <pi-field-group direction="column">
+              <pi-form-field
+                label="{{ mod.mod_order }}"
+                *ngFor="let mod of pageDetails.mod_details"
+              >
+                <input
+                  type="radio"
+                  pi-input
+                  name="'mod'"
+                  (ngModelChange)="change($event)"
+                  [value]="mod.mod_id"
+                  [(ngModel)]="selectedMod"
+                />
+              </pi-form-field>
+            </pi-field-group> -->
+        </div>
+      </div>
+    </mat-dialog-content>
+
+    <!-- <div class="nav-sec save-import">
+      <div class="box nav-sec save-view-btn">
+        <span>
+          <span class="revert-btn  cursor">
+            <em class="pixel-icons icon-filter"></em> <span> Filters</span>
+          </span>
+        </span>
+      </div>
+      <div search-sec>
+        <app-search
+          [search]="search"
+          (onSearch)="onSearch($event)"
+        ></app-search>
+      </div>
+    </div> -->
+  </div>
+  <div class="page-content-main-sec">
+    <!--this code is for tabs representation-->
+    <!-- <div class="page-tab-sec">
+      <mat-tab-group>
+        <mat-tab class="mat-tabs" label="All"></mat-tab>
+        <mat-tab class="mat-tabs" label="Changed"></mat-tab
+        ><mat-tab class="mat-tabs" label="Unchanged"></mat-tab
+        ><mat-tab class="mat-tabs" label="Deleted"></mat-tab>
+      </mat-tab-group>
+    </div> -->
+
+    <div class="page-content-sec" *ngFor="let detail of pageDetails">
+      <div class="page-content" *ngFor="let mod of detail.mod_details">
+        <div
+          class="page-preview"
+          [ngClass]="[
+            !mod?.mainline_copy_statement &&
+            !mod?.introduction_copy_statement &&
+            !mod?.regular_price
+              ? 'no-content'
+              : ''
+          ]"
+        >
+          <div>
+            <div class="page-preview-header">
+              <p class="page-preview-title">
+                Mod {{ mod.mod_order }}
+                <!--this code is for green check mark representation-->
+                <!-- <span  class="text-success">
+                  <em  class="material-icons">check_circle</em> 
+                </span> -->
+              </p>
+              <p class="version-count">{{ mod?.version_count }} versions</p>
+              <!-- <div class="page-preview-left-header">
+                <p class="page-preview-title">
+                  mod {{ mod.mod_order }}
+                </p>
+              </div>
+              <div class="page-preview-right-header">
+                <p class="version-count">{{ mod?.version_count }} versions</p>
+              </div> -->
+            </div>
+            <div class="page-preview-content">
+              <div
+                class="page-preview-left-content"
+                [ngClass]="[
+                  !mod?.mainline_copy_statement &&
+                  !mod?.introduction_copy_statement &&
+                  !mod?.regular_price
+                    ? 'no-content'
+                    : ''
+                ]"
+              >
+                <p
+                  class="page-preview-main-content"
+                  [ngClass]="{
+                    'no-content':
+                      !mod?.mainline_copy_statement &&
+                      !mod?.introduction_copy_statement &&
+                      !mod?.regular_price
+                  }"
+                >
+                  {{ mod?.introduction_copy_statement?.substring(0, 30) }}
+                  <span *ngIf="mod?.introduction_copy_statement?.length > 30"
+                    >...</span
+                  >
+                </p>
+                <p
+                  class="page-preview-main-content w-30 m-b-15"
+                  [ngClass]="{
+                    'no-content':
+                      !mod?.mainline_copy_statement &&
+                      !mod?.introduction_copy_statement &&
+                      !mod?.regular_price
+                  }"
+                ></p>
+                <p
+                  class="page-preview-sub-content"
+                  [ngClass]="{
+                    'no-content':
+                      !mod?.mainline_copy_statement &&
+                      !mod?.introduction_copy_statement &&
+                      !mod?.regular_price
+                  }"
+                >
+                  {{ mod?.mainline_copy_statement?.substring(0, 30) }}
+                  <span *ngIf="mod?.mainline_copy_statement?.length > 30"
+                    >...</span
+                  >
+                </p>
+                <p
+                  class="page-preview-sub-content"
+                  [ngClass]="{
+                    'no-content':
+                      !mod?.mainline_copy_statement &&
+                      !mod?.introduction_copy_statement &&
+                      !mod?.regular_price
+                  }"
+                ></p>
+
+                <p
+                  class="page-preview-sub-content w-30"
+                  [ngClass]="{
+                    'no-content':
+                      !mod?.mainline_copy_statement &&
+                      !mod?.introduction_copy_statement &&
+                      !mod?.regular_price
+                  }"
+                ></p>
+              </div>
+              <div class="page-preview-right-content">
+                <p class="page-preview-cost" *ngIf="mod?.regular_price">
+                  ${{ mod?.regular_price }}
+                </p>
+              </div>
+            </div>
+            <div
+              class="page-preview-images no-preview-images"
+              *ngIf="!mod.images.length"
+            >
+              <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+              </div>
+              <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+              </div>
+              <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+              </div>
+              <div class="preview-image">
+                <div class="preview-image-sec">
+                  <img src="{{ image_url }}" alt="image" />
+                </div>
+                <!--this code is for more images are present to display there count-->
+                <!-- <div class="overlay-sec" ></div>
+                <span class="preview-image-count" >+3</span> -->
+              </div>
+            </div>
+            <div class="page-preview-images" *ngIf="mod.images.length">
+              <div
+                class="preview-image"
+                *ngFor="let image of (mod.images | slice: 0:4); let i = index"
+              >
+                <div class="preview-image-sec">
+                  <img [src]="image.previewUrl" />
+                </div>
+                <span
+                  class="preview-image-count"
+                  *ngIf="mod.images.length > 4 && i > 2"
+                  >+{{ mod.images.length - 4 }}</span
+                >
+              </div>
+            </div>
+          </div>
+          <!--this code is for more images are present to display overlay and edit mod content-->
+          <div class="preview-overlay-sec"></div>
+          <div class="preview-edit-mod" (click)="editModDialog(detail, mod)">
+            <span> <em class="pixel-icons icon-mod-edit"></em> Edit MOD </span>
+          </div>
+        </div>
+        <div class="page-list-view">
+          <div class="page-list-header">
+            <div class="page-list-left-header">
+              <span class="page-name">page {{ detail.page_order }}</span>
+            </div>
+            <div
+              class="page-list-right-header"
+              [ngClass]="{ 'not-allowed': adsService.isImportProgess }"
+            >
+              <!-- <p [ngClass]="mod.status == 'Pending' ? 'mod-status-pending' :'mod-status-complete'">
+                {{mod.status}}
+              </p> -->
+              <pi-select
+                [ngClass]="{ 'no-hover-click': adsService.isImportProgess }"
+                [options]="modStaus"
+                [(ngModel)]="mod.status"
+                nameKey="name"
+                (onChange)="onModStatusChanged($event, mod)"
+                class="page-mod-status"
+              >
+              </pi-select>
+              <p class="edit-mod" (click)="editModDialog(detail, mod)">
+                <span><em class="pixel-icons icon-mod-edit"></em></span>Edit Mod
+              </p>
+            </div>
+          </div>
+          <div
+            class="page-list-main-sec pos-rel"
+            [ngClass]="mod.isExp ? 'page-list-expanded' : ''"
+          >
+            <!-- {{mod.mod_id == selectedModId}} -->
+            <div class="page-list-content" *ngFor="let promo of mod.promotions">
+              <div class="page-list-left-content">
+                <span class="promo-id">
+                  <em class="pixel-icons icon-label"></em>
+                  <span class="promo-id-block" [matTooltip]="promo.block">
+                    {{ promo.block }}</span
+                  >
+                </span>
+                <span class="promo-content">{{ promo.item_description }}</span>
+              </div>
+              <div class="page-list-right-content">
+                <div class="promo-cost">
+                  <span>${{ promo.promo_price }}</span>
+                </div>
+                <div
+                  class="promo-specs"
+                  *ngIf="promo.offer_type.length"
+                  matTooltip="{{ promo.offer_type }}"
+                >
+                  <em class="pixel-icons icon-offer-type"></em>
+                  <span>{{ promo.offer_type }}</span>
+                </div>
+                <div class="promo-specs" *ngIf="!promo.offer_type.length">
+                  <em class="pixel-icons icon-offer-type"></em> <span>--</span>
+                </div>
+              </div>
+            </div>
+            <!-- <p
+              class="page-list-expand-btn page-list-collapse-btn"
+              *ngIf="expandListValue && mod.promotions.length > 4"
+              (click)="expandList()"
+            >
+              Collapse
+            </p> -->
+
+            <!--this code is  no promotions found section-->
+            <div class="no-data" *ngIf="!mod.promotions.length">
+              <p>No Promotions Found</p>
+            </div>
+          </div>
+          <p
+            class="page-list-expand-btn "
+            *ngIf="!mod.isExp && mod.promotions.length > 4"
+          >
+            <span (click)="expandList(mod)">More Promotions</span>
+          </p>
+          <p
+            class="page-list-expand-btn page-list-collapse-btn"
+            *ngIf="mod.isExp && mod.promotions.length > 4"
+          >
+            <span (click)="expandList(mod)">Collapse</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!--this code is for spinner section and no pages found section-->
+    <div class="loader" *ngIf="fetchingData"></div>
+    <div
+      class="loader-text no-data-grid "
+      *ngIf="!pagesInfo.length && !fetchingData"
+    >
+      <em class="pixel-icons icon-pages"></em>
+
+      <p>No Pages Found</p>
+    </div>
+    <div class="loader-text no-data-grid " *ngIf="fetchingData">
+      <p>Loading Please Wait...</p>
+    </div>
+  </div>
+</div>
+<div *ngIf="editingMod">
+  <app-edit-mod
+    [editModInputData]="editModInputData"
+    (closeEdit)="selectedList(currentTabData)"
+  >
+  </app-edit-mod>
+</div>

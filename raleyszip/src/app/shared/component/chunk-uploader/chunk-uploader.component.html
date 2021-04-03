@@ -1,0 +1,91 @@
+<div class="file-area">
+  <div *ngIf="!fileImporting">
+    <div class="file">
+      <div class="file-drop-zone">
+        <!-- *ngIf="!progress && !fileImporting" -->
+        <ng-container
+          #flowAdvanced="flow"
+          [flowConfig]="flowConfig"
+        ></ng-container>
+        <div class="images-dropzone">
+          <img src="{{ importImg }}" alt="no_image.png" />
+        </div>
+        <!-- <input type="file"
+       flowButton
+       [flow]="flowAdvanced.flowJs"
+       [flowAttributes]="flowAttributes"> -->
+
+        <!-- <div class="drop-area"
+     flowDrop
+     [flow]="flowAdvanced.flowJs">
+     <span>Drop files here</span>
+</div> -->
+        <div
+          class="info-label"
+          flowDrop
+          [flow]="flowAdvanced.flowJs"
+          (click)="triggerUpld()"
+        >
+          <p class="drag-drop-text">
+            Drag and drop your files anywhere here or
+          </p>
+          <label for="fileInp" class="browse-file">
+            {{
+              fileData?.original_name ? 'Upload New File' : 'Browse File'
+            }}</label
+          >
+
+          <input
+            id="fileInp"
+            type="file"
+            style="visibility: hidden;"
+            flowButton
+            [flow]="flowAdvanced.flowJs"
+            [flowAttributes]="flowAttributes"
+          />
+          <div class="primary-color file-name">
+            {{ fileData?.original_name }}
+          </div>
+          <p class="size">
+            Maximum File Size 150 MB,
+            {{
+              this.importdata.format === 'csv'
+                ? "Accepts csv / txt file with ' | ' delimiter only."
+                : this.importdata.format
+            }}
+            <span *ngIf="this.importdata.format != 'csv'"
+              >File Format Only
+            </span>
+            <a
+              *ngIf="fromComp != 'comp-files' && fromComp != 'comp-file'"
+              class="primary-color"
+              href="{{ importdata.samplePath }}"
+              >Download Sample</a
+            >
+            <!-- <a *ngIf="fromComp === 'comp-files'" class="primary-color" (click)="crushImp()">Import</a>
+              <a *ngIf="fromComp === 'comp-files'" class="primary-color" (click)="crushDwnld()">Downlaod</a> -->
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="info">
+      <p class="invalid-error text-capital" *ngIf="uploadError">
+        Invalid file format.
+      </p>
+      <p class="invalid-error text-capital" *ngIf="sizeError">
+        Maximum file size(150 Mb) exceeded
+      </p>
+      <p class="invalid-error text-capital" *ngIf="onlyHeadersError">
+        {{ onlyHeadersErrorMsg }}
+      </p>
+      <div class="invalid-error text-capital">
+        {{ fileMatch }}
+        <!-- *ngIf="fileMatch != ''" -->
+      </div>
+    </div>
+  </div>
+  <div class="loader" *ngIf="fileImporting"></div>
+  <div *ngIf="fileImporting" class="no-data-grid loader-text">
+    Attaching file, please wait ...
+  </div>
+</div>
